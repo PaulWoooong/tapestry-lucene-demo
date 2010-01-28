@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.samtech</groupId>
+  <parent>
+  	<groupId>com.samtech</groupId>
+  	<artifactId>tapestry5-demo-parent</artifactId>
+  	<version>0.0.1</version>
+  </parent>
+  <artifactId>tapestry5-business</artifactId>
+  <name>tapestry5-demo-parent</name>
+  <version>0.0.1</version>
+  <description>tapestry5-business</description>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>com.samtech</groupId>
+  		<artifactId>tapestry5-database</artifactId>
+  		<version>0.0.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.samtech</groupId>
+  		<artifactId>tapestry5-domain</artifactId>
+  		<version>0.0.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-core</artifactId>
+  		<version>3.0.0</version>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-highlighter</artifactId>
+  		<version>3.0.0</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-pool</groupId>
+  		<artifactId>commons-pool</artifactId>
+  		<version>1.5.3</version>
+  	</dependency>
+  </dependencies>
+</project>
