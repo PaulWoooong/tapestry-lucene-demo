@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="com.samtech.database">
+	<class
+		name="Rbt2Staffer"
+		table="rbt2_staffer"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="string"
+			column="id"
+		>
+			<generator class="assigned"/>
+		</id>
+
+		<property
+			name="StafferName"
+			column="staffer_name"
+			type="string"
+			not-null="true"
+			length="50"
+		/>
+		<property
+			name="DepartmentId"
+			column="department_id"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+		<property
+			name="Password"
+			column="password"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+		<property
+			name="Telphone"
+			column="telphone"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+		<property
+			name="Mobile"
+			column="mobile"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+		<property
+			name="EMail"
+			column="e_mail"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+		<property
+			name="EndDate"
+			column="end_date"
+			type="timestamp"
+			not-null="false"
+			length="23"
+		/>
+		<property
+			name="Ip"
+			column="ip"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+		<property
+			name="OpDate"
+			column="op_date"
+			type="timestamp"
+			not-null="false"
+			length="23"
+		/>
+
+
+	</class>	
+</hibernate-mapping>

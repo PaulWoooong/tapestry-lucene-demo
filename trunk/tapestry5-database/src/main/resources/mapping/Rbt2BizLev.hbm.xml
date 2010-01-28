@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="com.samtech.database">
+	<class
+		name="Rbt2BizLev"
+		table="rbt2_biz_lev"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<composite-id name="Id" class="Rbt2BizLevPK">
+			<key-property
+				name="Id"
+				column="id"
+				type="string"
+			/>
+			<key-property
+				name="ParentId"
+				column="parent_id"
+				type="string"
+			/>
+		</composite-id>
+
+		<property
+			name="Name"
+			column="name"
+			type="string"
+			not-null="true"
+			length="50"
+		/>
+		<property
+			name="IsLeave"
+			column="is_leave"
+			type="integer"
+			not-null="true"
+			length="10"
+		/>
+		<property
+			name="BizCd"
+			column="biz_cd"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+		<property
+			name="OpId"
+			column="op_id"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+		<property
+			name="OpDate"
+			column="op_date"
+			type="timestamp"
+			not-null="false"
+			length="23"
+		/>
+ <!-- 
+		<many-to-one 
+			name="Biz" 
+			column="biz_cd" 
+			class="com.footmarktech.robot.database.Rbt2Bussiness" 
+			cascade="none" 
+			lazy="proxy" 
+			fetch="join" 
+			insert="false" 
+			update="false" 
+			
+		/>
+ -->
+	</class>	
+</hibernate-mapping>
