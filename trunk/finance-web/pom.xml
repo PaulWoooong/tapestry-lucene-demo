@@ -37,5 +37,10 @@
    		<artifactId>struts2-spring-plugin</artifactId>
    		<version>2.1.8.1</version>
    	</dependency>
+   	<dependency>
+   		<groupId>com.jgeppert.struts2.jquery</groupId>
+        <artifactId>struts2-jquery-plugin</artifactId>
+        <version>1.8.2</version>
+   	</dependency>
   </dependencies>
 </project>
