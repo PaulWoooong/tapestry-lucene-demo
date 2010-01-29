@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://java.sun.com/xml/ns/persistence
+        http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" 
+    version="1.0">
+    <persistence-unit name="finance" transaction-type="RESOURCE_LOCAL">
+    	<!--
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+         
+        <jta-data-source>java:/BookingDS</jta-data-source>
+         -->
+            <class>com.samtech.finance.database.TAccount</class>
+            <class>com.samtech.finance.database.RunningAccount</class> 
+            <class>com.samtech.finance.database.BusinessAccountRule</class>
+            <class>com.samtech.business.database.BusinessType</class>
+            <class>com.samtech.business.database.BusinessForm</class>
+          <properties>
+           <property name="hibernate.hbm2ddl.auto" value="update"/>
+          	 <!-- property name="hibernate.search.default.directory_provider" 
+                   value="org.hibernate.search.store.FSDirectoryProvider"/-->
+         <!-- directory where the indexes will be stored -->
+         <!-- property name="hibernate.search.default.indexBase" 
+                   value="/svcindexes"/ -->
+		                   
+			
+         </properties>
+    </persistence-unit>
+</persistence>
