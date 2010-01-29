@@ -3,7 +3,7 @@
   <display-name>struts2-demo</display-name>
   <context-param>
 	  <param-name>contextConfigLocation</param-name>
-	  <param-value>/WEB-INF/conf/applicationContext.xml</param-value>
+	  <param-value>classpath:applicationcontext_bean.xml;classpath:applicationcontext_web.xml</param-value>
  </context-param>
  	<context-param>
         <param-name>org.mortbay.jetty.servlet.ManagedAttributes</param-name>
