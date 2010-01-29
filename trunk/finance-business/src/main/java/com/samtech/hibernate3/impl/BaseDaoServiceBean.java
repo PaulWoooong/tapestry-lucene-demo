@@ -22,24 +22,14 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+
 //import org.apache.lucene.util.Version;
-import org.hibernate.search.SearchFactory;
-import org.hibernate.search.engine.DocumentBuilderIndexedEntity;
-import org.hibernate.search.engine.EntityState;
-import org.hibernate.search.engine.SearchFactoryImplementor;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.jpa.impl.FullTextEntityManagerImpl;
+
 import org.springframework.orm.jpa.JpaCallback;
 
+import com.samtech.common.domain.PagingAndSorting;
+import com.samtech.common.domain.ParamValue;
 import com.samtech.hibernate3.BaseServiceInf;
-import com.samtech.hibernate3.PagingAndSorting;
-import com.samtech.hibernate3.ParamValue;
 
 public class BaseDaoServiceBean extends AbstractEntityService implements
 		BaseServiceInf {

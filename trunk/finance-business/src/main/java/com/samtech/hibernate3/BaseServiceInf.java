@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.samtech.common.domain.PagingAndSorting;
+
 public interface BaseServiceInf {
 
 	<T> T getObject(Class<T> clazz, Serializable id);
