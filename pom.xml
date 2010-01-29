@@ -40,5 +40,7 @@
 		<module>tapestry5-domain</module>
 		<module>tapestry5-business</module>
 		<module>tapestry5-web-common</module>
+		<module>finance-business</module>
+		<module>finance-web</module>
 	</modules>
 </project>
