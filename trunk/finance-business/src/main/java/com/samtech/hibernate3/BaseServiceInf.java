@@ -6,23 +6,17 @@ import java.util.Map;
 
 import com.samtech.common.domain.PagingAndSorting;
 
-public interface BaseServiceInf {
+public interface BaseServiceInf<T> {
 
 	<T> T getObject(Class<T> clazz, Serializable id);
+	T getObject(Serializable id);
 
-	@SuppressWarnings("unchecked")
-	List query(String sql, Map<String, Object> param, PagingAndSorting pg);
+	List<T> query(String sql, Map<String, Object> param, PagingAndSorting pg);
 
-	void saveObject(Object o);
+	void saveObject(T o);
 
-	Serializable updateObject(Object o);
+	T updateObject(T o);
 
-	void deleteObject(Object o);
-
-	/*@SuppressWarnings("unchecked")
-	void updateClassIndexed(final Class clazz);
-
-	@SuppressWarnings("unchecked")
-	List searchByKeywords(Class clazz, Map<String, Float> properties,
-			String keywords);*/
+	void deleteObject(T o);
+	
 }
