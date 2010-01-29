@@ -130,6 +130,7 @@ public abstract class AbstractBaseDaoServiceBean<T> extends AbstractEntityServic
 		return this.getJpaTemplate().find(clazz, id);
 
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	public List<T> query(final String sql, final Map<String, Object> params,
@@ -252,8 +253,8 @@ public abstract class AbstractBaseDaoServiceBean<T> extends AbstractEntityServic
 			return 20;
 	}
 
-	public Serializable updateObject(Object o) {
-		return (Serializable) this.getJpaTemplate().merge(o);
+	public T updateObject(T o) {
+		return this.getJpaTemplate().merge(o);
 	}
 
 }
