@@ -6,32 +6,6 @@
 	response.setHeader("Cache-Control", "no-cache");
 	response.setDateHeader("Expires", 0);
 
-	// Calculate the view sources url
-	String sourceUrl = request.getContextPath() + "/viewSource.action";
-	com.opensymphony.xwork2.ActionInvocation inv = com.opensymphony.xwork2.ActionContext
-			.getContext().getActionInvocation();
-	org.apache.struts2.dispatcher.mapper.ActionMapping mapping = org.apache.struts2.ServletActionContext
-			.getActionMapping();
-	if (inv != null) {
-		com.opensymphony.xwork2.util.location.Location loc = inv
-				.getProxy().getConfig().getLocation();
-		sourceUrl += "?config="
-				+ (loc != null ? loc.getURI() + ":"
-						+ loc.getLineNumber() : "");
-		sourceUrl += "&className="
-				+ inv.getProxy().getConfig().getClassName();
-
-		if (inv.getResult() != null
-				&& inv.getResult() instanceof org.apache.struts2.dispatcher.StrutsResultSupport) {
-			sourceUrl += "&page="
-					+ mapping.getNamespace()
-					+ "/"
-					+ ((org.apache.struts2.dispatcher.StrutsResultSupport) inv
-							.getResult()).getLastFinalLocation();
-		}
-	} else {
-		sourceUrl += "?page=" + request.getServletPath();
-	}
 %>
 <%@taglib prefix="decorator"
 	uri="http://www.opensymphony.com/sitemesh/decorator"%>
@@ -77,14 +51,12 @@
 	   </h3>
 	   <div class="dbx-content">
 	                  <ul>
-	                  <li><s:a value="demo.jsp">Home</s:a></li>
-	                  <li><s:a action="etairportlist">airport list</s:a></li>
-	                  <li><s:a action="gogtlist">jqgrid airport list</s:a></li>
-	                  <li><s:a action="gmesalist">gmesa airport list</s:a></li>
-	                  <li><s:a action="slidertablelist">slider traveler list</s:a></li>
-	                  <li><s:a action="keywordslist">keyword filter</s:a></li>
-	                  <li><s:a action="showpicture">show pictures</s:a></li>
-                  	  <!-- <a href="<%= request.getContextPath() %>/chat.jsp">chat</a> -->
+	                   <li><s:a action="etairportlist">用户管理</s:a></li>
+	                  <li><s:a action="gogtlist">原始凭证</s:a></li>
+	                  <li><s:a action="slidertablelist">记账凭证查询</s:a></li>
+	                  <li><s:a action="gmesalist">流水账查询</s:a></li>
+	                  <li><s:a action="gmesalist">T账查询</s:a></li>
+                  	   <li><s:a action="gmesalist">T账报表</s:a></li>
                 </ul>
 	  </div>
 	</div>

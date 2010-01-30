@@ -18,6 +18,17 @@
   		<version>0.0.1</version>
    	</dependency>
    	<dependency>
+   		<groupId>javax.servlet</groupId>
+   		<artifactId>servlet-api</artifactId>
+   		<version>2.5</version>
+   		<scope>provided</scope>
+   	</dependency>
+   	<dependency>
+   		<groupId>org.springframework</groupId>
+   		<artifactId>spring-context-support</artifactId>
+   		<version>2.5.6</version>
+   	</dependency>
+   	<dependency>
    		<groupId>org.apache.struts</groupId>
    		<artifactId>struts2-core</artifactId>
    		<version>2.1.8.1</version>
@@ -37,10 +48,12 @@
    		<artifactId>struts2-spring-plugin</artifactId>
    		<version>2.1.8.1</version>
    	</dependency>
+   	<!-- 
    	<dependency>
    		<groupId>com.jgeppert.struts2.jquery</groupId>
         <artifactId>struts2-jquery-plugin</artifactId>
         <version>1.8.2</version>
    	</dependency>
+   	 -->
   </dependencies>
 </project>
