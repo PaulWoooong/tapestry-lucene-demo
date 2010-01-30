@@ -23,6 +23,10 @@ public class RunningAccount implements Serializable {
 	private Integer id;
 	@Column(name = "account_id", nullable = false, updatable = false)
 	private Integer accountId;
+	@Column(name="content")
+	private String content;
+	
+	
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "direct", updatable = false)
@@ -114,6 +118,14 @@ public class RunningAccount implements Serializable {
 		this.confirmDate = confirmDate;
 	}
 
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
