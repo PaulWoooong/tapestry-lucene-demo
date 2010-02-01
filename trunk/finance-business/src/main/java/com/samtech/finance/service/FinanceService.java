@@ -31,4 +31,8 @@ public interface FinanceService {
 	 * @throws FinanceRuleException
 	 */
 	public void confirmBizBalance(String bizId)throws FinanceRuleException;
+	
+	public void confirmMonthReport(int year,int month)throws FinanceRuleException;
+	
+	public void refuseMonthReport(int year,int month)throws FinanceRuleException;
 }
