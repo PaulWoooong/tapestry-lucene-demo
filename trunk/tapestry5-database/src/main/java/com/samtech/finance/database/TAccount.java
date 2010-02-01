@@ -11,6 +11,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name="t_account")
@@ -32,6 +35,10 @@ public class TAccount implements Serializable{
 	private BigDecimal debitBalance;
 	@Enumerated(EnumType.STRING)
 	private FinanceLevel level=FinanceLevel.ONE;
+	/*0/1 */
+	@Column(name="init_flag",length=1)
+	private short inited;
+	
 	@Column(name="parent_id")
 	private Integer parentId;
 	
@@ -94,6 +101,13 @@ public class TAccount implements Serializable{
 	}
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
+	}
+	
+	public short getInited() {
+		return inited;
+	}
+	public void setInited(short inited) {
+		this.inited = inited;
 	}
 	
 	@Override

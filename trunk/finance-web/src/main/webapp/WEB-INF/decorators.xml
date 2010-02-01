@@ -14,18 +14,15 @@
         <pattern>/ajax/AjaxResult*</pattern>
         <pattern>/AjaxTest.action</pattern>
         <pattern>/ajax/remoteforms/AjaxRemoteForm.action</pattern>
-        <pattern>/etload.action</pattern>
-        <pattern>/pgairport.action</pattern>
         <pattern>/loginInfo.action</pattern>
         <pattern>/login.action</pattern>
-        <pattern>/jsontable.action</pattern>
-        <pattern>/pgtraveler.action</pattern>
+        <pattern>/logout.action</pattern>
         <pattern>/tags/ui/ajax/*</pattern>
         <pattern>/nodecorate/*</pattern>
     </excludes>
 
     <decorator name="main" page="main.jsp">
         <pattern>/*</pattern>
-    </decorator>
+     </decorator>
     
 </decorators>
