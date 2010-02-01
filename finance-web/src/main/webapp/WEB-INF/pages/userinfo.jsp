@@ -1,15 +1,16 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="sj" uri="/struts-jquery-tags"%>
+
 
 <div id="login" class="dbx-box"
 	style="position: relative; display: block;">
 <h3 class="dbx-handle dbx-handle-cursor"
-	style="position: relative; display: block;"><s:if test="logined">user info</s:if>
-<s:else>login dailog</s:else></h3>
+	style="position: relative; display: block;"><s:if test="logined">用户信息</s:if>
+<s:else>登录信息</s:else></h3>
 <div class="dbx-content">
 <s:if test="logined">
-	<div>wellcome <s:property value="svcUser.employeeId" /></div>
-	<div>expireDate <s:property value="svcUser.expireDate" /></div>
+	<div>欢迎 <s:property value="loginUser.employeeId" /></div>
+	<div>有效期至 <s:property value="loginUser.expireDate" /></div>
 	<div><s:a name="logout" action="logout">logout</s:a></div>
 </s:if> <s:else>
 

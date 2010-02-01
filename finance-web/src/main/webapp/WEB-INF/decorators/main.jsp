@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%
 	response.setHeader("Pragma", "no-cache");
 	response.setHeader("Cache-Control", "no-cache");
@@ -11,27 +11,23 @@
 	uri="http://www.opensymphony.com/sitemesh/decorator"%>
 <%@taglib prefix="page" uri="http://www.opensymphony.com/sitemesh/page"%>
 <%@taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="sj" uri="/struts-jquery-tags"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh" lang="zh">
 <head>
 <title><decorator:title default="Struts Showcase" /></title>
-<link
-	href="<s:url value='/styles/main.css' encode='false' includeParams='none'/>"
+<link	href="<s:url value='/styles/main.css' encode='false' includeParams='none'/>"
 	rel="stylesheet" type="text/css" media="all" />
 <link
 	href="<s:url value='/styles/dbx.css' encode='false' includeParams='none'/>"
 	rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript"	src="<s:url value='/scripts/dbx/dbx.js' />" ></script>
-    <script type="text/javascript" src="<s:url value='/scripts/dbx/dbx-key.js' />"  ></script>
-<sj:head compressed="false" useJqGridPlugin="false" jqueryui="false"  locale="zh-CN" defaultIndicator="myDefaultIndicator"/>
+<script type="text/javascript"	src="<s:url value='/scripts/jquery/jquery-1.4.1.js' />" ></script>
 <decorator:head/>
 <!--[if lt IE 7]>
 <link rel="stylesheet" href="<s:url value='/styles/ie-gif.css'/>" type="text/css" />
 <![endif]-->
-    
 </head>
 
-<body >
+<body>
 <div id="page">
 <div id="wrapper">
     
@@ -47,16 +43,17 @@
 	<div id="sidebar-left" class="dbx-group" style="position: relative; display: block;">
 	  <div id="nav_plugin" class="dbx-box " style="position: relative; display: block;">
 	   <h3 class="dbx-handle dbx-handle-cursor" style="position: relative; display: block;" title="click-down and drag to move this box">
-	     navigation
+	     菜单
 	   </h3>
 	   <div class="dbx-content">
 	                  <ul>
-	                   <li><s:a action="etairportlist">用户管理</s:a></li>
-	                  <li><s:a action="gogtlist">原始凭证</s:a></li>
-	                  <li><s:a action="slidertablelist">记账凭证查询</s:a></li>
-	                  <li><s:a action="gmesalist">流水账查询</s:a></li>
-	                  <li><s:a action="gmesalist">T账查询</s:a></li>
-                  	   <li><s:a action="gmesalist">T账报表</s:a></li>
+	                   <li><a href="#">用户管理</s></li>
+	                  <li><a href="#">原始凭证</a></li>
+	                  <li><a action="slidertablelist">记账凭证查询</a></li>
+	                  <li><a action="gmesalist">流水账查询</a></li>
+	                  <li><a action="gmesalist">T账查询</a></li>
+                  	   <li><a action="gmesalist">T账报表</a></li>
+                  	   <!-- li><s:a action="gmesalist">T账报表</s:a></li-->
                 </ul>
 	  </div>
 	</div>
@@ -75,37 +72,11 @@
     
     </div>
 	
-    <!-- div id="sidebar-right" class="dbx-group" style="position: relative; display: block;">
     
-      <div id="msg" class="dbx-box"  style="position: relative; display: block;">
-      	<h3 class="dbx-handle dbx-handle-cursor" style="position: relative; display: block;">
-      	 msg
-      	</h3>
-      	<div class="dbx-content">
-      	  message
-      	</div>
-      </div>
-      
-    </div -->
     <!-- end sidebar-right -->
      <hr class="hidden"/>
 	</div>
 </div><!-- end page -->
-<script type="text/javascript">
-function registerfrm(){
-	var logfrm=$('#loginfrm');
-	if(logfrm)
-	logfrm.ajaxForm({//target
-			success:function(data){
-			$('#login').replaceWith(data);
-			if(window["sidebar_left"])
-			window["sidebar_left"].refresh(false);
-			registerfrm();
-		  }
-			
-		});
-	};
-$(document).ready(registerfrm);
-</script>
+
 </body>
 </html>

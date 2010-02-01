@@ -1,1 +1,1 @@
-<% response.sendRedirect("financeMain.action"); %>
+<% response.sendRedirect("login.action"); %>

@@ -3,6 +3,13 @@ package com.samtech.business.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.samtech.business.database.Gender;
 import com.samtech.common.domain.IUser;
 
 public class User implements Serializable,IUser{
@@ -62,6 +69,33 @@ public class User implements Serializable,IUser{
 	public void setExpireDate(Date expireDate) {
 		this.expireDate = expireDate;
 	}
+	
+	
+	private String name;
+	
+	private Gender gender=Gender.MALE;
+	
+	private Date birthDay;
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Gender getGender() {
+		return gender;
+	}
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+	public Date getBirthDay() {
+		return birthDay;
+	}
+	public void setBirthDay(Date birthDay) {
+		this.birthDay = birthDay;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

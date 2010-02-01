@@ -21,6 +21,7 @@ public abstract class AbstractAction extends ActionSupport implements
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public static final String SESSION_ATTRIBUTE_KEY_USER = "USER";
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
 	final String LOGIN_KEY = "user_logined";
@@ -66,7 +67,7 @@ public abstract class AbstractAction extends ActionSupport implements
 				Object o = smap.get(LOGIN_KEY);
 				if (o != null && ((Boolean) o).booleanValue()) {
 
-					user = (IUser) smap.get(USER_INFO_KEY);
+					user = (IUser) smap.get(SESSION_ATTRIBUTE_KEY_USER);
 				}
 			}
 		}
