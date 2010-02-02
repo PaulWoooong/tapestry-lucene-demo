@@ -10,6 +10,12 @@ public class RunningAccountBaseDao extends AbstractBaseDaoServiceBean<RunningAcc
 	public RunningAccount getObject(Serializable id) {
 		return this.getObject(RunningAccount.class, id);
 	}
+
+	@Override
+	protected RunningAccount convertT(Object o) {
+		return (RunningAccount)o; 
+		
+	}
 	
 	
 }
