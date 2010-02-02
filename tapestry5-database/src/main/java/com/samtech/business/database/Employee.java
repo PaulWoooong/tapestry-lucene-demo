@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Table(name="employee")
 public class Employee extends AbstractPerson {
 	@Id
-	@GeneratedValue(strategy=GenerationType.TABLE)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="employee_id",length=10)
 	private String employeeId;
 	@Column(name="education",length=30)

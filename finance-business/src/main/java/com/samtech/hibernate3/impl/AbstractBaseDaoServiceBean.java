@@ -235,7 +235,7 @@ public abstract class AbstractBaseDaoServiceBean<T> extends AbstractEntityServic
 	abstract protected T convertT(Object o);
 	
 
-	private static int getFetchSize(int first) {
+	protected static int getFetchSize(int first) {
 		if (first > 0) {
 			if (first < 50) {
 				return 20;
