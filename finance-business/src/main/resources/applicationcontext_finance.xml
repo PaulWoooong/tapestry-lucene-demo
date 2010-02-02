@@ -53,7 +53,6 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		
-
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://localhost/etdcs" />
 		<property name="username" value="root" />
@@ -81,13 +80,15 @@
 		</tx:attributes>
 	</tx:advice>
 	<aop:config>
-		<!-- 
-		<aop:pointcut id="fooServiceOperation"
-			expression="execution(* com.samtech.hibernate3.impl.EtAirportServiceBean.*(..))|| execution(* com.samtech.hibernate3.impl.BaseDaoServiceBean.*(..))|| execution(* com.samtech.hibernate3.impl.UserAccountServiceBean.*(..))" />
-			 -->
+		
 		<aop:pointcut id="serviceOperation"
 			expression="execution(* com.samtech.business.service.impl.*ServiceImpl.*(..))|| execution(* com.samtech.finance.service.impl.*ServiceImpl.*(..))" />	 
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+		
+		<aop:pointcut id="baseDaoOperation"
+			expression="execution(* com.samtech.finance.dao.*BaseDao.*(..))|| execution(* com.samtech.business.dao.*BaseDao.*(..))" />	 
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="baseDaoOperation" />
+		
 	</aop:config>
 	<bean id="BusinessTypeBaseDao" class="com.samtech.business.dao.BusinessTypeBaseDao">
 		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
@@ -98,5 +99,7 @@
 	<bean id="RunningAccountBaseDao" class="com.samtech.finance.dao.RunningAccountBaseDao">
 		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
 	</bean>
-	
+	<bean id="UserBaseDao" class="com.samtech.business.dao.UserBaseDao">
+		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
 </beans>
