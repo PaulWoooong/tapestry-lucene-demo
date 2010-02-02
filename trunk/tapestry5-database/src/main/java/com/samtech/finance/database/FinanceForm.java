@@ -21,8 +21,8 @@ public class FinanceForm implements Serializable {
 	 */
 	private static final long serialVersionUID = -3549555386853671230L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.TABLE)
-	@Column(name="id",length=10)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id",length=12)
 	private String id;
 	@Column(name="biz_date")
 	@Temporal(TemporalType.DATE)
