@@ -23,8 +23,8 @@ public class RunningAccount implements Serializable {
 	private Integer id;
 	@Column(name = "account_id", nullable = false, updatable = false)
 	private Integer accountId;
-	@Column(name="content")
-	private String content;
+	@Column(name="context",length=100)
+	private String context;
 	
 	
 
@@ -33,18 +33,19 @@ public class RunningAccount implements Serializable {
 	private BalanceDirect direct = BalanceDirect.DEBIT;
 	@Column(name = "amount", scale = 2, nullable = false)
 	private BigDecimal amount;
+	/**
+	 *financeform id 
+	 *
+	 */
 	@Column(name = "business", nullable = false,length=30)
 	private String businessId;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "account_status")
-	private AccountStatus Status = AccountStatus.PENDING;
+	
 	@Column(name = "company_id", length = 30)
 	private String companyId;
 	@Column(name = "create_date", updatable = false, nullable = false)
 	private Date createDate;
-	@Column(name = "confirm_date")
-	private Date confirmDate;
+	
 
 	public Integer getId() {
 		return id;
@@ -86,13 +87,7 @@ public class RunningAccount implements Serializable {
 		this.businessId = businessId;
 	}
 
-	public AccountStatus getStatus() {
-		return Status;
-	}
-
-	public void setStatus(AccountStatus status) {
-		Status = status;
-	}
+	
 
 	public String getCompanyId() {
 		return companyId;
@@ -110,20 +105,14 @@ public class RunningAccount implements Serializable {
 		this.createDate = insertDate;
 	}
 
-	public Date getConfirmDate() {
-		return confirmDate;
+	
+
+	public String getContext() {
+		return context;
 	}
 
-	public void setConfirmDate(Date confirmDate) {
-		this.confirmDate = confirmDate;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
+	public void setContext(String content) {
+		this.context = content;
 	}
 	
 	@Override
