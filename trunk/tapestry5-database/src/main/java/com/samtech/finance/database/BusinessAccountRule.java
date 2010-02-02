@@ -9,6 +9,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="biz_account_rule")
@@ -27,6 +29,7 @@ public class BusinessAccountRule implements Serializable{
 	@Enumerated(EnumType.STRING)
 	BalanceDirect direct;
 	@Column(name="create_date")
+	@Temporal(TemporalType.TIMESTAMP)
 	Date createDate;
 	
 }
