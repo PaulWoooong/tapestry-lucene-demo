@@ -9,7 +9,7 @@
 <s:else>登录信息</s:else></h3>
 <div class="dbx-content">
 <s:if test="logined">
-	<div>欢迎 <s:property value="loginUser.employeeId" /></div>
+	<div>欢迎 <s:property value="loginUser.UserName" /></div>
 	<div>有效期至 <s:property value="loginUser.expireDate" /></div>
 	<div><s:a name="logout" action="logout">logout</s:a></div>
 </s:if> <s:else>
