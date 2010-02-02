@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 
 
-public class SortColumn implements Serializable{
+public class SortColumn implements Serializable,Comparable<SortColumn>{
 
 	/**
 	 * 
@@ -15,6 +15,14 @@ public class SortColumn implements Serializable{
 	 private  String property;
 	 private  Order order;
 	 private int prior;
+	 
+	 public SortColumn() {
+	
+	}
+	 public SortColumn(String pro,Order o) {
+			this.property=pro;
+			this.order=o;
+	}
 	 
 	public String getProperty() {
 		return property;
@@ -59,6 +67,11 @@ public class SortColumn implements Serializable{
 	}
 	public int getPrior() {
 		return prior;
+	}
+	
+	public int compareTo(SortColumn o) {
+		return this.prior-o.prior;
+		
 	}
 	 
 	 

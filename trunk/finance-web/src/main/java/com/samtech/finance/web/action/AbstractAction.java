@@ -52,7 +52,7 @@ public abstract class AbstractAction extends ActionSupport implements
 	public void prepare() throws Exception {
 		HttpServletRequest request = getServletRequest();
 		HttpSession session = request.getSession();
-		if (isLoninRequired()) {
+		
 			user = null;
 			if (session != null) {
 
@@ -70,7 +70,7 @@ public abstract class AbstractAction extends ActionSupport implements
 					user = (IUser) smap.get(SESSION_ATTRIBUTE_KEY_USER);
 				}
 			}
-		}
+		
 	}
 
 	protected IUser getLoginUser() {
