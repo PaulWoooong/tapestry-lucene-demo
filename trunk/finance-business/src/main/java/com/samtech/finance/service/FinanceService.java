@@ -1,10 +1,8 @@
 package com.samtech.finance.service;
 
-import java.util.List;
-
 import com.samtech.finance.FinanceRuleException;
-import com.samtech.finance.domain.AccountBalance;
 import com.samtech.finance.domain.BizFinanceRule;
+import com.samtech.finance.domain.FinanceForms;
 
 public interface FinanceService {
 	/**
@@ -24,7 +22,7 @@ public interface FinanceService {
 	 * @param items
 	 * @throws FinanceRuleException
 	 */
-	public void pendingBizForm(String bizId,List<AccountBalance> items)throws FinanceRuleException;
+	public void pendingBizForm(FinanceForms form)throws FinanceRuleException;
 	/**
 	 * 业务记账核实
 	 * @param bizId
