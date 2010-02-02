@@ -5,13 +5,18 @@ import java.util.List;
 
 public class BizFinanceRule implements Serializable{
 	/**
-	 *业务单号 
+	 * 
+	 */
+	private static final long serialVersionUID = 6025288353833331435L;
+
+	/**
+	 *业务类型 
 	 */
 	private String bizId;
 	
-	List<BalanceItem> credit;
+	List<RuleItem> credits;
 	
-	List<BalanceItem> debit;
+	List<RuleItem> debits;
 
 	public String getBizId() {
 		return bizId;
@@ -21,20 +26,20 @@ public class BizFinanceRule implements Serializable{
 		this.bizId = bizId;
 	}
 
-	public List<BalanceItem> getCredit() {
-		return credit;
+	public List<RuleItem> getCredits() {
+		return credits;
 	}
 
-	public void setCredit(List<BalanceItem> credit) {
-		this.credit = credit;
+	public void setCredits(List<RuleItem> credit) {
+		this.credits = credit;
 	}
 
-	public List<BalanceItem> getDebit() {
-		return debit;
+	public List<RuleItem> getDebits() {
+		return debits;
 	}
 
-	public void setDebit(List<BalanceItem> debit) {
-		this.debit = debit;
+	public void setDebits(List<RuleItem> debit) {
+		this.debits = debit;
 	}
 	
 	

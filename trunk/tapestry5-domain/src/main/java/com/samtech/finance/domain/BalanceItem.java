@@ -13,7 +13,9 @@ public class BalanceItem implements Serializable{
 	private static final long serialVersionUID = 2228489119474657168L;
 	private Integer financeId;
 	private BigDecimal amount;
-	BalanceDirect direct;
+	private BalanceDirect direct;
+	private String companyId;
+	private String context;
 	
 	public Integer getFinanceId() {
 		return financeId;
@@ -34,6 +36,18 @@ public class BalanceItem implements Serializable{
 		this.direct = direct;
 	}
 	
+	public String getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+	public String getContext() {
+		return context;
+	}
+	public void setContext(String context) {
+		this.context = context;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
