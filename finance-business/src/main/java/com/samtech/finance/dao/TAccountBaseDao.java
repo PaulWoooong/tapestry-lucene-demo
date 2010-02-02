@@ -10,6 +10,12 @@ public class TAccountBaseDao extends AbstractBaseDaoServiceBean<TAccount> {
 	public TAccount getObject(Serializable id) {
 		return this.getObject(TAccount.class, id);
 	}
+
+	@Override
+	protected TAccount convertT(Object o) {
+		
+		return (TAccount)o;
+	}
 	
 	
 }

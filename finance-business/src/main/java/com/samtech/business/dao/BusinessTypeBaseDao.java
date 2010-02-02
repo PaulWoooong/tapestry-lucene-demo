@@ -10,6 +10,11 @@ public class BusinessTypeBaseDao extends AbstractBaseDaoServiceBean<BusinessType
 	public BusinessType getObject(Serializable id) {
 		return this.getObject(BusinessType.class, id);
 	}
+
+	@Override
+	protected BusinessType convertT(Object o) {
+		return (BusinessType)o;
+	}
 	
 	
 }

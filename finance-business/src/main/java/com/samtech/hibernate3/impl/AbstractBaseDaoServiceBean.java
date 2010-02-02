@@ -232,6 +232,7 @@ public abstract class AbstractBaseDaoServiceBean<T> extends AbstractEntityServic
 		return Collections.EMPTY_LIST;
 	}
 
+	abstract protected T convertT(Object o);
 	
 
 	private static int getFetchSize(int first) {
