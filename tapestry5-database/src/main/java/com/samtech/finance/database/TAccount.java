@@ -24,7 +24,7 @@ public class TAccount implements Serializable{
 	 */
 	private static final long serialVersionUID = 7338273290694408393L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.TABLE)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
 	@Column(length=30,name="name",nullable=false)
