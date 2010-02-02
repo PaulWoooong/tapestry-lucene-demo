@@ -47,7 +47,7 @@
 	   </h3>
 	   <div class="dbx-content">
 	                  <ul>
-	                   <li><a href="#">用户管理</s></li>
+	                   <li><s:a action="UserList" >用户管理</s:a></li>
 	                  <li><a href="#">原始凭证</a></li>
 	                  <li><a action="slidertablelist">记账凭证查询</a></li>
 	                  <li><a action="gmesalist">流水账查询</a></li>

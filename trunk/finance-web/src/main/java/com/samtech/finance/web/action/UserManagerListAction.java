@@ -4,16 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +33,8 @@ import org.jmesa.view.html.component.HtmlRow;
 import org.jmesa.view.html.component.HtmlTable;
 import org.jmesa.view.html.event.MouseRowEvent;
 
+import com.opensymphony.xwork2.inject.Inject;
+import com.samtech.business.dao.UserBaseDao;
 import com.samtech.business.database.Employee;
 import com.samtech.business.database.Gender;
 import com.samtech.business.domain.User;
@@ -43,7 +42,6 @@ import com.samtech.business.service.UserManagerService;
 import com.samtech.common.domain.IUser;
 import com.samtech.common.domain.PagingAndSorting;
 import com.samtech.common.domain.SortColumn;
-import com.samtech.hibernate3.impl.AbstractBaseDaoServiceBean;
 
 
 
@@ -57,7 +55,8 @@ public class UserManagerListAction extends AbstractAction  {
         private String queryUserId, queryName;
         private InputStream pgtableResult;
         private UserManagerService userManager;
-        AbstractBaseDaoServiceBean userBaseDao;
+        @Inject(value="UserBaseDao")
+        UserBaseDao userBaseDao;
         
 		private void setPgInputStream(InputStream in) {
     		pgtableResult = in;
@@ -340,11 +339,11 @@ public class UserManagerListAction extends AbstractAction  {
         	this.userManager=manager;
         }
         
-        private AbstractBaseDaoServiceBean getUserBaseDao() {
+        private UserBaseDao getUserBaseDao() {
 			return userBaseDao;
 		}
 
-		public void setUserBaseDao(AbstractBaseDaoServiceBean userBaseDao) {
+		public void setUserBaseDao(UserBaseDao userBaseDao) {
 			this.userBaseDao = userBaseDao;
 		}
 }

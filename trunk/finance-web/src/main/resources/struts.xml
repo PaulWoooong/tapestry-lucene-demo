@@ -48,8 +48,22 @@
                 </action>
                 <action name="loginInfo" class="com.samtech.finance.web.action.UserManagerAction">
                   <result>/WEB-INF/pages/userinfo.jsp</result>
+                  <result name="input">/WEB-INF/pages/userinfo.jsp</result>
+                	<result name="success">/WEB-INF/pages/userinfo.jsp</result>
+                	<result name="error">/WEB-INF/pages/userinfo.jsp</result>
                 </action>
-               
+               <action name="UserList" class="com.samtech.finance.web.action.UserManagerListAction">
+                	<result>/WEB-INF/pages/UserManagerList.jsp</result>
+                	<result name="input">/WEB-INF/pages/UserManagerList.jsp</result>
+                	<result name="success">/WEB-INF/pages/UserManagerList.jsp</result>
+                	<result name="error">/WEB-INF/pages/UserManagerList.jsp</result>
+                </action>
+                 <!-- action name="queryUsers" class="com.samtech.finance.web.action.UserManagerListAction" method="doQuery">
+                	<result name="input">/WEB-INF/pages/UserManagerList.jsp</result>
+                	<result name="success">/WEB-INF/pages/UserManagerList.jsp</result>
+                	<result name="error">/WEB-INF/pages/UserManagerList.jsp</result>
+                </action-->
+                
         </package>
         <!-- 
         <package name="gtexample" extends="json-default">
