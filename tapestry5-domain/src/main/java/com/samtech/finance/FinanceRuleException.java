@@ -27,7 +27,8 @@ public class FinanceRuleException extends Exception {
 	 */
 	public final int OUT_OF_BALANCE= (4);
 	
-	
+	public final int FREEZE_BALANCE= (101);
+	public final int RECORDDATE_FREEZE_BALANCE= (102);
 	private Integer errorCode;
 
 	public FinanceRuleException() {
