@@ -42,25 +42,33 @@
 </div>
 <script type='text/javascript'>
 
-$(document).ready(function () { 
-	var tableid="user_tbl";	
- $.jmesa.addTableFacade(tableid);
- 
-}); 
 
 function onInvokeAction(id) {
     $.jmesa.setExportToLimit(id, '');
 	
     var parameterString = $.jmesa.createParameterStringForLimit(id);
     
-    $.get('${pageContext.request.contextPath}/pgtraveler.action?ajax=true&' + parameterString, function(data) {
+    $.get('${pageContext.request.contextPath}/pgUserList.action?ajax=true&' + parameterString, function(data) {
     $("#employee_container").html(data);
+    $('.ymPrompt').each(function (){
+		$(this).click(function(){
+			var _href = null;
+			var _title= null;
+			var _handler=null;
+			_href = $(this).attr("href1");
+			_title = $(this).attr("title");
+			_handler=$(this).attr("handler");
+			ymPrompt.win({message:_href,iframe:true,width:800,height:400,title:_title,showMask:false,handler:_handler});
+			return false;
+		});
+		
+	});
 });
 }
 
 function onInvokeExportAction(id) {
 var parameterString = $.jmesa.createParameterStringForLimit(id);
-location.href = '${pageContext.request.contextPath}/pgtraveler.action?ajax=false&' + parameterString;
+location.href = '${pageContext.request.contextPath}/pgUserList.action?ajax=false&' + parameterString;
 }
 
 function del(v1){
