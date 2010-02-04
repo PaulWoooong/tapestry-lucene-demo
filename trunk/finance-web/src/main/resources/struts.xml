@@ -16,7 +16,9 @@
         <constant name="struts.ui.theme" value="simple"/>
         <constant name="struts.action.extension" value="action,," />
         <constant name="struts.action.excludePattern" value="/cometd/.*"></constant>
-        
+        <package name="json" extends="json-default" namespace="/">
+		
+		</package>
         <package name="default" extends="struts-default">
                 <default-action-ref name="struts2_demo" />
                 <global-results>
@@ -58,6 +60,14 @@
                 	<result name="success">/WEB-INF/pages/UserManagerList.jsp</result>
                 	<result name="error">/WEB-INF/pages/UserManagerList.jsp</result>
                 </action>
+                <action name="pgUserList" class="com.samtech.finance.web.action.UserManagerListAction"
+			method="paging">
+			<result name="pgresult" type="stream">
+				<param name="contentType">txt/html</param>
+				<param name="inputName">pgInputStream</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			</action>
                 <action name="deleteUser" class="com.samtech.finance.web.action.UserManagerListAction" method="doDelete">
                  <result name="success" type="redirectAction">
                  	<param name="actionName">UserList</param>

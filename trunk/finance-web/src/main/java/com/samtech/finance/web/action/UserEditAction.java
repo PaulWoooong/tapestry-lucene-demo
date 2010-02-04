@@ -108,6 +108,7 @@ public class UserEditAction extends AbstractAction {
 			if (u == null) {
 				// if never register then report error
 				getUserBaseDao().saveObject(editUser);
+				this.setEditUser(new User());
 				this.addActionMessage("用户新增成功！");
 			} else {
 				// if have register then update

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.jmesa.facade.TableFacade;
 import org.jmesa.facade.TableFacadeImpl;
+import org.jmesa.limit.Action;
 import org.jmesa.limit.Limit;
 import org.jmesa.limit.Order;
 import org.jmesa.limit.RowSelect;
@@ -84,16 +86,19 @@ public class UserManagerListAction extends AbstractAction  {
     		HttpServletRequest request = this.getServletRequest();
     		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
     		
-    		tableFacade.setMaxRows(10);
+    		//tableFacade.setMaxRows(10);
     		
     		HttpSession session = request.getSession();
     		if (session != null) {
     				session.setAttribute(tblid + "_q_name",this.queryName);
     				session.setAttribute(tblid + "_q_id",this.queryUserId);
     		}
-    		
+    		isMaxRow=true;
     		String qname=this.queryName;
     		String qid=this.queryUserId;
+    		tableFacade.setStateAttr("restore");
+    		tableFacade.setMaxRows(10);		
+    		tableFacade.setMaxRowsIncrements(10, 20, 50);    
     		initTable(tableFacade, qname, qid);
     		if(users==null || users.isEmpty()){
     			this.addActionError("查询没有记录！");
@@ -123,8 +128,8 @@ public class UserManagerListAction extends AbstractAction  {
     		}
     		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
     		
-    		tableFacade.setMaxRows(10);
-    		    		
+    		tableFacade.setMaxRows(10);		
+    		tableFacade.setMaxRowsIncrements(10, 20, 50);    
     		initTable(tableFacade, qname, qid);
     		if(users==null || users.isEmpty()){
     			this.addActionError("查询没有记录！");
@@ -156,7 +161,9 @@ public class UserManagerListAction extends AbstractAction  {
  		   
  	   }*/
     }
-
+	private boolean isPage=false;
+	private boolean isSort=false;
+	boolean isMaxRow=false;
     @SuppressWarnings("unchecked")
 	public String paging() {
 		HttpServletRequest request = this.getServletRequest();
@@ -168,10 +175,46 @@ public class UserManagerListAction extends AbstractAction  {
 				qname = (String) session.getAttribute(tblid + "_q_name");
 				qid = (String) session.getAttribute(tblid + "_q_id");
 		}
+		Map parameterMap = request.getParameterMap();
+		String maxrowkey=tblid+"_" + Action.MAX_ROWS.toParam();
+		String pagekey=tblid+"_" + Action.PAGE.toParam();
+		String sortkey=tblid+"_" + Action.SORT.toParam();
+		
+		if(parameterMap.containsKey(maxrowkey)){
+			Object object = parameterMap.get(maxrowkey);
+			if(object!=null){
+				if(object.getClass().isArray()){
+					String[] pvalues=(String[]) object;
+					if(!("null".equalsIgnoreCase(pvalues[0].toString())|| "".equals(pvalues[0])))
+						isMaxRow=true;
+				}else if(!("null".equalsIgnoreCase(object.toString())|| "".equals(object.toString())))
+					isMaxRow=true;
+			}
+			if(!isMaxRow)request.setAttribute(maxrowkey, 10);
+			object = parameterMap.get(pagekey);
+			if(object!=null){
+				if(object.getClass().isArray()){
+					String[] pvalues=(String[]) object;
+					if(!"null".equalsIgnoreCase(pvalues[0].toString()))
+						isPage=true;
+				}else if(!"null".equalsIgnoreCase(object.toString()))
+					isPage=true;
+			}
+			Set keySet = parameterMap.keySet();
+			if(keySet!=null){
+					Iterator iterator = keySet.iterator();
+					while (	iterator.hasNext()) {
+						String key = (String) iterator.next();
+						if(key.indexOf(sortkey)>=0)
+						isSort=true;
+					}
+			}
+		}
 		
 		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
+		
 		tableFacade.setStateAttr("restore");
-		tableFacade.setMaxRows(10);
+		
 		initTable(tableFacade, qname, qid);
 		final String buildTable = buildTable(tableFacade);
 		ByteArrayInputStream inputStream = null;
@@ -206,48 +249,59 @@ public class UserManagerListAction extends AbstractAction  {
 		if(wbuf.length()>0){
 			sql+=" where "+wbuf.toString();
 		}
-		Limit limit = tableFacade.getLimit();
-		SortSet sortSet = limit.getSortSet();
-		if (sortSet != null) {
-			Collection<Sort> sorts = sortSet.getSorts();
-			pg.setAlias("o");
-			if (sorts != null) {
-				List<SortColumn> columns=new ArrayList<SortColumn>(5);
-				for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
-					Sort sort = (Sort) iterator.next();
-					Order order = sort.getOrder();
-					com.samtech.common.domain.Order o=null;
-					String s = "";
-					if (order.equals(Order.ASC)){
-						s = "asc";
-						o=com.samtech.common.domain.Order.ASC;
+		//if(isPage){
+			
+			
+		//}
+			if(isSort){
+				Limit limit = tableFacade.getLimit();
+				SortSet sortSet = limit.getSortSet();
+				if (sortSet != null) {
+					Collection<Sort> sorts = sortSet.getSorts();
+					pg.setAlias("o");
+					if (sorts != null) {
+						List<SortColumn> columns=new ArrayList<SortColumn>(5);
+						for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
+							Sort sort = (Sort) iterator.next();
+							Order order = sort.getOrder();
+							com.samtech.common.domain.Order o=null;
+							String s = "";
+							if (order.equals(Order.ASC)){
+								s = "asc";
+								o=com.samtech.common.domain.Order.ASC;
+							}
+							if (order.equals(Order.DESC)){
+								s = "desc";
+								o=com.samtech.common.domain.Order.DESC;
+							}
+							int position = sort.getPosition();
+							String property = sort.getProperty();
+							System.out.println("{property:'" + property + "',position:"
+									+ position + ",order:'" + s + "'}");
+							if(property!=null && o!=null){
+								SortColumn c = new SortColumn(property,o);
+								c.setPrior(position);
+								columns.add(c);
+							}
+						}
+						if(!columns.isEmpty()){
+							Collections.sort(columns);
+							for(int ik=0;ik<columns.size();ik++){
+								pg.addSortColumn(columns.get(ik));
+							}
+						}
 					}
-					if (order.equals(Order.DESC)){
-						s = "desc";
-						o=com.samtech.common.domain.Order.DESC;
-					}
-					int position = sort.getPosition();
-					String property = sort.getProperty();
-					System.out.println("{property:'" + property + "',position:"
-							+ position + ",order:'" + s + "'}");
-					if(property!=null && o!=null){
-						SortColumn c = new SortColumn(property,o);
-						c.setPrior(position);
-						columns.add(c);
-					}
-				}
-				if(!columns.isEmpty()){
-					Collections.sort(columns);
-					for(int ik=0;ik<columns.size();ik++){
-						pg.addSortColumn(columns.get(ik));
-					}
-				}
 			}
 		}
 		users = this.getUserBaseDao().query(sql, param, pg);
 		tableFacade.setTotalRows(users.size());
-		tableFacade.setMaxRowsIncrements(10, 20, 50);
+		tableFacade.setMaxRowsIncrements(10, 20, 50);    
+		/*if(rsl!=null){
+			rsl.getMaxRows();
+		}else*/
+		//tableFacade.setMaxRows(10);
 		
+		Limit limit = tableFacade.getLimit();
 		RowSelect rowSelect = limit.getRowSelect();
 		
 		if (rowSelect != null) {
