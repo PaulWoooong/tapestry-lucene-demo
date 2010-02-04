@@ -62,7 +62,7 @@ public class PagingAndSorting implements Serializable{
 
 
 	public static String buildOrderBy(String query, PagingAndSorting pg) {
-		 if (pg != null && pg.getSorts() != null) {
+		 if (pg != null && pg.getSorts() != null && !pg.getSorts().isEmpty()) {
 		    	StringBuffer orderBy = new StringBuffer();
 		    	int j = query.toLowerCase().indexOf(" order ");
 		    	if(j>0){
