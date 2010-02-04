@@ -77,7 +77,8 @@ public class PagingAndSorting implements Serializable{
 		    	}else
 		    		orderBy.append(new String(query));
 		        orderBy.append(" order by ");
-		        SortColumn[] sorts = (SortColumn[]) pg.getSorts().toArray();
+		        SortColumn[] sorts =new SortColumn[0];
+		        sorts= pg.getSorts().toArray(sorts);
 		       
 		        //.getOrderProperties().split(",");
 		        for (int i = 0; i < sorts.length; i++) {
