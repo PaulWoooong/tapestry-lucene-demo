@@ -7,7 +7,6 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,10 +21,7 @@ import org.jmesa.facade.TableFacade;
 import org.jmesa.facade.TableFacadeImpl;
 import org.jmesa.limit.Action;
 import org.jmesa.limit.Limit;
-import org.jmesa.limit.Order;
 import org.jmesa.limit.RowSelect;
-import org.jmesa.limit.Sort;
-import org.jmesa.limit.SortSet;
 import org.jmesa.util.ItemUtils;
 import org.jmesa.view.editor.BasicCellEditor;
 import org.jmesa.view.editor.CellEditor;
@@ -35,11 +31,9 @@ import org.jmesa.view.html.component.HtmlRow;
 import org.jmesa.view.html.component.HtmlTable;
 import org.jmesa.view.html.event.MouseRowEvent;
 
-import com.samtech.business.database.Employee;
 import com.samtech.business.database.Gender;
 import com.samtech.common.domain.IUser;
 import com.samtech.common.domain.PagingAndSorting;
-import com.samtech.common.domain.SortColumn;
 import com.samtech.finance.domain.Account;
 import com.samtech.finance.service.TAccountManagerService;
 
@@ -76,7 +70,7 @@ public class TAccountManagerListAction extends AbstractAction  {
     	public String doQuery(){
     		checkError();
     		final Map<String, List<String>> fieldErrors = this.getFieldErrors();
-    		Collection<String> actionErrors = this.getActionErrors();
+    		//Collection<String> actionErrors = this.getActionErrors();
 			if(fieldErrors!=null && !fieldErrors.isEmpty()){
 				return INPUT;
 			}
