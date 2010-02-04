@@ -13,8 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+
 @Entity
 @Table(name="business_form")
+@GenericGenerator(name="c_biz_id",strategy="assigned")
 public class BusinessForm implements Serializable{
 
 	/**
@@ -23,7 +26,8 @@ public class BusinessForm implements Serializable{
 	private static final long serialVersionUID = 814775873798012282L;
 	@Id
 	@Column(length=30)
-	@GeneratedValue(strategy=GenerationType.TABLE)
+	@GeneratedValue(strategy=GenerationType.AUTO,generator="c_biz_id")
+	
 	private String id;
 	/**
 	 * {@link BusinessType}

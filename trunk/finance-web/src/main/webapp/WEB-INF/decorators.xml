@@ -16,6 +16,8 @@
         <pattern>/ajax/remoteforms/AjaxRemoteForm.action</pattern>
         <pattern>/loginInfo.action</pattern>
         <pattern>/login.action</pattern>
+        <pattern>/modifyUser*</pattern>
+        <pattern>/UserEdit*</pattern>
         <pattern>/logout.action</pattern>
         <pattern>/tags/ui/ajax/*</pattern>
         <pattern>/nodecorate/*</pattern>

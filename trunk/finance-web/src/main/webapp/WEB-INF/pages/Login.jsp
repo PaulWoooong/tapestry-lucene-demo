@@ -20,12 +20,7 @@ body{margin:120px 0px 0px 0px;font-size:14px;background:#006699;}
 .footer{background:transparent url(/images/content-bottom-bg.png) no-repeat scroll 0 0;color:#282828;font-size:87%;
 line-height:15px;padding:12px 0 0 10px;}
 </style>
-<script language=JavaScript type=text/javascript><!--
-	window.onload = function (){
-		document.Form0.loginUsername.focus();
-		document.Form0.loginUsername.select();
-	}
-// --></script>
+
 </head>
 
 <body>

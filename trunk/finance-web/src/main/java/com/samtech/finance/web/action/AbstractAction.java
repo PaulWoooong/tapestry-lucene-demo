@@ -50,6 +50,7 @@ public abstract class AbstractAction extends ActionSupport implements
 	}
 
 	public void prepare() throws Exception {
+		
 		HttpServletRequest request = getServletRequest();
 		HttpSession session = request.getSession();
 		
@@ -73,7 +74,7 @@ public abstract class AbstractAction extends ActionSupport implements
 		
 	}
 
-	protected IUser getLoginUser() {
+	public IUser getLoginUser() {
 		return user;
 	}
 }

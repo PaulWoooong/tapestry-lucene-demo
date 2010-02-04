@@ -10,8 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+
 @Entity
 @Table(name = "business_type")
+@GenericGenerator(name="c_biz_code",strategy="assigned")
 public class BusinessType implements Serializable {
 
 	/**
@@ -19,7 +22,7 @@ public class BusinessType implements Serializable {
 	 */
 	private static final long serialVersionUID = 3270584648155299998L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE)
+	@GeneratedValue(strategy = GenerationType.AUTO,generator="c_biz_code")
 	@Column(name = "business_code", length = 10)
 	private String bizCode;
 	@Column(name = "description", length = 256,nullable=false)

@@ -10,7 +10,7 @@
 <div class="dbx-content">
 <s:if test="logined">
 	<div>欢迎 <s:property value="loginUser.UserName" /></div>
-	<div>有效期至 <s:property value="loginUser.expireDate" /></div>
+	<div>有效期至 <s:date name="loginUser.expireDate" format="yyyy-MM-dd"/></div>
 	<div><s:a name="logout" action="logout">logout</s:a></div>
 </s:if> <s:else>
 

@@ -11,11 +11,18 @@
          
         <jta-data-source>java:/BookingDS</jta-data-source>
          -->
+         	<class>com.samtech.business.database.Gender</class>
+         	<class>com.samtech.finance.database.AccountStatus</class>
+         	<class>com.samtech.finance.database.BalanceDirect</class>
+         	<class>com.samtech.finance.database.FinanceLevel</class>
+         	<class>com.samtech.business.database.BizStatus</class>
+         	
             <class>com.samtech.finance.database.TAccount</class>
             <class>com.samtech.finance.database.RunningAccount</class> 
             <class>com.samtech.finance.database.BusinessAccountRule</class>
             <class>com.samtech.business.database.BusinessType</class>
             <class>com.samtech.business.database.BusinessForm</class>
+            <class>com.samtech.business.database.Employee</class>
           <properties>
            <property name="hibernate.hbm2ddl.auto" value="update"/>
           	 <!-- property name="hibernate.search.default.directory_provider" 

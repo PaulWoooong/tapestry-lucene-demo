@@ -12,8 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name="finance_form")
+@GenericGenerator(name="c_financeform_id",strategy="assigned")
 public class FinanceForm implements Serializable {
 
 	/**
@@ -21,7 +24,7 @@ public class FinanceForm implements Serializable {
 	 */
 	private static final long serialVersionUID = -3549555386853671230L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO,generator="c_financeform_id")
 	@Column(name="id",length=12)
 	private String id;
 	@Column(name="biz_date")

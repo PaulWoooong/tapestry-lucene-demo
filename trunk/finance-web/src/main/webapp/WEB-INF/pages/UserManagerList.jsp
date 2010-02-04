@@ -4,6 +4,10 @@
 <title>user manager.</title>
 <link type="text/css" rel="stylesheet" href="<%= request.getContextPath() %>/styles/jmesa.css" media="all"/>
 <script type="text/javascript" src="<%= request.getContextPath() %>/scripts/jquery.jmesa.js"></script>
+<link href="<s:url value='/scripts/prompt/skin/dmm-green/ymPrompt.css'/>" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="<s:url value='/scripts/prompt/ymPrompt.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/scripts/prompt/jquery_ymPrompt.js'/>"></script>
+<script type="text/javascript" src="<s:url value='/scripts/DatePicker/DatePicker.js'/>"></script>
 </head>
 <body>
 <s:form  namespace="/" method="POST" id="queryForm">
@@ -20,7 +24,7 @@
     <s:submit cssClass="button" value="查询" method="doQuery" 			id="doQuery"></s:submit>
     <input class="button" type="button" onClick="$('#newUserWin').click();" value="新增用户"/>
     <div style="display:none">
-    <a href="javascript:void(0)" id="newUserWin" href1="modifyUser.action" class="ymPrompt" title="新增用户">新增用户</a>
+    <a href="javascript:void(0)" id="newUserWin" href1="UserEdit.action" class="ymPrompt" title="新增用户">新增用户</a>
     
     </div>
     </td>
