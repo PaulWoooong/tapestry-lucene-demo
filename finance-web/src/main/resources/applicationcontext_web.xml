@@ -27,26 +27,42 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
 	default-autowire="byName" default-lazy-init="false">
 	
-	<!-- 
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="dataSource" />
+	<bean id="userManager" class="com.samtech.business.service.impl.UserManagerServiceImpl" scope="prototype">
+		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
+	
+	<bean id="financeManager" class="com.samtech.finance.service.impl.FinanceServiceImpl" scope="prototype">
+		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
+	
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="modi*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<tx:advice id="txAdvice1" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="modi*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
 		
-		<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-spring.xml" />
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5Dialect" />
-				<property name="showSql" value="true" />
-			</bean>
-		</property>
-	</bean>
- 	-->
-	<bean id="userManager" class="com.samtech.business.service.impl.UserManagerServiceImpl">
-		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
-	</bean>
-	
-	<bean id="financeManager" class="com.samtech.finance.service.impl.FinanceServiceImpl">
-		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
-	</bean>
-	
+		<aop:pointcut id="serviceOperation"
+			expression="execution(* com.samtech.business.service.impl.*ServiceImpl.*(..))|| execution(* com.samtech.finance.service.impl.*ServiceImpl.*(..))" />	 
+		<aop:pointcut id="baseDaoOperation"
+			expression="execution(* com.samtech.finance.dao.*BaseDao.*(..))|| execution(* com.samtech.business.dao.*BaseDao.*(..))" />	 
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+		
+		<aop:advisor advice-ref="txAdvice1" pointcut-ref="baseDaoOperation" />
+	</aop:config>
 </beans>

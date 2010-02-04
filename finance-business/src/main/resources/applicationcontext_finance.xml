@@ -26,14 +26,8 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
 	default-autowire="byName" default-lazy-init="false">
-	<!--
-		xsi:schemaLocation="http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
-	-->
-	
-
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" >
 		<property name="dataSource" ref="dataSource" />
 		<!-- property name="persistenceUnitName" value="ejb3"/-->
 		<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-spring.xml" />
@@ -51,7 +45,7 @@
 	</bean>
 
 	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
 		
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://localhost/etdcs" />
@@ -61,45 +55,27 @@
 	</bean>
 	<bean
 		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+		
+	<bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+		
 	<!--
 		bean id="transactionManager"
 		class="org.springframework.orm.jpa.JpaTransactionManager"> <property
 		name="entityManagerFactory" ref="entityManagerFactory" /> </bean
 	-->
-	<bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
-	<tx:advice id="txAdvice" transaction-manager="txManager">
-		<tx:attributes>
-			<tx:method name="save*" propagation="REQUIRED" />
-			<tx:method name="add*" propagation="REQUIRED" />
-			<tx:method name="delete*" propagation="REQUIRED" />
-			<tx:method name="create*" propagation="REQUIRED" />
-			<tx:method name="modi*" propagation="REQUIRED" />
-			<tx:method name="update*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-	<aop:config>
-		
-		<aop:pointcut id="serviceOperation"
-			expression="execution(* com.samtech.business.service.impl.*ServiceImpl.*(..))|| execution(* com.samtech.finance.service.impl.*ServiceImpl.*(..))" />	 
-		<aop:pointcut id="baseDaoOperation"
-			expression="execution(* com.samtech.finance.dao.*BaseDao.*(..))|| execution(* com.samtech.business.dao.*BaseDao.*(..))" />	 
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
-		
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="baseDaoOperation" />
-		
-	</aop:config>
-	<bean id="BusinessTypeBaseDao" class="com.samtech.business.dao.BusinessTypeBaseDao">
+	
+	<bean id="businessTypeBaseDao" class="com.samtech.business.dao.BusinessTypeBaseDao" scope="prototype">
 		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
 	</bean>
-	<bean id="TAccountBaseDao" class="com.samtech.finance.dao.TAccountBaseDao">
+	<bean id="tAccountBaseDao" class="com.samtech.finance.dao.TAccountBaseDao" scope="prototype">
 		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
 	</bean>
-	<bean id="RunningAccountBaseDao" class="com.samtech.finance.dao.RunningAccountBaseDao">
+	<bean id="runningAccountBaseDao" class="com.samtech.finance.dao.RunningAccountBaseDao" scope="prototype">
 		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
 	</bean>
-	<bean id="UserBaseDao" class="com.samtech.business.dao.UserBaseDao">
+	<bean id="userBaseDao" class="com.samtech.business.dao.UserBaseDao" scope="prototype">
 		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
 	</bean>
 </beans>

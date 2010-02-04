@@ -29,7 +29,19 @@ public class UserBaseDao extends AbstractBaseDaoServiceBean<User> {
 
 	@Override
 	protected User convertT(Object o) {
-		
+		User e=new User();
+		if(o==null)return null;
+		if(o instanceof Employee){
+			Employee	ep=(Employee)o;
+		e.setBirthDay(ep.getBirthDay());
+		e.setEducation(ep.getEducation());
+		e.setExpireDate(ep.getExpireDate());
+		e.setGender(ep.getGender());
+		e.setName(ep.getName());
+		e.setEmployeeId(ep.getEmployeeId());
+		e.setProfessionTitle(ep.getProfessionTitle());
+		return e;
+		}
 		return null;
 	}
 	@Override
@@ -48,7 +60,8 @@ public class UserBaseDao extends AbstractBaseDaoServiceBean<User> {
 						e.setGender(o.getGender());
 						e.setName(o.getName());
 						e.setProfessionTitle(o.getProfessionTitle());
-						em.merge(e);
+						 em.merge(e);
+						//em.persist(merge);
 						return o;
 					}
 				}
@@ -86,17 +99,11 @@ public class UserBaseDao extends AbstractBaseDaoServiceBean<User> {
 				if(employeeId!=null){
 					Employee e = em.find(Employee.class, employeeId);
 					if(e!=null){
-						/*e.setBirthDay(o.getBirthDay());
-						e.setEducation(o.getEducation());
-						e.setExpireDate(o.getExpireDate());
-						e.setGender(o.getGender());
-						e.setName(o.getName());
-						e.setProfessionTitle(o.getProfessionTitle());
-						em.merge(e);
-						return o;*/
+						
 						throw new PersistenceException("already had employee id="+employeeId);
 					}else{
 						e=new Employee();
+						e.setEmployeeId(o.getEmployeeId());
 						e.setBirthDay(o.getBirthDay());
 						e.setEducation(o.getEducation());
 						e.setExpireDate(o.getExpireDate());
@@ -105,7 +112,7 @@ public class UserBaseDao extends AbstractBaseDaoServiceBean<User> {
 						e.setPassword(o.getPassword());
 						e.setProfessionTitle(o.getProfessionTitle());
 						e.setCreateDate(new Date());
-						em.persist(e);
+						em.merge(e);
 						return o;
 					}
 				}else{
@@ -228,7 +235,10 @@ public class UserBaseDao extends AbstractBaseDaoServiceBean<User> {
 	}
 	
 	public User getObject(Serializable id) {
-		// TODO Auto-generated method stub
+		Employee object = this.getObject(Employee.class, id);
+		if(object!=null){
+			return convertT(object);
+		}
 		return null;
 	}
 

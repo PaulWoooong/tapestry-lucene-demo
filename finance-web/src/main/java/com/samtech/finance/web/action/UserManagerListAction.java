@@ -33,8 +33,6 @@ import org.jmesa.view.html.component.HtmlRow;
 import org.jmesa.view.html.component.HtmlTable;
 import org.jmesa.view.html.event.MouseRowEvent;
 
-import com.opensymphony.xwork2.inject.Inject;
-import com.samtech.business.dao.UserBaseDao;
 import com.samtech.business.database.Employee;
 import com.samtech.business.database.Gender;
 import com.samtech.business.domain.User;
@@ -42,6 +40,7 @@ import com.samtech.business.service.UserManagerService;
 import com.samtech.common.domain.IUser;
 import com.samtech.common.domain.PagingAndSorting;
 import com.samtech.common.domain.SortColumn;
+import com.samtech.hibernate3.BaseServiceInf;
 
 
 
@@ -55,9 +54,16 @@ public class UserManagerListAction extends AbstractAction  {
         private String queryUserId, queryName;
         private InputStream pgtableResult;
         private UserManagerService userManager;
-        @Inject(value="UserBaseDao")
-        UserBaseDao userBaseDao;
+        private static String tblid = "user_tbl";
+        private List<User> users;
         
+       
+        		
+		BaseServiceInf userBaseDao;
+		
+		
+		
+		
 		private void setPgInputStream(InputStream in) {
     		pgtableResult = in;
     	}
@@ -66,6 +72,7 @@ public class UserManagerListAction extends AbstractAction  {
     		
     		return pgtableResult;
     	}
+    	
     	public String doQuery(){
     		checkError();
     		final Map<String, List<String>> fieldErrors = this.getFieldErrors();
@@ -73,35 +80,87 @@ public class UserManagerListAction extends AbstractAction  {
 			if(fieldErrors!=null && !fieldErrors.isEmpty()){
 				return INPUT;
 			}
-			
     		String tblid = "user_tbl";
     		HttpServletRequest request = this.getServletRequest();
     		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
     		
     		tableFacade.setMaxRows(10);
+    		
+    		HttpSession session = request.getSession();
+    		if (session != null) {
+    				session.setAttribute(tblid + "_q_name",this.queryName);
+    				session.setAttribute(tblid + "_q_id",this.queryUserId);
+    		}
+    		
     		String qname=this.queryName;
     		String qid=this.queryUserId;
     		initTable(tableFacade, qname, qid);
+    		if(users==null || users.isEmpty()){
+    			this.addActionError("查询没有记录！");
+    		}else{
     		final String buildTable = buildTable(tableFacade);
-			request.setAttribute("etairport_tbl", buildTable);
-    		
+			request.setAttribute("user_tbl", buildTable);
+    		}
     		return SUCCESS;
     	}
-        
-    protected void checkError(){
+    	
+    	public String doDelete(){
+    		if(queryUserId!=null){
+    			
+    			String qid=this.queryUserId;
+    			Object object = this.getUserBaseDao().getObject(qid);
+    			if(object!=null)
+    			this.getUserBaseDao().deleteObject(object);
+    			this.addActionMessage("删除成功！");
+    		}
+    		HttpServletRequest request = this.getServletRequest();
+    		HttpSession session = request.getSession();
+    		String qname=null;
+    		String qid=null;
+    		if (session != null) {
+    				qname = (String) session.getAttribute(tblid + "_q_name");
+    				qid = (String) session.getAttribute(tblid + "_q_id");
+    		}
+    		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
+    		
+    		tableFacade.setMaxRows(10);
+    		    		
+    		initTable(tableFacade, qname, qid);
+    		if(users==null || users.isEmpty()){
+    			this.addActionError("查询没有记录！");
+    		}else{
+    		final String buildTable = buildTable(tableFacade);
+			request.setAttribute("user_tbl", buildTable);
+    		}
+    		return SUCCESS;
+    	}
+    	
+    	public String doRedirectEdit(){
+    		String id = this.queryUserId;
+    		if(StringUtils.isNotBlank(id)){
+    			Object object = this.getUserBaseDao().getObject(id);
+    			if(object==null){
+    				this.addActionError("没有该用户 employeeId="+id);
+      			}
+    		}
+    		return SUCCESS;
+    	}
+    	
+
+	protected void checkError(){
         String id = this.getQueryUserId();
  	   String qname = this.getQueryName();
- 	   if(StringUtils.isBlank( id) && StringUtils.isBlank( qname) ){
+ 	   /*if(StringUtils.isBlank( id) && StringUtils.isBlank( qname) ){
  		   this.addFieldError("queryName",  "请输入名字");
  		   this.addFieldError("queryUserId",  "请输入登录ID");
  		   
- 	   }
+ 	   }*/
     }
 
     @SuppressWarnings("unchecked")
 	public String paging() {
 		HttpServletRequest request = this.getServletRequest();
-		String tblid = "user_tbl";
+		
 		String qname = request.getParameter(tblid + "_q_name");
 		String qid = request.getParameter(tblid + "_q_id");
 		HttpSession session = request.getSession();
@@ -134,12 +193,12 @@ public class UserManagerListAction extends AbstractAction  {
 		String sql = "select o from " + Employee.class.getName()
 				+ " as o ";
 		StringBuffer wbuf=new StringBuffer();
-		if(qname!=null){
+		if(StringUtils.isNotBlank(qname)){
 			if(wbuf.length()>0)wbuf.append(" and ");
 			wbuf.append("o.name=:p_name");
 			param.put("p_name", qname);
 		}
-		if(qid!=null){
+		if(StringUtils.isNotBlank(qid)){
 			if(wbuf.length()>0)wbuf.append(" and ");
 			wbuf.append("o.employeeId=:p_id");
 			param.put("p_id", qid);
@@ -177,7 +236,7 @@ public class UserManagerListAction extends AbstractAction  {
 						columns.add(c);
 					}
 				}
-				if(columns.isEmpty()){
+				if(!columns.isEmpty()){
 					Collections.sort(columns);
 					for(int ik=0;ik<columns.size();ik++){
 						pg.addSortColumn(columns.get(ik));
@@ -185,7 +244,7 @@ public class UserManagerListAction extends AbstractAction  {
 				}
 			}
 		}
-		List<User> users = this.getUserBaseDao().query(sql, param, pg);
+		users = this.getUserBaseDao().query(sql, param, pg);
 		tableFacade.setTotalRows(users.size());
 		tableFacade.setMaxRowsIncrements(10, 20, 50);
 		
@@ -243,7 +302,8 @@ public class UserManagerListAction extends AbstractAction  {
     				"expireDate", "operator");
 
     		HtmlTable table = (HtmlTable) tableFacade.getTable();
-    		table.getTableRenderer().setWidth("350px");
+    		table.getTableRenderer().setWidth("100%");//475px
+    		//table.getTableRenderer().setStyle(style)
     		HtmlRow row = table.getRow();
     		row.setFilterable(Boolean.FALSE);
     		MouseRowEvent onmouseout = new MouseRowEvent();
@@ -294,6 +354,7 @@ public class UserManagerListAction extends AbstractAction  {
     				Object value = new BasicCellEditor().getValue(item, property,
     						rowcount);
     				HtmlBuilder html = new HtmlBuilder();
+    				if(value!=null)
     				html.append(sm.format(value));
     				return html.toString();
     			}
@@ -309,7 +370,7 @@ public class UserManagerListAction extends AbstractAction  {
     						rowcount);
     				HtmlBuilder html = new HtmlBuilder();
     				Object id = ItemUtils.getItemValue(item, "employeeId");
-    				String js = " onclick='javascript:del(\"tableId\"," + id + ")'"; //
+    				String js = " onclick='return del(\"tableId\",\"" +id + "\");'"; //
     				html.a().append(js).href().quote().append(
     						request.getContextPath()
     								+ "/deleteUser.action?queryUserId=" + id).quote()
@@ -318,10 +379,10 @@ public class UserManagerListAction extends AbstractAction  {
     						.border("none").end();*/
     				html.append("删除");
     				html.aEnd();
-    				html.append("#160");
+    				html.append("&#160;");
     				//<a href="javascript:void(0)" href1="<s:property value="#url"/>"  class="ymPrompt" title="修改用户">修改</a>
     				html.a().href().quote().append("javascript:void(0)").quote().append( " href1=\""+request.getContextPath()
-    								+ "/modifyUser.action?queryUserId=" + id+"\"").styleClass("ymPrompt").title("修改用户")
+    								+ "/UserEdit.action?queryUserId=" + id+"\"").styleClass("ymPrompt").title("修改用户")
     						.close();
     				html.append("修改");
     				html.aEnd();
@@ -339,11 +400,11 @@ public class UserManagerListAction extends AbstractAction  {
         	this.userManager=manager;
         }
         
-        private UserBaseDao getUserBaseDao() {
+        private BaseServiceInf getUserBaseDao() {
 			return userBaseDao;
 		}
 
-		public void setUserBaseDao(UserBaseDao userBaseDao) {
+		public void setUserBaseDao(BaseServiceInf userBaseDao) {
 			this.userBaseDao = userBaseDao;
 		}
 }

@@ -13,10 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name="t_account")
+@GenericGenerator(name="c_tacc_id",strategy="assigned")
 public class TAccount implements Serializable{
 	
 	/**
@@ -24,7 +26,7 @@ public class TAccount implements Serializable{
 	 */
 	private static final long serialVersionUID = 7338273290694408393L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO,generator="c_tacc_id")
 	private Integer id;
 	
 	@Column(length=30,name="name",nullable=false)

@@ -58,6 +58,31 @@
                 	<result name="success">/WEB-INF/pages/UserManagerList.jsp</result>
                 	<result name="error">/WEB-INF/pages/UserManagerList.jsp</result>
                 </action>
+                <action name="deleteUser" class="com.samtech.finance.web.action.UserManagerListAction" method="doDelete">
+                 <result name="success" type="redirectAction">
+                 	<param name="actionName">UserList</param>
+                 </result>
+                </action>
+                <action name="modifyUser" class="com.samtech.finance.web.action.UserManagerListAction" method="doRedirectEdit">
+                 <!-- result name="success" type="redirectAction">
+                 	<param name="actionName">UserEdit</param>
+                 	<param name="queryUserId">${queryUserId}</param>
+                 </result-->
+                 <result name="success" type="redirect">UserEdit.action?queryUserId=${queryUserId}</result>
+                 <result name="error" type="redirectAction">
+                 	<param name="actionName">UserList</param>
+                 </result>
+                 <result name="input" type="redirectAction">
+                 	<param name="actionName">UserEdit</param>
+                 </result>
+                </action>
+                
+                <action name="UserEdit" class="com.samtech.finance.web.action.UserEditAction">
+                <result>/WEB-INF/pages/UserEdit.jsp</result>
+                	<result name="input">/WEB-INF/pages/UserEdit.jsp</result>
+                	<result name="success">/WEB-INF/pages/UserEdit.jsp</result>
+                	<result name="error">/WEB-INF/pages/UserEdit.jsp</result>
+                </action>
                  <!-- action name="queryUsers" class="com.samtech.finance.web.action.UserManagerListAction" method="doQuery">
                 	<result name="input">/WEB-INF/pages/UserManagerList.jsp</result>
                 	<result name="success">/WEB-INF/pages/UserManagerList.jsp</result>
