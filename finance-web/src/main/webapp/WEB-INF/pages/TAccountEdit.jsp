@@ -17,64 +17,61 @@
 </style>
 </head>
 
-<body>
+
 <body>
 <font color="red"><s:fielderror >
-			<s:param>username</s:param>
-			<s:param>password</s:param>
 			</s:fielderror>
 			<s:actionerror /> <s:actionmessage /></font>
 
-<s:form method="POST" id="questionAddForm" action="UserEdit" namespace="/">
+<s:form method="POST" id="questionAddForm" action="TAccountEdit" namespace="/">
 <table width="100%" border="0" cellpadding="3" cellspacing="1"  class="tabg">
 		<tr class="tr1">
 		<td colspan="4">
-		 <s:if test="queryUserId==null || queryUserId==''">新增用户</s:if>
-		 <s:else> 修改用户 
-		    <s:hidden name="queryUserId"/>
+		 <s:if test="accountId==null ">新增T账户</s:if>
+		 <s:else> 修改T账户
+		    <s:hidden name="accountId"/>
 		 </s:else>
 		        
 		</td>
 		</tr>
           <tr class="tab">
-            <td width="16%" class="td1">登录名：</td>
+            <td width="16%" class="td1">T账账号(key)：</td>
             <td>
-               <s:if test="queryUserId==null || queryUserId==''">
-                   <s:textfield  name="editUser.employeeId"  size="20" maxlength="30" ></s:textfield><span class="red">*</span>
+               <s:if test="accountId==null">
+                   <s:textfield  name="account.id"  size="20" maxlength="30" ></s:textfield><span class="red">*</span>
                </s:if>
                <s:else> 
-		          <s:textfield  name="editUser.employeeId"  size="20" maxlength="30" readonly="true"></s:textfield>
+		          <s:textfield  name="account.id"  size="20" maxlength="30" readonly="true"></s:textfield>
 		       </s:else>
               </td>
-            <td width="16%" class="td1">姓名：</td>
-            <td><s:textfield  name="editUser.name"  size="20" maxlength="30"></s:textfield><span class="red">*</span></td>            
+            <td width="16%" class="td1">账户名称：</td>
+            <td><s:textfield  name="account.name"  size="20" maxlength="30"></s:textfield><span class="red">*</span></td>            
           </tr>
           <tr class="tab">
-            <td width="16%" class="td1">密码：</td>
-            <td><input type="password"   name="editUser.password"  value="<s:property value='editUser.password'/>" size="20" maxlength="30"></input><span class="red">*</span></td>
-            <td width="16%" class="td1">性别：</td>
-            <td>
-            	<s:select name="editUser.gender" value="editUser.gender" list="genderValues" listKey="key" listValue="value">  
-		        <!-- option value="MALE">男</option>  
-		        <option value="FEMALE">女</option-->  
-     			</s:select>  
+            <td width="16%" class="td1">借方余额：</td>
+            <td><s:textfield   name="account.debitBalance"   size="20" maxlength="30"></input><span class="red">*</span></td>
+            <td width="16%" class="td1">贷方余额：</td>
+            <td><s:textfield   name="account.debitBalance"   size="20" maxlength="30"></input><span class="red">*</span>
+            	
 			</td>            
           </tr>
           <tr class="tab">
-            <td width="16%" class="td1">出生日期：</td>
-            <td><s:textfield  name="editUser.birthDay" id="calendar_DatePicker0" size="20" maxlength="12" readonly="true" onClick="showCalendar('calendar_DatePicker0');">
-            <s:param name="value"><s:date name="editUser.birthDay" format="yyyy-MM-dd"/></s:param>
-            </s:textfield></td>
-            <td width="16%" class="td1">帐号有效期至：</td>
-            <td><s:textfield  name="editUser.expireDate" id="calendar_DatePicker1" size="20" maxlength="12" readonly="true" onClick="showCalendar('calendar_DatePicker1');">
-            <s:param name="value"><s:date name="editUser.expireDate" format="yyyy-MM-dd"/></s:param>
+            <td width="16%" class="td1">科目级别：</td>
+            <td><s:select name="account.level" value="account.level" list="genderValues" listKey="key" listValue="value">  
+		       
+     			</s:select>  
+     			
+           </td>
+            <td width="16%" class="td1">上级科目代码：</td>
+            <td><s:textfield  name="account.parentId"  size="10" >
+           
             </s:textfield><s:hidden value="" id="calendarValue" name="calendarValue"/></td>            
           </tr>
 </table>
 		
 
 	<p align="center">
-	   	 <s:if test="queryUserId==null || queryUserId==''">
+	   	 <s:if test="accountId==null ">
 			 <s:submit name="submit" method="addAndNew" id="doAddAndNew" value="保存并新增" />
 	  	 </s:if>
      	 <s:else> 

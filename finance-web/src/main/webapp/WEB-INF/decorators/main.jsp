@@ -51,7 +51,7 @@
 	                  <li><a href="#">原始凭证</a></li>
 	                  <li><a action="slidertablelist">记账凭证查询</a></li>
 	                  <li><a action="gmesalist">流水账查询</a></li>
-	                  <li><a action="gmesalist">T账查询</a></li>
+	                  <li><s:a action="TAccountList">T账查询</s:a></li>
                   	   <li><a action="gmesalist">T账报表</a></li>
                   	   <!-- li><s:a action="gmesalist">T账报表</s:a></li-->
                 </ul>

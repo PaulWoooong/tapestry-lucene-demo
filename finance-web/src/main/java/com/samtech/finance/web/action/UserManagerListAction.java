@@ -420,8 +420,7 @@ public class UserManagerListAction extends AbstractAction  {
     		operatorAction.getCellRenderer().setCellEditor(new CellEditor() {
     			
     			public Object getValue(Object item, String property, int rowcount) {
-    				Object value = new BasicCellEditor().getValue(item, property,
-    						rowcount);
+    			
     				HtmlBuilder html = new HtmlBuilder();
     				Object id = ItemUtils.getItemValue(item, "employeeId");
     				String js = " onclick='return del(\"tableId\",\"" +id + "\");'"; //

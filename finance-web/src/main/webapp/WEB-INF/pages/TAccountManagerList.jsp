@@ -26,7 +26,7 @@
     <s:submit cssClass="button" value="初始化T帐" method="doInit" 	id="doInit"></s:submit>
     <input class="button" type="button" onClick="$('#newUserWin').click();" value="新增T账"/>
     <div style="display:none">
-    <a href="javascript:void(0)" id="newUserWin" href1="UserEdit.action" class="ymPrompt" title="新增用户">新增T账</a>
+    <a href="javascript:void(0)" id="newUserWin" href1="TAccountEdit.action" class="ymPrompt" title="新增用户">新增T账</a>
     
     </div>
     </td>
@@ -50,7 +50,7 @@ function onInvokeAction(id) {
 	
     var parameterString = $.jmesa.createParameterStringForLimit(id);
     
-    $.get('${pageContext.request.contextPath}/pgUserList.action?ajax=true&' + parameterString, function(data) {
+    $.get('${pageContext.request.contextPath}/pgTAccountList.action?ajax=true&' + parameterString, function(data) {
     $("#employee_container").html(data);
     $('.ymPrompt').each(function (){
 		$(this).click(function(){
@@ -70,7 +70,7 @@ function onInvokeAction(id) {
 
 function onInvokeExportAction(id) {
 var parameterString = $.jmesa.createParameterStringForLimit(id);
-location.href = '${pageContext.request.contextPath}/pgUserList.action?ajax=false&' + parameterString;
+location.href = '${pageContext.request.contextPath}/pgTAccountList.action?ajax=false&' + parameterString;
 }
 
 function del(v1){

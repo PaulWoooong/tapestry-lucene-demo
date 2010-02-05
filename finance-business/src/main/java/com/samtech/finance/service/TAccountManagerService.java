@@ -12,6 +12,7 @@ public interface TAccountManagerService {
 	 * juest new or not inited can be save.
 	 */
 	Account saveAccount(Account a)throws FinanceRuleException;
+	Account getAccountById(Integer id);
 	/**
 	 * init account will be check balance.
 	 * @throws FinanceRuleException
@@ -27,6 +28,12 @@ public interface TAccountManagerService {
 	 * @return
 	 */
 	List<Account> findTAccountStatus(String accName, Integer accountId, Short status);
+	/**
+	 * 
+	 * @param qid
+	 * no inited and no children.
+	 */
+	void deleteAccount(Integer qid)throws FinanceRuleException;
 	
 	
 }
