@@ -19,9 +19,9 @@
 
 
 <body>
-<font color="red"><s:fielderror >
+<font color="red"><s:fielderror>
 			</s:fielderror>
-			<s:actionerror /> <s:actionmessage /></font>
+			<s:actionerror/> <s:actionmessage/></font>
 
 <s:form method="POST" id="questionAddForm" action="TAccountEdit" namespace="/">
 <table width="100%" border="0" cellpadding="3" cellspacing="1"  class="tabg">
@@ -49,22 +49,19 @@
           </tr>
           <tr class="tab">
             <td width="16%" class="td1">借方余额：</td>
-            <td><s:textfield   name="account.debitBalance"   size="20" maxlength="30"></input><span class="red">*</span></td>
+            <td><s:textfield   name="account.debitBalance"   size="20" maxlength="30"></s:textfield><span class="red">*</span></td>
             <td width="16%" class="td1">贷方余额：</td>
-            <td><s:textfield   name="account.debitBalance"   size="20" maxlength="30"></input><span class="red">*</span>
+            <td><s:textfield   name="account.creditBalance"   size="20" maxlength="30"></s:textfield><span class="red">*</span>
             	
 			</td>            
           </tr>
           <tr class="tab">
             <td width="16%" class="td1">科目级别：</td>
             <td><s:select name="account.level" value="account.level" list="genderValues" listKey="key" listValue="value">  
-		       
      			</s:select>  
-     			
            </td>
             <td width="16%" class="td1">上级科目代码：</td>
             <td><s:textfield  name="account.parentId"  size="10" >
-           
             </s:textfield><s:hidden value="" id="calendarValue" name="calendarValue"/></td>            
           </tr>
 </table>
@@ -72,15 +69,15 @@
 
 	<p align="center">
 	   	 <s:if test="accountId==null ">
-			 <s:submit name="submit" method="addAndNew" id="doAddAndNew" value="保存并新增" />
+			 <s:submit name="submit" method="doAddAndNew" id="doAddAndNew" value="保存并新增" />
 	  	 </s:if>
      	 <s:else> 
-			<s:submit name="submit" method="addAndView"  id="doAddAndView"  value="保存"/>
+			<s:submit name="submit" method="doAddAndView"  id="doAddAndView"  value="保存"/>
          </s:else>
 		<input type="button" value="关闭" onClick="parent.ymPrompt.close();" />
 	</p>
 </s:form>
-<script type="text/javascript">
+<script type="text/javascript">//<!--
 var calendar_DatePicker = new Calendar();
 calendar_DatePicker.create();
 calendar_DatePicker.onchange = function() {
@@ -97,6 +94,7 @@ function showCalendar(v1){
 	document.getElementById("calendarValue").value=v1;
 	calendar_DatePicker.toggle(document.getElementById(v1));
 }
+//-->
 </script>
 </body>
 </html>

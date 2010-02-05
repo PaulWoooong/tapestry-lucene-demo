@@ -16,9 +16,9 @@
 <td colspan="10">T账查询</td>
 </tr>
   <tr class="tab">
-    <td class="td1">ID：</td><td><s:textfield  name="queryUserId" maxlength="6" size="5"></s:textfield></td>
+    <td class="td1">ID：</td><td><s:textfield  name="queryAccountId" maxlength="6" size="5"></s:textfield></td>
     <td class="td1">名称：</td><td><s:textfield  name="queryName" size="20"></s:textfield></td>
-    <td class="td1">状态：</td><td><s:select  name="accountStatus"></s:select></td>
+    <td class="td1">状态：</td><td><s:select  name="accountStatus" list="#{'':'','0':'无初始化','1':'已初始化'}"></s:select></td>
    </tr>
   <tr class="tab">
     <td colspan="10" align="center">
