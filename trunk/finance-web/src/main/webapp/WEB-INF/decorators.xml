@@ -19,6 +19,7 @@
          <pattern>/pgUserList*</pattern>
         <pattern>/modifyUser*</pattern>
         <pattern>/UserEdit*</pattern>
+        <pattern>/TAccountEdit*</pattern>
         <pattern>/logout.action</pattern>
         <pattern>/tags/ui/ajax/*</pattern>
         <pattern>/nodecorate/*</pattern>

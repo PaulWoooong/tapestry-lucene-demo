@@ -18,10 +18,7 @@
 </head>
 
 <body>
-<body>
 <font color="red"><s:fielderror >
-			<s:param>username</s:param>
-			<s:param>password</s:param>
 			</s:fielderror>
 			<s:actionerror /> <s:actionmessage /></font>
 

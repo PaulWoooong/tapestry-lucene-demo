@@ -38,6 +38,21 @@ public class FinanceRuleException extends Exception {
 		super();
 	}
 	
+	public FinanceRuleException(String message, Throwable cause) {
+		super(message, cause);
+		
+	}
+
+	public FinanceRuleException(String message) {
+		super(message);
+		
+	}
+
+	public FinanceRuleException(Throwable cause) {
+		super(cause);
+		
+	}
+
 	@Override
 	public String getMessage() {
 		

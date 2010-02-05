@@ -2,6 +2,7 @@ package com.samtech.finance.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 
@@ -26,12 +27,15 @@ public class Account implements Serializable{
 	private BigDecimal lastMonthDebitBalance;
 	private BigDecimal lastMonthCreditBalance;
 	
+	private Date lastDate;
+	
+	
 	private FinanceLevel level=FinanceLevel.ONE;
 	/*0/1 */
-	@Column(name="init_flag",length=1)
+	
 	private short inited;
 	
-	@Column(name="parent_id")
+	
 	private Integer parentId;
 	
 	/**
@@ -114,6 +118,12 @@ public class Account implements Serializable{
 	}
 	public void setLastMonthCreditBalance(BigDecimal lastMonthCreditBalance) {
 		this.lastMonthCreditBalance = lastMonthCreditBalance;
+	}
+	public Date getLastDate() {
+		return lastDate;
+	}
+	public void setLastDate(Date lastDate) {
+		this.lastDate = lastDate;
 	}
 	@Override
 	public int hashCode() {
