@@ -19,34 +19,31 @@ public class RunningAccount implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1335332172333428991L;
-	@Id
+	
 	private Integer id;
-	@Column(name = "account_id", nullable = false, updatable = false)
+	
 	private Integer accountId;
-	@Column(name="context",length=100)
+	
 	private String context;
 	
 	
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "direct", updatable = false)
 	private BalanceDirect direct = BalanceDirect.DEBIT;
-	@Column(name = "amount", scale = 2, nullable = false)
+	
 	private BigDecimal amount;
 	/**
 	 *financeform id 
 	 *
 	 */
-	@Column(name = "business", nullable = false,length=30)
+	
 	private String businessId;
 
 	
-	@Column(name = "company_id", length = 30)
+	
 	private String companyId;
-	@Column(name = "create_date", updatable = false, nullable = false)
+	
 	private Date createDate;
 	
-
+	@Id
 	public Integer getId() {
 		return id;
 	}
@@ -54,7 +51,7 @@ public class RunningAccount implements Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
+	@Column(name = "account_id", nullable = false, updatable = false)
 	public Integer getAccountId() {
 		return accountId;
 	}
@@ -62,7 +59,8 @@ public class RunningAccount implements Serializable {
 	public void setAccountId(Integer accountId) {
 		this.accountId = accountId;
 	}
-
+	@Column(name = "direct", updatable = false)
+	@Enumerated(value=EnumType.STRING)
 	public BalanceDirect getDirect() {
 		return direct;
 	}
@@ -70,7 +68,7 @@ public class RunningAccount implements Serializable {
 	public void setDirect(BalanceDirect direct) {
 		this.direct = direct;
 	}
-
+	@Column(name = "amount", scale = 2, nullable = false)
 	public BigDecimal getAmount() {
 		return amount;
 	}
@@ -78,7 +76,7 @@ public class RunningAccount implements Serializable {
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
-
+	@Column(name = "business", nullable = false,length=30)
 	public String getBusinessId() {
 		return businessId;
 	}
@@ -88,7 +86,7 @@ public class RunningAccount implements Serializable {
 	}
 
 	
-
+	@Column(name = "company_id", length = 30)
 	public String getCompanyId() {
 		return companyId;
 	}
@@ -96,7 +94,7 @@ public class RunningAccount implements Serializable {
 	public void setCompanyId(String companyId) {
 		this.companyId = companyId;
 	}
-
+	@Column(name = "create_date", updatable = false, nullable = false)
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -106,7 +104,7 @@ public class RunningAccount implements Serializable {
 	}
 
 	
-
+	@Column(name="context",length=100)
 	public String getContext() {
 		return context;
 	}

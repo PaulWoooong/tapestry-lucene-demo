@@ -26,24 +26,22 @@ public class TAccountHistory implements Serializable{
 	private static final long serialVersionUID = -1884898280599913673L;
 	
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	
 	private Integer id;
-	@Column(name="account_id")
+	
 	private Integer accountId;
-	@Column(length=30,name="name",nullable=false)
+	
 	private String name;
-	@Column(scale=2,name="credit_balance",nullable=false)
+	
 	private BigDecimal creditBalance;
-	@Column(scale=2,name="debit_balance",nullable=false)
+	
 	private BigDecimal debitBalance;
-	@Enumerated(EnumType.STRING)
+	
 	private FinanceLevel level=FinanceLevel.ONE;
 		
-	@Column(name="parent_id")
+	
 	private Integer parentId;
-	@Column(name="init_date")
-	@Temporal(TemporalType.DATE)
+	
 	private Date initDate;
 	
 	
@@ -51,6 +49,8 @@ public class TAccountHistory implements Serializable{
 	 * 主键
 	 * @return
 	 */
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	public Integer getId() {
 		return id;
 	}
@@ -61,6 +61,7 @@ public class TAccountHistory implements Serializable{
 	 * 科目代码
 	 * @return
 	 */
+	@Column(name="account_id")
 	public Integer getAccountId() {
 		return accountId;
 	}
@@ -71,6 +72,7 @@ public class TAccountHistory implements Serializable{
 	 * 科目名称
 	 * @return
 	 */
+	@Column(length=30,name="name",nullable=false)
 	public String getName() {
 		return name;
 	}
@@ -81,6 +83,7 @@ public class TAccountHistory implements Serializable{
 	 * 贷方金额
 	 * @return
 	 */
+	@Column(scale=2,name="credit_balance",nullable=false)
 	public BigDecimal getCreditBalance() {
 		return creditBalance;
 	}
@@ -91,6 +94,7 @@ public class TAccountHistory implements Serializable{
 	 * 借方金额
 	 * @return
 	 */
+	@Column(scale=2,name="debit_balance",nullable=false)
 	public BigDecimal getDebitBalance() {
 		return debitBalance;
 	}
@@ -101,6 +105,7 @@ public class TAccountHistory implements Serializable{
 	 * 科目级别 {@link FinanceLevel}
 	 * @return
 	 */
+	@Enumerated(value=EnumType.STRING)
 	public FinanceLevel getLevel() {
 		return level;
 	}
@@ -111,6 +116,7 @@ public class TAccountHistory implements Serializable{
 	 * 上级科目代码
 	 * @return
 	 */
+	@Column(name="parent_id")
 	public Integer getParentId() {
 		return parentId;
 	}
@@ -118,7 +124,8 @@ public class TAccountHistory implements Serializable{
 		this.parentId = parentId;
 	}
 	
-	
+	@Column(name="init_date")
+	@Temporal(TemporalType.DATE)
 	public Date getInitDate() {
 		return initDate;
 	}
