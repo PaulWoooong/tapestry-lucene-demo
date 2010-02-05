@@ -6,12 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -31,9 +27,7 @@ import org.jmesa.view.html.component.HtmlRow;
 import org.jmesa.view.html.component.HtmlTable;
 import org.jmesa.view.html.event.MouseRowEvent;
 
-import com.samtech.business.database.Gender;
 import com.samtech.common.domain.IUser;
-import com.samtech.common.domain.PagingAndSorting;
 import com.samtech.finance.FinanceRuleException;
 import com.samtech.finance.database.FinanceLevel;
 import com.samtech.finance.domain.Account;
@@ -139,6 +133,19 @@ public class TAccountManagerListAction extends AbstractAction  {
 			request.setAttribute("user_tbl", buildTable);
     		}
     		return SUCCESS;
+    	}
+    	
+    	public String doInit(){
+    		
+    		try {
+				this.accountManager.initAccount();
+				this.addActionMessage("初始化成功");
+				return SUCCESS;
+			} catch (FinanceRuleException e) {
+				this.addActionError(e.getMessage());
+				e.printStackTrace();
+				return ERROR;
+			}
     	}
 
 	protected void checkError(){
@@ -343,11 +350,11 @@ public class TAccountManagerListAction extends AbstractAction  {
     		});
     		
     		genderAction = row.getColumn("lastMonthDebitBalance");
-    		genderAction.setTitle("上次借方余额");
+    		genderAction.setTitle("上次<br/>借方余额");
     		genderAction.setSortable(Boolean.FALSE);
     		
     		genderAction = row.getColumn("lastMonthCreditBalance");
-    		genderAction.setTitle("上次贷方余额");
+    		genderAction.setTitle("上次<br/>贷方余额");
     		genderAction.setSortable(Boolean.FALSE);
     	
     		genderAction = row.getColumn("lastDate");
@@ -400,7 +407,7 @@ public class TAccountManagerListAction extends AbstractAction  {
     				html.append("&#160;");
     				//<a href="javascript:void(0)" href1="<s:property value="#url"/>"  class="ymPrompt" title="修改用户">修改</a>
     				html.a().href().quote().append("javascript:void(0)").quote().append( " href1=\""+request.getContextPath()
-    								+ "/TAccountEdit.action?queryUserId=" + id+"\"").styleClass("ymPrompt").title("修改T帐")
+    								+ "/TAccountEdit.action?accountId=" + id+"\"").styleClass("ymPrompt").title("修改T帐")
     						.close();
     				html.append("修改");
     				html.aEnd();
@@ -414,7 +421,7 @@ public class TAccountManagerListAction extends AbstractAction  {
     	}
         
         
-        public void setUserManager(TAccountManagerService manager){
+        public void setAccountManager(TAccountManagerService manager){
         	this.accountManager=manager;
         }
         

@@ -2,6 +2,9 @@ package com.samtech.finance.web.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.samtech.finance.domain.Account;
 import com.samtech.finance.service.TAccountManagerService;
@@ -69,11 +72,16 @@ public class TAccountEditAction extends AbstractAction {
 	public void prepare() throws Exception {
 		
 		super.prepare();
-		if(this.accountId!=null){
+		HttpServletRequest request = this.getServletRequest();
+		String parameter = request.getParameter("accountId");
+		String method = request.getMethod();
+		if(method!=null && "get".equalsIgnoreCase(method))
+		if(parameter!=null && parameter.trim().length()>0){
 			Account u = (Account) accountManager.getAccountById(
-					this.accountId);
+					Integer.valueOf(parameter));
 			if(u!=null)this.setAccount(u);
 		}
+		
 	}
 	@Override
 	public String execute() throws Exception {
@@ -90,6 +98,8 @@ public class TAccountEditAction extends AbstractAction {
 	// 保存页面并返回新增问题页面
 	public String doAddAndNew() {
 		checkEditError();
+		Map<String, List<String>> fieldErrors = this.getFieldErrors();
+		if(fieldErrors!=null && !fieldErrors.isEmpty())return INPUT;
 		accountId = null;
 		try {
 			// search the id whether have be register
@@ -119,7 +129,8 @@ public class TAccountEditAction extends AbstractAction {
 	
 	public String doAddAndView() {
 		checkEditError();
-
+		Map<String, List<String>> fieldErrors = this.getFieldErrors();
+		if(fieldErrors!=null && !fieldErrors.isEmpty())return INPUT;
 		try {
 			Account u = (Account) accountManager.getAccountById(this.account.getId());
 			if (u == null) {
@@ -146,7 +157,7 @@ public class TAccountEditAction extends AbstractAction {
 
 	}
 
-	public void setUserManager(TAccountManagerService manager){
+	public void setAccountManager(TAccountManagerService manager){
     	this.accountManager=manager;
     }
 

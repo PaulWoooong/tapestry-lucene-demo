@@ -72,10 +72,10 @@
 
 	<p align="center">
 	   	 <s:if test="queryUserId==null || queryUserId==''">
-			 <s:submit name="submit" method="addAndNew" id="doAddAndNew" value="保存并新增" />
+			 <s:submit name="submit" method="doAddAndNew" id="doAddAndNew" value="保存并新增" />
 	  	 </s:if>
      	 <s:else> 
-			<s:submit name="submit" method="addAndView"  id="doAddAndView"  value="保存"/>
+			<s:submit name="submit" method="doAddAndView"  id="doAddAndView"  value="保存"/>
          </s:else>
 		<input type="button" value="关闭" onClick="parent.ymPrompt.close();" />
 	</p>

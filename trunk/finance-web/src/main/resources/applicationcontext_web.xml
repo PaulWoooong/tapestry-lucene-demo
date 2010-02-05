@@ -34,7 +34,9 @@
 	<bean id="financeManager" class="com.samtech.finance.service.impl.FinanceServiceImpl" scope="prototype">
 		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
 	</bean>
-	
+	<bean id="accountManager" class="com.samtech.finance.service.impl.TAccountManagerServiceImpl" scope="prototype">
+	<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
 	<tx:advice id="txAdvice" transaction-manager="txManager">
 		<tx:attributes>
 			<tx:method name="save*" propagation="REQUIRED" />
@@ -43,6 +45,7 @@
 			<tx:method name="create*" propagation="REQUIRED" />
 			<tx:method name="modi*" propagation="REQUIRED" />
 			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="initAccount" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 	<tx:advice id="txAdvice1" transaction-manager="txManager">
@@ -55,10 +58,12 @@
 			<tx:method name="update*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
+	
 	<aop:config>
 		
 		<aop:pointcut id="serviceOperation"
 			expression="execution(* com.samtech.business.service.impl.*ServiceImpl.*(..))|| execution(* com.samtech.finance.service.impl.*ServiceImpl.*(..))" />	 
+			
 		<aop:pointcut id="baseDaoOperation"
 			expression="execution(* com.samtech.finance.dao.*BaseDao.*(..))|| execution(* com.samtech.business.dao.*BaseDao.*(..))" />	 
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
