@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE validators PUBLIC "-//OpenSymphony Group//XWork Validator 1.0.2//EN"
+	"http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+	<validators>
+		<field name="account.id">
+		 <field-validator type="required">
+		 	<message key="account_id">employee_required</message>
+		 </field-validator>
+		
+		</field>
+		<field name="account.name">
+		<field-validator type="requiredstring">
+		 	<message key="account_name.required">account required</message>
+		 </field-validator>
+		</field>
+		<field name="account.debitBalance">
+		<field-validator type="required">
+		 	<message key="account_debitBalance.required"></message>
+		 </field-validator>
+		 <field-validator type="double">
+		 	<param name="minInclusive">0</param>
+		 	<message key="account_debitBalance.rang"></message>
+		 </field-validator>
+		</field>
+		<field name="account.creditBalance">
+		<field-validator type="required">
+		 	<message key="account_creditBalance.required"></message>
+		 </field-validator>
+		 <field-validator type="double">
+		 <param name="minInclusive">0</param>
+		 <message key="account_creditBalance.rang"></message>
+		 </field-validator>
+		</field>
+		
+	</validators>
