@@ -25,6 +25,7 @@ import com.samtech.finance.database.FinanceForm;
 import com.samtech.finance.database.RunningAccount;
 import com.samtech.finance.database.TAccount;
 import com.samtech.finance.database.TAccountHistory;
+import com.samtech.finance.domain.Account;
 import com.samtech.finance.domain.BalanceItem;
 import com.samtech.finance.domain.BizFinanceRule;
 import com.samtech.finance.domain.FinanceForms;
@@ -404,6 +405,17 @@ private static Integer synTax=new Integer(2);
 				form.setConfirmDate(new Date());	
 			}
 		}
+		return null;
+	}
+
+	public void deleteFinanceForm(String qid) throws FinanceRuleException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public List<FinanceForms> findFinanceForms(String financeformId, String bizName,
+			Date startDate, Date endDate) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
