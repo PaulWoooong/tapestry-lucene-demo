@@ -1,6 +1,10 @@
 package com.samtech.finance.service;
 
+import java.util.Date;
+import java.util.List;
+
 import com.samtech.finance.FinanceRuleException;
+import com.samtech.finance.domain.Account;
 import com.samtech.finance.domain.BizFinanceRule;
 import com.samtech.finance.domain.FinanceForms;
 
@@ -33,4 +37,20 @@ public interface FinanceService {
 	public void confirmMonthReport(int year,int month)throws FinanceRuleException;
 	
 	public void refuseMonthReport(int year,int month)throws FinanceRuleException;
+	/**
+	 * 
+	 * @param qid
+	 * @throws FinanceRuleException
+	 */
+	public void deleteFinanceForm(String qid)throws FinanceRuleException;
+	/**
+	 * 
+	 * @param financeformId
+	 * @param bizName
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<FinanceForms> findFinanceForms(String financeformId, String bizName,
+			Date startDate, Date endDate);
 }
