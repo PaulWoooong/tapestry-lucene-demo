@@ -218,15 +218,13 @@ public class TAccountManagerListAction extends AbstractAction  {
 
 	@SuppressWarnings("unchecked")
 	private void initTable(TableFacade tableFacade, String qname, Integer qid,Short status) {
-		
+		if(StringUtils.isBlank(qname))
+			qname=null;
 			
-			accs = accountManager.findTAccountStatus(qname, qid, status);
+		accs = accountManager.findTAccountStatus(qname, qid, status);
 		tableFacade.setTotalRows(accs.size());
 		tableFacade.setMaxRowsIncrements(10, 20, 50);    
-		/*if(rsl!=null){
-			rsl.getMaxRows();
-		}else*/
-		//tableFacade.setMaxRows(10);
+		
 		
 		Limit limit = tableFacade.getLimit();
 		RowSelect rowSelect = limit.getRowSelect();

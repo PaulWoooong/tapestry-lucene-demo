@@ -90,7 +90,7 @@ public class TAccountEditAction extends AbstractAction {
 			Account u = (Account) accountManager.getAccountById(qid);
 			if(u!=null)this.setAccount(u);
 			else{
-				this.addActionError("没有该用户 employeeId="+qid);
+				this.addActionError("没有该账号 Id="+qid);
 			}
 		}
 		return super.execute();
@@ -109,7 +109,7 @@ public class TAccountEditAction extends AbstractAction {
 				// if never register then report error
 				accountManager.saveAccount(account);
 				this.setAccount(new Account());
-				this.addActionMessage("用户新增成功！");
+				this.addActionMessage("帐号新增成功！");
 			} else {
 				if(u.getInited()<1)
 					accountManager.saveAccount(account);
@@ -135,11 +135,11 @@ public class TAccountEditAction extends AbstractAction {
 			Account u = (Account) accountManager.getAccountById(this.account.getId());
 			if (u == null) {
 				accountManager.saveAccount(account);
-				addActionMessage("新增用户成功！");
+				addActionMessage("新增账号成功！");
 			} else {
 				if(u.getInited()<1){
 				account=(Account) accountManager.saveAccount(account);
-				addActionMessage("修改用户成功！");
+				addActionMessage("修改账号成功！");
 				}else
 					addActionMessage("已经初始化！");
 
