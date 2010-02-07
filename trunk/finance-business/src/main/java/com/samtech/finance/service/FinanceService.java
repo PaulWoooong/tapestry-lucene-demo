@@ -39,18 +39,18 @@ public interface FinanceService {
 	public void refuseMonthReport(int year,int month)throws FinanceRuleException;
 	/**
 	 * 
-	 * @param qid
+	 * @param financeid
 	 * @throws FinanceRuleException
 	 */
-	public void deleteFinanceForm(String qid)throws FinanceRuleException;
+	public void deleteFinanceForm(String financeid)throws FinanceRuleException;
 	/**
 	 * 
 	 * @param financeformId
-	 * @param bizName
+	 * @param bizId
 	 * @param startDate
 	 * @param endDate
 	 * @return
 	 */
-	public List<FinanceForms> findFinanceForms(String financeformId, String bizName,
+	public List<FinanceForms> findFinanceForms(String financeformId, String bizId,
 			Date startDate, Date endDate);
 }

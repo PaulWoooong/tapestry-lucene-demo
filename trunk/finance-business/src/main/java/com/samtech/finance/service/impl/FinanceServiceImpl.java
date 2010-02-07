@@ -15,6 +15,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.orm.jpa.JpaCallback;
 
 import com.samtech.finance.FinanceRuleException;
@@ -25,7 +26,6 @@ import com.samtech.finance.database.FinanceForm;
 import com.samtech.finance.database.RunningAccount;
 import com.samtech.finance.database.TAccount;
 import com.samtech.finance.database.TAccountHistory;
-import com.samtech.finance.domain.Account;
 import com.samtech.finance.domain.BalanceItem;
 import com.samtech.finance.domain.BizFinanceRule;
 import com.samtech.finance.domain.FinanceForms;
@@ -408,17 +408,161 @@ private static Integer synTax=new Integer(2);
 		return null;
 	}
 
-	public void deleteFinanceForm(String qid) throws FinanceRuleException {
-		// TODO Auto-generated method stub
-		
-	}
+	public void deleteFinanceForm(final String financeid) throws FinanceRuleException {
 
-	public List<FinanceForms> findFinanceForms(String financeformId, String bizName,
-			Date startDate, Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		Object object = this.getJpaTemplate().execute(new JpaCallback() {
+			
+			@SuppressWarnings("unchecked")
+			public Object doInJpa(EntityManager em) throws PersistenceException {
+				
+				FinanceForm dform = em.find(FinanceForm.class, financeid);
+				if(dform==null)return null;
+				synchronized (synT) {
+					AccountStatus status = dform.getStatus();
+					if(status!=null && (status.equals(AccountStatus.NORMAL)||status.equals(AccountStatus.REBACK))){
+							FinanceRuleException ex = new FinanceRuleException("已记账完税，不能删除");
+							ex.setErrorCode(FinanceRuleException.UNKNOW);
+							return ex;
+					}
+					//em.createQuery("").e
+					Query q = em.createQuery("select o from "+RunningAccount.class.getName()+" as o where o.businessId=:p_id");
+					q.setParameter("p_id", dform.getId());
+					List<RunningAccount> lst = q.getResultList();
+					if(lst!=null && !lst.isEmpty()){
+						for (RunningAccount r : lst) {
+							em.remove(r);
+						}
+					}
+					em.remove(dform);
+				}
+				return null;
+			}
 
+			
+		}, true);
+		if(object!=null && object instanceof FinanceRuleException)throw (FinanceRuleException) object;
 	
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<FinanceForms> findFinanceForms(final String financeformId,final String bizId,
+			final Date startDate,final Date endDate) {
+
+
+		Object object = this.getJpaTemplate().execute(new JpaCallback() {
+			
+			@SuppressWarnings("unchecked")
+			public Object doInJpa(EntityManager em) throws PersistenceException {
+				String ql="select o from "+FinanceForm.class.getName()+" as o ";
+				StringBuffer buf=new StringBuffer();
+				
+				if(StringUtils.isNotBlank(financeformId)){
+					if(buf.length()>0)buf.append(" and ");
+					buf.append("  o.id=:p_id");
+				}
+				if(StringUtils.isNotBlank(bizId)){
+					if(buf.length()>0)buf.append(" and ");
+					buf.append("  o.businessId=:p_bid");
+				}
+				if(startDate!=null){
+					if(buf.length()>0)buf.append(" and ");
+					buf.append(" o.bizDate>=:p_sdate");
+					
+				}
+				if(endDate!=null){
+					if(buf.length()>0)buf.append(" and ");
+					buf.append(" o.bizDate>=:p_edate");
+				}
+				
+				Query query = em.createQuery(ql+(buf.length()>0?(" where "+buf.toString()):""));
+				if(StringUtils.isNotBlank(financeformId)){
+					query.setParameter("p_id", financeformId.trim());
+					
+				}
+				if(StringUtils.isNotBlank(bizId)){
+					query.setParameter("p_bid", bizId.trim());
+				}
+				if(startDate!=null){
+					query.setParameter("p_sdate", startDate,TemporalType.DATE);
+					
+					
+				}
+				if(endDate!=null){
+					query.setParameter("p_edate", endDate,TemporalType.DATE);
+				}
+				
+				List<FinanceForm> resultList = query.getResultList();
+				List<String> ls=new ArrayList<String>(25);
+				List<FinanceForms> results=new ArrayList<FinanceForms>(25);
+				FinanceForms fm=null;
+				for (FinanceForm f : resultList) {
+					ls.add(f.getId());
+					 fm = convertToDomain(f);
+					 results.add(fm);
+				}
+				
+				Query q = em.createQuery("select o from "+RunningAccount.class.getName()+" as o where o.businessId in( :p_id )");
+				q.setParameter("p_id", ls);
+				List<RunningAccount> lst = q.getResultList();
+				if(lst!=null && !lst.isEmpty()){
+					for (RunningAccount r : lst) {
+						BalanceItem item = convertToBalanceItem(r);
+						String businessId = r.getBusinessId();
+						for (FinanceForms f1 : results) {
+							if(f1.getId().equals(r.getBusinessId())){
+								BalanceDirect direct = r.getDirect();
+								List<BalanceItem> debits = f1.getDebits();
+								List<BalanceItem> credits = f1.getCredits();
+								if(BalanceDirect.DEBIT.equals(direct)){
+									if(debits==null){
+										debits=new ArrayList<BalanceItem>();
+										f1.setDebits(debits);
+									}
+									debits.add(item);
+								}
+								if(BalanceDirect.CREDIT.equals(direct)){
+									if(credits==null){
+										credits=new ArrayList<BalanceItem>();
+										f1.setCredits(credits);
+									}
+									debits.add(item);
+								}
+							}
+						}
+					}
+				}
+				
+				
+				return results;
+			}
+
+			
+
+			
+		}, true);
+		
+		return (List<FinanceForms>)object;
+	}
+
+	public static FinanceForms convertToDomain(FinanceForm f){
+		FinanceForms fm=new FinanceForms();
+		fm.setId(f.getId());
+		fm.setAmount(f.getAmount());
+		fm.setBizDate(f.getBizDate());
+		fm.setBusinessId(f.getBusinessId());
+		fm.setConfirmDate(f.getConfirmDate());
+		fm.setContext(f.getContext());
+		fm.setStatus(f.getStatus());
+		return fm;
+	}
+	public static BalanceItem convertToBalanceItem(RunningAccount r) {
+		BalanceItem item=new BalanceItem();
+		item.setAmount(r.getAmount());
+		item.setCompanyId(r.getCompanyId());
+		item.setContext(r.getContext());
+		item.setDirect(r.getDirect());
+		item.setFinanceId(r.getAccountId());
+		return item;
+	}
 
 }
