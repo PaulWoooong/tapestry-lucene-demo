@@ -17,8 +17,10 @@
         <pattern>/loginInfo.action</pattern>
         <pattern>/login.action</pattern>
          <pattern>/pgUserList*</pattern>
+         <pattern>/searchAccount*</pattern>
         <pattern>/modifyUser*</pattern>
         <pattern>/UserEdit*</pattern>
+        <pattern>/FinanceFormEdit*</pattern>
         <pattern>/TAccountEdit*</pattern>
         <pattern>/logout.action</pattern>
         <pattern>/tags/ui/ajax/*</pattern>

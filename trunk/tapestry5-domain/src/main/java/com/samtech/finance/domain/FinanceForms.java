@@ -2,6 +2,7 @@ package com.samtech.finance.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -87,6 +88,9 @@ public class FinanceForms implements Serializable {
 	}
 
 	public List<BalanceItem> getDebits() {
+		if(debits==null){
+			debits=new ArrayList<BalanceItem>(5);
+		}
 		return debits;
 	}
 
@@ -95,6 +99,9 @@ public class FinanceForms implements Serializable {
 	}
 
 	public List<BalanceItem> getCredits() {
+		if(credits==null){
+			credits=new ArrayList<BalanceItem>(5);
+		}
 		return credits;
 	}
 

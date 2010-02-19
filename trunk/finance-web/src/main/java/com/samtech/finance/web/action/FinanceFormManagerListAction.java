@@ -31,10 +31,8 @@ import org.jmesa.view.html.event.MouseRowEvent;
 import com.samtech.common.domain.IUser;
 import com.samtech.finance.FinanceRuleException;
 import com.samtech.finance.database.FinanceLevel;
-import com.samtech.finance.domain.Account;
 import com.samtech.finance.domain.FinanceForms;
 import com.samtech.finance.service.FinanceService;
-import com.samtech.finance.service.TAccountManagerService;
 
 
 
@@ -84,6 +82,12 @@ public class FinanceFormManagerListAction extends AbstractAction  {
     		if (session != null) {
     				session.setAttribute(tblid + "_q_name",this.bizName);
     				session.setAttribute(tblid + "_q_id",this.queryFinanceFormId);
+    				if(startDate!=null){
+    					session.setAttribute(tblid+"_sdate", startDate);
+    				}
+    				if(endDate!=null){
+    					session.setAttribute(tblid+"_edate", endDate);
+    				}
     				//session.setAttribute(tblid + "_q_status",this.accountStatus);//status = (Short) session.getAttribute(tblid + "_q_status");
     		}
     		isMaxRow=true;
@@ -120,12 +124,17 @@ public class FinanceFormManagerListAction extends AbstractAction  {
     		String qname=null;
     		String financeid=null;
     		Date sDate=null,eDate=null;
-    		Short status=null;
+    		
     		if (session != null) {
     				qname = (String) session.getAttribute(tblid + "_q_name");
     				financeid = (String) session.getAttribute(tblid + "_q_id");
-    				status = (Short) session.getAttribute(tblid + "_q_status");
-    		}
+    				
+    				
+    					Object o=session.getAttribute(tblid+"_sdate");
+    				if(o!=null)sDate=(Date) o;
+    					o=session.getAttribute(tblid+"_edate");
+    					if(o!=null)eDate=(Date) o;
+     		}
     		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
     		
     		tableFacade.setMaxRows(10);		
@@ -159,14 +168,20 @@ public class FinanceFormManagerListAction extends AbstractAction  {
 		//Short status=null;
 		String qname = request.getParameter(tblid + "_q_name");
 		String financeid = request.getParameter(tblid + "_q_id");
-		String pst = request.getParameter(tblid + "_q_status");
+		
 		Date sDate=null,eDate=null;
 		
 		HttpSession session = request.getSession();
 		if (session != null) {
 				qname = (String) session.getAttribute(tblid + "_q_name");
 				financeid = (String) session.getAttribute(tblid + "_q_id");
-				//status = (Short) session.getAttribute(tblid + "_q_status");
+				
+				
+				
+					Object o=session.getAttribute(tblid+"_sdate");
+				if(o!=null)sDate=(Date) o;
+					o=session.getAttribute(tblid+"_edate");
+					if(o!=null)eDate=(Date) o;
 		}
 		Map parameterMap = request.getParameterMap();
 		String maxrowkey=tblid+"_" + Action.MAX_ROWS.toParam();
@@ -255,13 +270,7 @@ public class FinanceFormManagerListAction extends AbstractAction  {
                 this.bizName = username;
         }
 
-        /*public Short getAccountStatus() {
-			return accountStatus;
-		}
-
-		public void setAccountStatus(Short accountStatus) {
-			this.accountStatus = accountStatus;
-		}*/
+      
 		
         public Date getStartDate() {
 			return startDate;
@@ -291,9 +300,7 @@ public class FinanceFormManagerListAction extends AbstractAction  {
         
         private String buildTable(TableFacade tableFacade) {
         	final HttpServletRequest request = this.getServletRequest();
-    		tableFacade.setColumnProperties("id", "name","level","inited","lastMonthDebitBalance",
-    				"lastMonthCreditBalance","lastDate","debitBalance",
-    				"creditBalance", "operator");
+    		tableFacade.setColumnProperties("id", "businessId","bizDate","amount", "operator");
 
     		HtmlTable table = (HtmlTable) tableFacade.getTable();
     		table.getTableRenderer().setWidth("100%");//475px
@@ -307,63 +314,13 @@ public class FinanceFormManagerListAction extends AbstractAction  {
     		
     		HtmlColumn id = row.getColumn("id");
     		id.setFilterable(false);
-    		id.setTitle("帐号");
+    		id.setTitle("凭证号");
     		//id.setSortable(Boolean.FALSE);
-    		HtmlColumn firstName = row.getColumn("name");
-    		firstName.setTitle("姓名");
+    		HtmlColumn firstName = row.getColumn("businessId");
+    		firstName.setTitle("原始单号");
 
-    		HtmlColumn genderAction = row.getColumn("level");
-    		genderAction.setTitle("科目级别");
-    		genderAction.setSortable(Boolean.FALSE);
-    		genderAction.getCellRenderer().setCellEditor(new CellEditor() {
-    			public Object getValue(Object item, String property, int rowcount) {
-    				Object value = new BasicCellEditor().getValue(item, property,
-    						rowcount);
-    				HtmlBuilder html = new HtmlBuilder();
-    				
-    				if (value != null
-    						&& value instanceof FinanceLevel) {
-    					if(FinanceLevel.ONE.equals(value)){
-    						html.append("一级科目");
-    					}
-    					if(FinanceLevel.TWO.equals(value)){
-    						html.append("二级科目");
-    					}
-    				} else
-    					html.append(value);
-    				return html.toString();
-    			}
-    		});
-    		
-    		genderAction = row.getColumn("inited");
-    		genderAction.setTitle("初始化");
-    		genderAction.setSortable(Boolean.FALSE);
-    		genderAction.getCellRenderer().setCellEditor(new CellEditor() {
-    			public Object getValue(Object item, String property, int rowcount) {
-    				Object value = new BasicCellEditor().getValue(item, property,
-    						rowcount);
-    				HtmlBuilder html = new HtmlBuilder();
-    				
-    				if (value != null
-    						&& value instanceof Number ) {
-    					if(((Number)value).intValue()>0)
-    					html.append("是");
-    					else html.append("否");
-    				}
-    				return html.toString();
-    			}
-    		});
-    		
-    		genderAction = row.getColumn("lastMonthDebitBalance");
-    		genderAction.setTitle("上次<br/>借方余额");
-    		genderAction.setSortable(Boolean.FALSE);
-    		
-    		genderAction = row.getColumn("lastMonthCreditBalance");
-    		genderAction.setTitle("上次<br/>贷方余额");
-    		genderAction.setSortable(Boolean.FALSE);
-    	
-    		genderAction = row.getColumn("lastDate");
-    		genderAction.setTitle("上次日期");
+    		HtmlColumn genderAction = row.getColumn("bizDate");
+    		genderAction.setTitle("记账日期");
     		genderAction.setSortable(Boolean.FALSE);
     		final Format datefm=new SimpleDateFormat("yyyy-MM-dd");
     		genderAction.getCellRenderer().setCellEditor(new CellEditor() {
@@ -380,13 +337,29 @@ public class FinanceFormManagerListAction extends AbstractAction  {
     			}
     		});
     		
-    		genderAction = row.getColumn("debitBalance");
-    		genderAction.setTitle("借方余额");
-    		genderAction.setSortable(Boolean.FALSE);
     		
-    		genderAction = row.getColumn("creditBalance");
-    		genderAction.setTitle("贷方余额");
+    		genderAction = row.getColumn("amount");
+    		genderAction.setTitle("金额");
     		genderAction.setSortable(Boolean.FALSE);
+    		genderAction.getCellRenderer().setCellEditor(new CellEditor() {
+    			public Object getValue(Object item, String property, int rowcount) {
+    				Object value = new BasicCellEditor().getValue(item, property,
+    						rowcount);
+    				HtmlBuilder html = new HtmlBuilder();
+    				
+    				if (value != null
+    						&& value instanceof Number ) {
+    					if(((Number)value).intValue()>0)
+    					html.append(value);
+    					else html.append("0");
+    				}
+    				return html.toString();
+    			}
+    		});
+    		
+    		
+    		
+    		
     		
     		HtmlColumn operatorAction = row.getColumn("operator");
     		operatorAction.setTitle("操作");
@@ -403,7 +376,7 @@ public class FinanceFormManagerListAction extends AbstractAction  {
     				String js = " onclick='return del(\"tableId\",\"" +id + "\");'"; //
     				html.a().append(js).href().quote().append(
     						request.getContextPath()
-    								+ "/deleteTAccount.action?queryUserId=" + id).quote()
+    								+ "/deleteFinanceForm.action?queryFinanceFormId=" + id).quote()
     						.close();
     				/*html.img().src(request.getContextPath() + "/images/pencil.png")
     						.border("none").end();*/
@@ -412,7 +385,7 @@ public class FinanceFormManagerListAction extends AbstractAction  {
     				html.append("&#160;");
     				//<a href="javascript:void(0)" href1="<s:property value="#url"/>"  class="ymPrompt" title="修改用户">修改</a>
     				html.a().href().quote().append("javascript:void(0)").quote().append( " href1=\""+request.getContextPath()
-    								+ "/TAccountEdit.action?accountId=" + id+"\"").styleClass("ymPrompt").title("修改T帐")
+    								+ "/FinanceFormEdit.action?queryFinanceFormId=" + id+"\"").styleClass("ymPrompt").title("修改T帐")
     						.close();
     				html.append("修改");
     				html.aEnd();
