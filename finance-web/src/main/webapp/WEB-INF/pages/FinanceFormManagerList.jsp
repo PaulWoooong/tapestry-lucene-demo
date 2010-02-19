@@ -13,20 +13,22 @@
 <s:form  namespace="/" method="POST" id="queryForm">
 <table width="100%" class="tabg" border="0" cellpadding="3" cellspacing="1" >
 <tr class="tr1">
-<td colspan="10">记账凭证查询</td>
+<td colspan="4">记账凭证查询</td>
 </tr>
   <tr class="tab">
-    <td class="td1">凭证号：</td><td><s:textfield  name="queryAccountId" maxlength="6" size="5"></s:textfield></td>
-    <td class="td1">原始单号：</td><td><s:textfield  name="queryName" size="20"></s:textfield></td>
-    <td class="td1">日期：</td><td><s:select  name="accountStatus" list="#{'':'','0':'无初始化','1':'已初始化'}"></s:select></td>
+    <td class="td1">凭证号：</td><td><s:textfield  name="queryFinanceFormId" maxlength="15" size="12"></s:textfield></td>
+    <td class="td1">原始单号：</td><td><s:textfield  name="queryName" size="12" maxlength="15"></s:textfield></td>
    </tr>
+   <tr class="tab">
+    <td class="td1">日期：</td><td colspan="3"><s:textfield name="startDate" size="12" id="startDate" onclick="showCalendar('startDate')"/> -<s:textfield id="endDate" name="endDate" size="12" onclick="showCalendar('endDate')"/><s:hidden value="" id="calendarValue" name="calendarValue"/></td>
+    </tr>
   <tr class="tab">
-    <td colspan="10" align="center">
+    <td colspan="4" align="center">
     <s:submit cssClass="button" value="查询" method="doQuery" 			id="doQuery"></s:submit>
-    <s:submit cssClass="button" value="初始化T帐" method="doInit" 	id="doInit"></s:submit>
-    <input class="button" type="button" onClick="$('#newUserWin').click();" value="新增T账"/>
+    
+    <input class="button" type="button" onClick="$('#newUserWin').click();" value="新增记账凭证"/>
     <div style="display:none">
-    <a href="javascript:void(0)" id="newUserWin" href1="TAccountEdit.action" class="ymPrompt" title="新增用户">新增T账</a>
+    <a href="javascript:void(0)" id="newUserWin" href1="FinanceFormEdit.action" class="ymPrompt" title="新增记账凭证">新增记账凭证</a>
     
     </div>
     </td>
@@ -43,14 +45,31 @@
  ${user_tbl}
 </div>
 <script type='text/javascript'>
-
+var calendar_DatePicker = new Calendar();
+$(document).ready(function(){
+calendar_DatePicker.create();
+calendar_DatePicker.onchange = function() {
+ field = document.getElementById(document.getElementById("calendarValue").value);
+ var value = this.formatDate();
+  if (field.value != value) {
+    field.value = value;
+    if (field.onchange) {
+      field.onchange();
+    }
+  }
+}
+});
+function showCalendar(v1){
+	document.getElementById("calendarValue").value=v1;
+	calendar_DatePicker.toggle(document.getElementById(v1));
+}
 
 function onInvokeAction(id) {
     $.jmesa.setExportToLimit(id, '');
 	
     var parameterString = $.jmesa.createParameterStringForLimit(id);
     
-    $.get('${pageContext.request.contextPath}/pgTAccountList.action?ajax=true&' + parameterString, function(data) {
+    $.get('${pageContext.request.contextPath}/pgFinanceFormList.action?ajax=true&' + parameterString, function(data) {
     $("#employee_container").html(data);
     $('.ymPrompt').each(function (){
 		$(this).click(function(){

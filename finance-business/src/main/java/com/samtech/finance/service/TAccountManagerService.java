@@ -28,6 +28,7 @@ public interface TAccountManagerService {
 	 * @return
 	 */
 	List<Account> findTAccountStatus(String accName, Integer accountId, Short status);
+	List<Account> findTAccountlike(String accName);
 	/**
 	 * 
 	 * @param qid

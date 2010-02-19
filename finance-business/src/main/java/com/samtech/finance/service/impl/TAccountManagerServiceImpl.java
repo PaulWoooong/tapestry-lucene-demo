@@ -175,12 +175,12 @@ public class TAccountManagerServiceImpl extends AbstractEntityService implements
 							BigDecimal debitBalance = acc.getDebitBalance();
 							if (debitBalance != null)
 								debits += debitBalance.doubleValue();
-							if (acc.getInited() < 1) {
+							/*if (acc.getInited() < 1) {
 								FinanceRuleException ex = new FinanceRuleException();
 								ex
 										.setErrorCode(FinanceRuleException.NO_BALANCE);
 								return ex;
-							}
+							}*/
 						}
 						if (debits != credits) {
 							FinanceRuleException ex = new FinanceRuleException();
@@ -324,6 +324,49 @@ public class TAccountManagerServiceImpl extends AbstractEntityService implements
 		
 
 	
+	}
+
+	public List<Account> findTAccountlike(final String accName) {
+
+		Object o = this.getJpaTemplate().execute(new JpaCallback() {
+
+			@SuppressWarnings("unchecked")
+			public Object doInJpa(EntityManager em) throws PersistenceException {
+				String ql = "select o from "
+						+ TAccount.class.getName() + " as o ";
+				StringBuffer buf=new StringBuffer();
+				if(accName!=null){
+					if(buf.length()>0) buf.append(" and ");
+					buf.append("(o.name like :p_name");
+					buf.append(" or convert(o.id,char(6)) like :p_id )");
+				}
+				
+				if(buf.length()>0)ql+=" where "+buf.toString();
+				Query q = em.createQuery(ql);
+				if(accName!=null){
+					q.setParameter("p_name", accName.trim()+"%");
+					q.setParameter("p_id", accName.trim()+"%");
+				}
+				
+				List<Account> results=new ArrayList<Account>(20);
+				List<TAccount> ls = q.getResultList();
+				if(ls!=null && !ls.isEmpty()){
+					for (TAccount account : ls) {
+						Account a=new Account();
+						a.setId(account.getId());
+						a.setInited(account.getInited());
+						a.setLevel(account.getLevel());
+						a.setName(account.getName());
+						a.setParentId(account.getParentId());
+						results.add(a);
+					}
+				}
+				return results;
+			}
+		}, true);
+
+		return (List<Account>) o;
+
 	}
 
 }

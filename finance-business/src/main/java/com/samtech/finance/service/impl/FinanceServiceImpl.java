@@ -55,7 +55,7 @@ private static Integer synTax=new Integer(2);
 
 	public void pendingBizForm(final FinanceForms form)
 			throws FinanceRuleException {
-		this.getJpaTemplate().execute(new JpaCallback() {
+		Object obj = this.getJpaTemplate().execute(new JpaCallback() {
 			
 			@SuppressWarnings("unchecked")
 			public Object doInJpa(EntityManager em) throws PersistenceException {
@@ -168,7 +168,8 @@ private static Integer synTax=new Integer(2);
 						dform.setBusinessId(form.getBusinessId());
 						dform.setContext(form.getContext());
 						dform.setStatus(form.getStatus());
-						em.persist(dform);
+						em.merge(dform);
+						//em.persist(dform);
 					}else{
 						dform.setAmount(form.getAmount());
 						dform.setBizDate(form.getBizDate());
@@ -180,7 +181,8 @@ private static Integer synTax=new Integer(2);
 					for (RunningAccount item : items) {
 						item.setBusinessId(dform.getId());
 						if(item.getId()==null){
-							em.persist(item);
+							em.merge(item);
+							//em.persist(item);
 						}else{
 							em.merge(item);
 						}
@@ -196,7 +198,33 @@ private static Integer synTax=new Integer(2);
 
 			
 		}, true);
-		
+		if(obj!=null && obj instanceof Integer){
+			if(FINANCE_RULE_ERROR.equals(obj)){
+				FinanceRuleException ex = new FinanceRuleException("FINANCE_RULE_ERROR");
+				ex.setErrorCode(FinanceRuleException.UNKNOW);
+				throw ex;
+			}
+			if(STATUS_ERROR.equals(obj)){
+				FinanceRuleException ex = new FinanceRuleException("STATUS_ERROR");
+				ex.setErrorCode(FinanceRuleException.UNKNOW);
+				throw ex;
+			}
+			if(BALANCE_ERROR.equals(obj)){
+				FinanceRuleException ex = new FinanceRuleException("BALANCE_ERROR");
+				ex.setErrorCode(FinanceRuleException.NO_BALANCE);
+				throw ex;
+			}
+			if(FREEZE_ERROR.equals(obj)){
+				FinanceRuleException ex = new FinanceRuleException("FREEZE_ERROR");
+				ex.setErrorCode(FinanceRuleException.FREEZE_BALANCE);
+				throw ex;
+			}
+			
+				FinanceRuleException ex = new FinanceRuleException(obj.toString());
+				ex.setErrorCode(FinanceRuleException.UNKNOW);
+				throw ex;
+			
+		}
 	}
 
 	public void saveBizFinanceRule(final BizFinanceRule r) {
@@ -308,7 +336,7 @@ private static Integer synTax=new Integer(2);
 			Date sdate = cld.getTime();
 			cld.add(Calendar.MONTH, 1);
 			Date edate=cld.getTime();
-		 	Query query= em.createQuery( "select o from "+TAccountHistory.class.getName()+" as o where o.initDate>=:p_sdate and o.initDate<p_edate ");
+		 	Query query= em.createQuery( "select o from "+TAccountHistory.class.getName()+" as o where o.initDate>=:p_sdate and o.initDate<:p_edate ");
 		 	query.setParameter("p_sdate", sdate,TemporalType.DATE).setParameter("p_edate", edate,TemporalType.DATE);
 		 	List resultList = query.getResultList();
 		 	if(resultList!=null && !resultList.isEmpty())return true;
@@ -347,7 +375,7 @@ private static Integer synTax=new Integer(2);
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	@SuppressWarnings({ "unchecked", "unused" })
@@ -500,38 +528,38 @@ private static Integer synTax=new Integer(2);
 					 fm = convertToDomain(f);
 					 results.add(fm);
 				}
-				
-				Query q = em.createQuery("select o from "+RunningAccount.class.getName()+" as o where o.businessId in( :p_id )");
-				q.setParameter("p_id", ls);
-				List<RunningAccount> lst = q.getResultList();
-				if(lst!=null && !lst.isEmpty()){
-					for (RunningAccount r : lst) {
-						BalanceItem item = convertToBalanceItem(r);
-						String businessId = r.getBusinessId();
-						for (FinanceForms f1 : results) {
-							if(f1.getId().equals(r.getBusinessId())){
-								BalanceDirect direct = r.getDirect();
-								List<BalanceItem> debits = f1.getDebits();
-								List<BalanceItem> credits = f1.getCredits();
-								if(BalanceDirect.DEBIT.equals(direct)){
-									if(debits==null){
-										debits=new ArrayList<BalanceItem>();
-										f1.setDebits(debits);
+				if(!ls.isEmpty()){
+					Query q = em.createQuery("select o from "+RunningAccount.class.getName()+" as o where o.businessId in( :p_id )");
+					q.setParameter("p_id", ls);
+					List<RunningAccount> lst = q.getResultList();
+					if(lst!=null && !lst.isEmpty()){
+						for (RunningAccount r : lst) {
+							BalanceItem item = convertToBalanceItem(r);
+							String businessId = r.getBusinessId();
+							for (FinanceForms f1 : results) {
+								if(f1.getId().equals(r.getBusinessId())){
+									BalanceDirect direct = r.getDirect();
+									List<BalanceItem> debits = f1.getDebits();
+									List<BalanceItem> credits = f1.getCredits();
+									if(BalanceDirect.DEBIT.equals(direct)){
+										if(debits==null){
+											debits=new ArrayList<BalanceItem>();
+											f1.setDebits(debits);
+										}
+										debits.add(item);
 									}
-									debits.add(item);
-								}
-								if(BalanceDirect.CREDIT.equals(direct)){
-									if(credits==null){
-										credits=new ArrayList<BalanceItem>();
-										f1.setCredits(credits);
+									if(BalanceDirect.CREDIT.equals(direct)){
+										if(credits==null){
+											credits=new ArrayList<BalanceItem>();
+											f1.setCredits(credits);
+										}
+										credits.add(item);
 									}
-									debits.add(item);
 								}
 							}
 						}
 					}
 				}
-				
 				
 				return results;
 			}
