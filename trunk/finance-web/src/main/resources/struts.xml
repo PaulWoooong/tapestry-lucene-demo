@@ -154,6 +154,14 @@
 			<result name="success" type="redirectAction">
 				<param name="actionName">FinanceFormList</param>
 			</result>
+			<result name="input">/WEB-INF/pages/FinanceFormManagerList.jsp</result>
+		</action>
+		<action name="FinanceFormExport" class="com.samtech.finance.web.action.FinanceFormManagerListAction" method="exportExcel">
+			<result name="success" type="stream">
+				<param name="contentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelInputStream</param>
+				<param name="bufferSize">1024</param>
+			</result>
 		</action>
 		<action name="FinanceFormEdit"
 			class="com.samtech.finance.web.action.FinanceFormEditAction">

@@ -41,9 +41,15 @@
 <s:actionerror /> 
 <s:actionmessage/>
 <br/>
+<s:form namespace="/" method="POST" id="printForm" action="FinanceFormExport">
 <div id="employee_container">
  ${user_tbl}
 </div>
+<s:if test="showTable">
+<input type="checkbox" class="checkbox" name="checkbox" value="checkbox"  onclick="javascript:allSelect(this);">全选&nbsp;&nbsp;
+<input type="button" value="导出Excel" onclick="checkselect()"/>
+</s:if>
+</s:form>
 <script type='text/javascript'>
 var calendar_DatePicker = new Calendar();
 $(document).ready(function(){
@@ -63,6 +69,48 @@ function showCalendar(v1){
 	document.getElementById("calendarValue").value=v1;
 	calendar_DatePicker.toggle(document.getElementById(v1));
 }
+function checkselect(){
+	 var itemArr = document.getElementsByName("id_check");
+	    if(!itemArr){
+	      return;
+	    }
+	    var found=false;
+	    for(var i=0;i<itemArr.length;i++){
+	        if(!itemArr[i].disabled){
+	          if(itemArr[i].checked){
+		          found=true ;
+		          break;
+	        	}
+	        }
+	      }
+	      if(found){
+	    	  var form1=document.getElementById("printForm");
+	    	  form1.submit();
+	      }else{
+		      alert("请选择一个导出");
+	      }
+}
+function allSelect(obj){
+    var itemArr = document.getElementsByName("id_check");
+    if(!itemArr){
+      return;
+    }
+    if(obj.checked){
+      for(var i=0;i<itemArr.length;i++){
+        if(!itemArr[i].disabled){
+          itemArr[i].checked = true;
+        }
+        
+      }
+    }else{
+      for(var i=0;i<itemArr.length;i++){
+        if(!itemArr[i].disabled){
+          itemArr[i].checked = false;
+        }
+        
+      }
+    }
+  }
 
 function onInvokeAction(id) {
     $.jmesa.setExportToLimit(id, '');
