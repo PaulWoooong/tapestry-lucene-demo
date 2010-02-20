@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import jxl.Cell;
 import jxl.CellFeatures;
 import jxl.CellType;
+import jxl.CellView;
 import jxl.Range;
 import jxl.Sheet;
 import jxl.SheetSettings;
@@ -550,11 +551,15 @@ public class FinanceFormManagerListAction extends AbstractAction {
 					CellFormat cellFormat=null;
 					WritableCellFeatures features=null;
 					CellType type=null;
+					CellView paramCellView=null;
 					for(int k=0;k<15;k++){
-						Cell[] cells = sheet.getRow(i*17+k);
+						paramCellView = sheet.getRowView(i*17+k);
+						//Cell[] cells = sheet.getRow(i*17+k);
 						//Cell[] targets = sheet.getRow((i+1)*17+k+1);
-						for(int kk=0;kk<30 && kk<cells.length;kk++){
-							cell=cells[kk];
+						sheet.setRowView((i+1)*17+k, paramCellView);
+						for(int kk=0;kk<30 ;kk++){
+							cell=sheet.getCell(kk, i*17+k);
+							if(cell==null)continue;
 							type = cell.getType();
 							column = cell.getColumn();
 							row = cell.getRow();
