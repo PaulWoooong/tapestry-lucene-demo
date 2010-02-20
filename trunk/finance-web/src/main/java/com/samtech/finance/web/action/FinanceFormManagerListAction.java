@@ -10,6 +10,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,6 @@ import jxl.CellType;
 import jxl.CellView;
 import jxl.Range;
 import jxl.Sheet;
-import jxl.SheetSettings;
 import jxl.Workbook;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
@@ -54,9 +54,11 @@ import org.jmesa.view.html.event.MouseRowEvent;
 import com.samtech.common.domain.IUser;
 import com.samtech.finance.FinanceRuleException;
 import com.samtech.finance.database.BalanceDirect;
+import com.samtech.finance.domain.Account;
 import com.samtech.finance.domain.BalanceItem;
 import com.samtech.finance.domain.FinanceForms;
 import com.samtech.finance.service.FinanceService;
+import com.samtech.finance.service.TAccountManagerService;
 
 public class FinanceFormManagerListAction extends AbstractAction {
 
@@ -71,6 +73,14 @@ public class FinanceFormManagerListAction extends AbstractAction {
 	private InputStream pgtableResult;
 	private InputStream excelInputStream;
 
+	private static String tblid = "user_tbl";
+	private List<FinanceForms> accs;
+	
+	private Map<Integer,Account> acc_map=new HashMap<Integer, Account>(20);
+	
+	private FinanceService financeManager;
+	private TAccountManagerService accountManager;
+	private boolean showtable;
 	// private Short accountStatus;
 
 	public InputStream getExcelInputStream() {
@@ -81,11 +91,6 @@ public class FinanceFormManagerListAction extends AbstractAction {
 		this.excelInputStream = excelInputStream;
 	}
 
-	private static String tblid = "user_tbl";
-	private List<FinanceForms> accs;
-
-	private FinanceService financeManager;
-	private boolean showtable;
 
 	private void setPgInputStream(InputStream in) {
 		pgtableResult = in;
@@ -532,6 +537,7 @@ public class FinanceFormManagerListAction extends AbstractAction {
 		if(settings!=null){
 			sheet.get
 		}*/
+		
 		if (dataList != null && !dataList.isEmpty()) {
 			Format fm=new SimpleDateFormat("yyyy年MM月dd日");
 			int rows=15;//skip 1 row
@@ -734,10 +740,21 @@ public class FinanceFormManagerListAction extends AbstractAction {
 			item= items.get(k);
 			Cell cell = sheet.getCell(1, startrow+k);
 			cellFormat =cell.getCellFormat();
+			String disp=item.getFinanceId().toString();
+			if(acc_map.containsKey(item.getFinanceId())){
+				Account account = acc_map.get(item.getFinanceId());
+				disp=account.getId().toString()+" "+account.getName();
+			}else{
+				Account account = this.accountManager.getAccountById(item.getFinanceId());
+				if(account!=null){
+					acc_map.put(account.getId(), account);
+					disp=account.getId().toString()+" "+account.getName();
+				}
+			}
 			if(cellFormat!=null)
-				label=new Label(1,startrow+k,item.getFinanceId().toString(),cellFormat);
+				label=new Label(1,startrow+k,disp,cellFormat);
 			else
-				label=new Label(1,startrow+k,item.getFinanceId().toString());
+				label=new Label(1,startrow+k,disp);
 			sheet.addCell(label);
 			BalanceDirect direct = item.getDirect();
 			int j=0;
@@ -784,4 +801,7 @@ public class FinanceFormManagerListAction extends AbstractAction {
 		this.financeManager = manager;
 	}
 
+	 public void setAccountManager(TAccountManagerService manager){
+     	this.accountManager=manager;
+     }
 }
