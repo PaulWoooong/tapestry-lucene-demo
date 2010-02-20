@@ -499,7 +499,7 @@ private static Integer synTax=new Integer(2);
 				}
 				if(endDate!=null){
 					if(buf.length()>0)buf.append(" and ");
-					buf.append(" o.bizDate>=:p_edate");
+					buf.append(" o.bizDate<=:p_edate");
 				}
 				
 				Query query = em.createQuery(ql+(buf.length()>0?(" where "+buf.toString()):""));
