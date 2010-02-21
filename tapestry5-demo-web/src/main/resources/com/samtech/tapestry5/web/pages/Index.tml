@@ -1,0 +1,47 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:a="tapestry-library:ajax" xmlns:p="tapestry:parameter">
+
+  <head>
+      <title>tapestry demo </title>
+  </head>
+  <body>
+ 	<h1>hello world</h1>
+ 	<form t:id="form" t:type="form">
+ 	<t:errors/><br/>
+ 		<span t:id="fltDate1" t:type="Label" t:for="fltDate" /><input t:id="fltDate"/>
+ 		<span t:id="tierLabel" t:type="Label" t:for="tier"/>
+  		<input t:type="select" t:id="tier" t:value="ctier" t:blankOption="never" t:model="literal:ALL=All,90=VVIP,80=VIP,68=CIP,50=LIP"/>
+ 		
+ 		<input type="submit" t:id="submitButton" t:type="Submit"/>
+ 	</form>
+ 	<span t:type="If" test="isComputeFlag">
+ 		<table t:id="tables">
+ 		 <p:customerNamecell>
+ 		    <t:pagelink page="ticket/customerticket" context="ticketParams">${item.customerName}</t:pagelink>
+ 		 </p:customerNamecell>
+ 		 
+ 		  <p:editcell>
+ 		    <t:pagelink page="ticket/customerticket" context="ticketParams">${message:edit-label}</t:pagelink>
+ 		 </p:editcell>
+ 		 <p:certificateIdcell>
+ 		  <span t:type="If" test="ognl:@org.apache.commons.lang.StringUtils@isNotBlank(item.certificateId)">
+ 		     ${message:yes-label}
+ 		  </span>
+ 		  <span t:type="If" test="ognl:@org.apache.commons.lang.StringUtils@isBlank(item.certificateId)">
+ 		     ${message:no-label}
+ 		  </span>
+ 		 </p:certificateIdcell>
+ 		 <p:transfercell>
+ 		  <span t:type="If" test="item.transfer">
+ 		    ${message:yes}
+ 		  </span>
+ 		 </p:transfercell>
+ 		 <p:arvPortcell>
+ 		 	${ognl:showTime(item.arvPort)}
+ 		 </p:arvPortcell>
+ 		 <p:leavPortcell>
+ 		 	${ognl:showTime(item.arvPort)}
+ 		 </p:leavPortcell>
+ 		</table>
+ 	</span>
+  </body>
+</html>
