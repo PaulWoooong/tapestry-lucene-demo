@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.samtech.finance.FinanceRuleException;
+import com.samtech.finance.database.AccountStatus;
 import com.samtech.finance.domain.BizFinanceRule;
 import com.samtech.finance.domain.FinanceForms;
+import com.samtech.finance.domain.RunningAccountHistory;
 
 public interface FinanceService {
 	/**
@@ -52,4 +54,8 @@ public interface FinanceService {
 	 */
 	public List<FinanceForms> findFinanceForms(String financeformId, String bizId,
 			Date startDate, Date endDate);
+
+	public List<RunningAccountHistory> findRunningAccount(String financeformId, Integer accountId,
+			String content,List<AccountStatus> statuses, Date startDate, Date endDate);
+
 }
