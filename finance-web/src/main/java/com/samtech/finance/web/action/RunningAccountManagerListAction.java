@@ -1,8 +1,11 @@
 package com.samtech.finance.web.action;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +15,25 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import jxl.Cell;
+import jxl.CellFeatures;
+import jxl.CellType;
+import jxl.CellView;
+import jxl.Range;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.format.Border;
+import jxl.format.BorderLineStyle;
+import jxl.format.CellFormat;
+import jxl.read.biff.BiffException;
+import jxl.write.Label;
+import jxl.write.WritableCell;
+import jxl.write.WritableCellFeatures;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 import org.apache.commons.lang.StringUtils;
 import org.jmesa.facade.TableFacade;
@@ -31,6 +53,8 @@ import org.jmesa.view.html.event.MouseRowEvent;
 import com.samtech.common.domain.IUser;
 import com.samtech.finance.database.AccountStatus;
 import com.samtech.finance.database.BalanceDirect;
+import com.samtech.finance.domain.BalanceItem;
+import com.samtech.finance.domain.FinanceForms;
 import com.samtech.finance.domain.RunningAccountHistory;
 import com.samtech.finance.service.FinanceService;
 
@@ -49,11 +73,11 @@ public class RunningAccountManagerListAction extends AbstractAction  {
         private Date startDate,endDate;
         
         private InputStream pgtableResult;
-        //private Short accountStatus; 
+        private InputStream excelInputStream;
         
 		private static String tblid = "racc_tbl";
         private List<RunningAccountHistory> accs;
-        
+        private boolean showtable;
         //private TAccountManagerService accountManager;
         private FinanceService financeManager;		
 		
@@ -74,6 +98,7 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 			if(fieldErrors!=null && !fieldErrors.isEmpty()){
 				return INPUT;
 			}
+			showtable=false;
     		//String tblid = "racc_tbl";
     		HttpServletRequest request = this.getServletRequest();
     		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
@@ -104,6 +129,7 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     		if(accs==null || accs.isEmpty()){
     			this.addActionError("查询没有记录！");
     		}else{
+    			showtable=true;
     		final String buildTable = buildTable(tableFacade);
 			request.setAttribute("user_tbl", buildTable);
     		}
@@ -172,7 +198,7 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
 		
 		tableFacade.setStateAttr("restore");
-		
+		showtable=true;
 		initTable(tableFacade, qname,qfid,accountId,sDate,eDate);
 		final String buildTable = buildTable(tableFacade);
 		ByteArrayInputStream inputStream = null;
@@ -183,6 +209,60 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 		}
 		this.setPgInputStream(inputStream);
 		return "pgresult";
+	}
+public String exportExcel(){
+		
+		List<RunningAccountHistory> dataList=null;
+		HttpServletRequest request = this.getServletRequest();
+		Integer accountId=null;
+		
+		String qname = null;
+		String qfid =null;
+		Date sDate = null, eDate = null;
+		HttpSession session = request.getSession();
+		if (session != null) {
+				qname = (String) session.getAttribute(tblid + "_q_name");
+				accountId = (Integer) session.getAttribute(tblid + "_q_id");
+				
+				session.setAttribute(tblid + "_q_name",this.queryName);
+				
+				
+				qfid=(String)session.getAttribute(tblid + "_q_fid");
+				
+				Object o = session.getAttribute(tblid + "_sdate");
+				if (o != null)
+					sDate = (Date) o;
+				o = session.getAttribute(tblid + "_edate");
+				if (o != null)
+					eDate = (Date) o;
+				
+		}
+		
+		try {
+			
+			dataList =this.financeManager.findRunningAccount(qfid, accountId, qname, null, sDate, eDate);
+			
+			
+			if(dataList==null || dataList.isEmpty())return INPUT;
+			this.printExcel(dataList);
+		} catch (RowsExceededException e) {
+			
+			e.printStackTrace();
+			return INPUT;
+		} catch (BiffException e) {
+			
+			e.printStackTrace();
+			return INPUT;
+		} catch (WriteException e) {
+			
+			e.printStackTrace();
+			return INPUT;
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			return INPUT;
+		}
+		return SUCCESS;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -214,7 +294,88 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 			tableFacade.setItems(rs);
 		}
 	}
-    
+	private String getExcelFileName() {
+		return "financeforms.xls";
+	}
+	private void printExcel(List<RunningAccountHistory> dataList) throws BiffException, IOException, RowsExceededException, WriteException {
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		
+		
+		WritableWorkbook workbook = Workbook.createWorkbook(baos);
+		String version = Workbook.getVersion();
+		System.out.println("version="+version);
+		excelInputStream=null;
+		
+		// 创建工作表实例
+		WritableSheet sheet = workbook.createSheet("sss",0);
+		// HSSFSheet sheet = workbook.createSheet("sxtaExcel");
+		// 设置列宽
+		
+		// 获取样式
+		/*SheetSettings settings = sheet.getSettings();
+		if(settings!=null){
+			sheet.get
+		}*/
+		
+		if (dataList != null && !dataList.isEmpty()) {
+			Format fm=new SimpleDateFormat("yyyy年MM月dd日");
+			int rows=15;//skip 1 row
+			// 给excel填充数据
+			boolean isMerged=false;
+			Range[] orgin_mergedCells = sheet.getMergedCells();
+			if(orgin_mergedCells!=null && orgin_mergedCells.length>0){
+				isMerged=true;
+			}
+			for (int i = 0; i < dataList.size(); i++) {
+				// 将dataList里面的数据取出来
+				RunningAccountHistory form = dataList.get(i);
+				
+				WritableCell cell = sheet.getWritableCell(1, i*17+1);//i*17
+				System.out.println("col="+cell.getColumn()+" ;row="+cell.getRow());
+				String contents = cell.getContents();
+				System.out.println("contents"+contents);
+				CellFormat cellFormat = cell.getCellFormat();
+				
+				Label label =null;
+				if(cellFormat!=null)
+					label=new Label(1,i*17+1,fm.format(form.getBizDate()),cellFormat);
+				else
+					label=new Label(1,i*17+1,fm.format(form.getBizDate()));
+				
+				sheet.addCell(label);
+				cell = sheet.getWritableCell(0, i*17+4);
+				cellFormat = cell.getCellFormat();
+				CellFeatures cellFeatures = cell.getCellFeatures();
+				if(cellFormat!=null)
+					label=new Label(0,i*17+4,form.getContext(),cellFormat);
+				else
+					label=new Label(0,i*17+4,form.getContext());
+				sheet.addCell(label);
+				int jj=i*17+4;
+				
+				
+			}
+			String fileNames = getExcelFileName();
+			this
+					.getServletResponse()
+					.addHeader(
+							"Content-disposition",
+							"attachment;filename=\""
+									+ new String(fileNames.getBytes(), "ISO-8859-1")
+									+ "\"");
+
+			//ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			workbook.write();
+			baos.flush();
+			workbook.close();
+			byte[] aa = baos.toByteArray();
+			excelInputStream = new ByteArrayInputStream(aa, 0, aa.length);
+
+		}
+		
+	}
 
 		public boolean isLogined() {
                 return logined;
@@ -263,7 +424,18 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 		public void setEndDate(Date endDate) {
 			this.endDate = endDate;
 		}
+		
+		public InputStream getExcelInputStream() {
+			return excelInputStream;
+		}
 
+		public void setExcelInputStream(InputStream excelInputStream) {
+			this.excelInputStream = excelInputStream;
+		}
+
+		public boolean isShowTable(){
+			return showtable;
+		}
 		@Override
         public void prepare() throws Exception {
         

@@ -40,9 +40,14 @@
 <s:actionerror /> 
 <s:actionmessage/>
 <br/>
+<s:form namespace="/" method="POST" id="printForm" action="FinanceFormExport">
 <div id="employee_container">
  ${user_tbl}
 </div>
+<s:if test="showTable">
+<input type="button" value="导出Excel" />
+</s:if>
+</s:form>
 <script type='text/javascript'>
 
 
