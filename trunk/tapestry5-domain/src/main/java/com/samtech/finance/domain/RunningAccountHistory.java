@@ -16,6 +16,7 @@ public class RunningAccountHistory implements Serializable{
 	private Integer id;
 	private String financeId;
 	private Integer accountId;
+	private String accountName;
 	private BigDecimal amount;
 	private BalanceDirect direct;
 	private String companyId;
@@ -41,6 +42,13 @@ public class RunningAccountHistory implements Serializable{
 	}
 	public void setAccountId(Integer accountId) {
 		this.accountId = accountId;
+	}
+	
+	public String getAccountName() {
+		return accountName;
+	}
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 	public BigDecimal getAmount() {
 		return amount;

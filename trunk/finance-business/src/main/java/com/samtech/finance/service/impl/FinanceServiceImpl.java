@@ -617,9 +617,9 @@ private static Integer synTax=new Integer(2);
 			
 			
 			public Object doInJpa(EntityManager em) throws PersistenceException {
-				String ql="select o from "+RunningAccount.class.getName()+" as o ";
+				String ql="select o from "+RunningAccount.class.getName()+" as o ," +FinanceForm.class.getName()+" as d";
 				StringBuffer buf=new StringBuffer();
-				
+				buf.append("o.businessId = d.id ");
 				if(StringUtils.isNotBlank(financeformId)){
 					if(buf.length()>0)buf.append(" and ");
 					buf.append("  o.businessId=:p_id");
@@ -629,11 +629,11 @@ private static Integer synTax=new Integer(2);
 					buf.append("  o.accountId=:p_bid");
 				}
 				StringBuffer subsql=new StringBuffer(20);
-				boolean hassub=false;
-				if(startDate!=null || endDate!=null || StringUtils.isNotBlank(content) || (statuses!=null && !statuses.isEmpty())){
-					buf.append(" and o.businessId in (select d.id from where ");
+				//boolean hassub=false;
+				/*if(startDate!=null || endDate!=null || StringUtils.isNotBlank(content) || (statuses!=null && !statuses.isEmpty())){
+					buf.append(" and o.businessId in (select d.id from "  where ");
 					hassub=true;
-				}
+				}*/
 				if(startDate!=null){
 					if(subsql.length()>0)subsql.append(" and ");
 					subsql.append(" d.bizDate>=:p_sdate");
@@ -652,8 +652,8 @@ private static Integer synTax=new Integer(2);
 					subsql.append(" d.status in( :p_status )");
 					
 				}
-				if(hassub){
-					buf.append(subsql.toString()+")");
+				if(subsql.length()>0){
+					buf.append(" and "+subsql.toString()+"");
 				}
 				Query query = em.createQuery(ql+(buf.length()>0?(" where "+buf.toString()):""));
 				if(StringUtils.isNotBlank(financeformId)){
@@ -682,8 +682,11 @@ private static Integer synTax=new Integer(2);
 				List<String> ls=new ArrayList<String>(25);
 				List<RunningAccountHistory> results=new ArrayList<RunningAccountHistory>(25);
 				RunningAccountHistory ra=null;
+				List<Integer> accountIds=new ArrayList<Integer>(5);
 				for (RunningAccount f : resultList) {
 					ls.add(f.getBusinessId());
+					if(!accountIds.contains(f.getAccountId()))
+						accountIds.add(f.getAccountId());
 					ra = convertToDomain(f);
 					 results.add(ra);
 				}
@@ -705,7 +708,22 @@ private static Integer synTax=new Integer(2);
 						}
 					}
 				}
-				
+				if(!accountIds.isEmpty()){
+					Query q = em.createQuery("select o from "+TAccount.class.getName()+" as o where o.id in( :p_id )");
+					q.setParameter("p_id", accountIds);
+					List<TAccount> lst = q.getResultList();
+					if(lst!=null && !lst.isEmpty()){
+						for (RunningAccountHistory f1 : results) {
+							for (TAccount r : lst) {
+								
+								if(f1.getAccountId().equals(r.getId())){
+									f1.setAccountName(r.getName());
+									break;
+								}
+							}
+						}
+					}
+				}
 				return results;
 			}
 

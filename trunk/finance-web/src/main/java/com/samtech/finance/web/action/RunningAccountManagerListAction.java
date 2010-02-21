@@ -29,10 +29,10 @@ import org.jmesa.view.html.component.HtmlTable;
 import org.jmesa.view.html.event.MouseRowEvent;
 
 import com.samtech.common.domain.IUser;
-import com.samtech.finance.FinanceRuleException;
-import com.samtech.finance.database.FinanceLevel;
-import com.samtech.finance.domain.Account;
-import com.samtech.finance.service.TAccountManagerService;
+import com.samtech.finance.database.AccountStatus;
+import com.samtech.finance.database.BalanceDirect;
+import com.samtech.finance.domain.RunningAccountHistory;
+import com.samtech.finance.service.FinanceService;
 
 
 
@@ -49,13 +49,13 @@ public class RunningAccountManagerListAction extends AbstractAction  {
         private Date startDate,endDate;
         
         private InputStream pgtableResult;
-        private Short accountStatus; 
+        //private Short accountStatus; 
         
-		private static String tblid = "user_tbl";
-        private List<Account> accs;
+		private static String tblid = "racc_tbl";
+        private List<RunningAccountHistory> accs;
         
-        private TAccountManagerService accountManager;
-        		
+        //private TAccountManagerService accountManager;
+        private FinanceService financeManager;		
 		
 		
 		private void setPgInputStream(InputStream in) {
@@ -74,7 +74,7 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 			if(fieldErrors!=null && !fieldErrors.isEmpty()){
 				return INPUT;
 			}
-    		String tblid = "user_tbl";
+    		//String tblid = "racc_tbl";
     		HttpServletRequest request = this.getServletRequest();
     		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
     		
@@ -83,17 +83,24 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     		HttpSession session = request.getSession();
     		if (session != null) {
     				session.setAttribute(tblid + "_q_name",this.queryName);
-    				//session.setAttribute(tblid + "_q_id",this.queryAccountId);
-    				session.setAttribute(tblid + "_q_status",this.accountStatus);//status = (Short) session.getAttribute(tblid + "_q_status");
+    				if(this.accountId!=null)
+    				session.setAttribute(tblid + "_q_id",this.accountId);
+    				session.setAttribute(tblid + "_q_fid",this.queryFinanceFormId);
+    				if (startDate != null) {
+    					session.setAttribute(tblid + "_sdate", startDate);
+    				}
+    				if (endDate != null) {
+    					session.setAttribute(tblid + "_edate", endDate);
+    				}
     		}
     		isMaxRow=true;
     		String qname=this.queryName;
-    		Integer qid=null;//this.queryAccountId;
-    		Short status=accountStatus;
+    		Integer qid=accountId;//this.queryAccountId;
+    		
     		tableFacade.setStateAttr("restore");
     		tableFacade.setMaxRows(10);		
     		tableFacade.setMaxRowsIncrements(10, 20, 50);    
-    		initTable(tableFacade, qname, qid,status);
+    		initTable(tableFacade, qname, this.queryFinanceFormId,qid,startDate,endDate);
     		if(accs==null || accs.isEmpty()){
     			this.addActionError("查询没有记录！");
     		}else{
@@ -103,28 +110,15 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     		return SUCCESS;
     	}
     	
-    	//public String doDelete(){}
     	
-    	public String doInit(){
-    		
-    		try {
-				this.accountManager.initAccount();
-				this.addActionMessage("初始化成功");
-				return SUCCESS;
-			} catch (FinanceRuleException e) {
-				this.addActionError(e.getMessage());
-				e.printStackTrace();
-				return ERROR;
-			}
-    	}
+    	
+    	
+
+	
 
 	protected void checkError(){
       
- 	   /*if(StringUtils.isBlank( id) && StringUtils.isBlank( qname) ){
- 		   this.addFieldError("queryName",  "请输入名字");
- 		   this.addFieldError("queryUserId",  "请输入登录ID");
- 		   
- 	   }*/
+ 	  
     }
 	
 	boolean isMaxRow=false;
@@ -132,26 +126,32 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 	public String paging() {
 		HttpServletRequest request = this.getServletRequest();
 		Integer accountId=null;
-		Short status=null;
-		String qname = request.getParameter(tblid + "_q_name");
-		String qid = request.getParameter(tblid + "_q_id");
-		String pst = request.getParameter(tblid + "_q_status");
-		if(StringUtils.isNotBlank(qid))
-			accountId=Integer.valueOf(qid);
-		if(StringUtils.isNotBlank(pst))
-			status=Short.valueOf(pst);
 		
+		String qname = null;
+		String qfid =null;
+		Date sDate = null, eDate = null;
 		HttpSession session = request.getSession();
 		if (session != null) {
 				qname = (String) session.getAttribute(tblid + "_q_name");
 				accountId = (Integer) session.getAttribute(tblid + "_q_id");
-				status = (Short) session.getAttribute(tblid + "_q_status");
+				
+				session.setAttribute(tblid + "_q_name",this.queryName);
+				
+				
+				qfid=(String)session.getAttribute(tblid + "_q_fid");
+				
+				Object o = session.getAttribute(tblid + "_sdate");
+				if (o != null)
+					sDate = (Date) o;
+				o = session.getAttribute(tblid + "_edate");
+				if (o != null)
+					eDate = (Date) o;
 				
 		}
 		Map parameterMap = request.getParameterMap();
 		String maxrowkey=tblid+"_" + Action.MAX_ROWS.toParam();
 		String pagekey=tblid+"_" + Action.PAGE.toParam();
-		String sortkey=tblid+"_" + Action.SORT.toParam();
+		//String sortkey=tblid+"_" + Action.SORT.toParam();
 		
 		if(parameterMap.containsKey(maxrowkey)){
 			Object object = parameterMap.get(maxrowkey);
@@ -173,13 +173,12 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 		
 		tableFacade.setStateAttr("restore");
 		
-		initTable(tableFacade, qname, accountId,status);
+		initTable(tableFacade, qname,qfid,accountId,sDate,eDate);
 		final String buildTable = buildTable(tableFacade);
 		ByteArrayInputStream inputStream = null;
 		try {
 			inputStream = new ByteArrayInputStream(buildTable.getBytes("UTF8"));
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.setPgInputStream(inputStream);
@@ -187,11 +186,14 @@ public class RunningAccountManagerListAction extends AbstractAction  {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void initTable(TableFacade tableFacade, String qname, Integer qid,Short status) {
-		if(StringUtils.isBlank(qname))
-			qname=null;
-			
-		accs = accountManager.findTAccountStatus(qname, qid, status);
+	private void initTable(TableFacade tableFacade, String context,
+				String financeFormId, Integer accid, Date startDate,
+				Date endDate) {
+		if(StringUtils.isBlank(context))
+			context=null;
+		if(StringUtils.isBlank(financeFormId))
+			financeFormId=null;	
+		accs =this.financeManager.findRunningAccount(financeFormId, accid, context, null, startDate, endDate);
 		tableFacade.setTotalRows(accs.size());
 		tableFacade.setMaxRowsIncrements(10, 20, 50);    
 		
@@ -228,13 +230,7 @@ public class RunningAccountManagerListAction extends AbstractAction  {
                 this.queryName = username;
         }
 
-        public Short getAccountStatus() {
-			return accountStatus;
-		}
-
-		public void setAccountStatus(Short accountStatus) {
-			this.accountStatus = accountStatus;
-		}
+       
 		
         public String getQueryFinanceFormId() {
 			return queryFinanceFormId;
@@ -280,29 +276,47 @@ public class RunningAccountManagerListAction extends AbstractAction  {
         
         private String buildTable(TableFacade tableFacade) {
         	final HttpServletRequest request = this.getServletRequest();
-    		tableFacade.setColumnProperties("id", "name","level","inited","lastMonthDebitBalance",
-    				"lastMonthCreditBalance","lastDate","debitBalance",
-    				"creditBalance", "operator");
+    		tableFacade.setColumnProperties("financeId", "accountName","context","direct","amount",
+    				"bizDate","status","companyId", "operator");
 
     		HtmlTable table = (HtmlTable) tableFacade.getTable();
     		table.getTableRenderer().setWidth("100%");//475px
     		HtmlRow row = table.getRow();
     		row.setFilterable(Boolean.FALSE);
     		MouseRowEvent onmouseout = new MouseRowEvent();
-    		onmouseout.setStyleClass("odd");
-    		MouseRowEvent onmouseover = new MouseRowEvent();
+    		    		
     		onmouseout.setStyleClass("even");
     		row.setOnmouseout(onmouseout);
     		
-    		HtmlColumn id = row.getColumn("id");
+    		HtmlColumn id = row.getColumn("financeId");
     		id.setFilterable(false);
-    		id.setTitle("帐号");
+    		id.setTitle("记账凭证");
+    		 id = row.getColumn("context");
+    		id.setFilterable(false);
+    		id.setTitle("摘要");
+    		id.getCellRenderer().setStyle("overflow:hidden");
+    		
     		//id.setSortable(Boolean.FALSE);
-    		HtmlColumn firstName = row.getColumn("name");
-    		firstName.setTitle("姓名");
-
-    		HtmlColumn genderAction = row.getColumn("level");
-    		genderAction.setTitle("科目级别");
+    		HtmlColumn firstName = row.getColumn("accountName");
+    		firstName.setTitle("T账号");
+    		firstName.getCellRenderer().setCellEditor(new CellEditor() {
+    			public Object getValue(Object item, String property, int rowcount) {
+    				Object value = new BasicCellEditor().getValue(item, property,
+    						rowcount);
+    				HtmlBuilder html = new HtmlBuilder();
+    				Object acc = new BasicCellEditor().getValue(item, "accountId",
+    						rowcount);
+    				if (value != null &&
+    						StringUtils.isNotBlank((String)value)) {
+    					html.append(acc).append(value);
+    				} else
+    					html.append(acc);
+    				return html.toString();
+    			}
+    		});
+    		
+    		HtmlColumn genderAction = row.getColumn("direct");
+    		genderAction.setTitle("借/贷");
     		genderAction.setSortable(Boolean.FALSE);
     		genderAction.getCellRenderer().setCellEditor(new CellEditor() {
     			public Object getValue(Object item, String property, int rowcount) {
@@ -311,12 +325,12 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     				HtmlBuilder html = new HtmlBuilder();
     				
     				if (value != null
-    						&& value instanceof FinanceLevel) {
-    					if(FinanceLevel.ONE.equals(value)){
-    						html.append("一级科目");
+    						&& value instanceof BalanceDirect) {
+    					if(BalanceDirect.DEBIT.equals(value)){
+    						html.append("借");
     					}
-    					if(FinanceLevel.TWO.equals(value)){
-    						html.append("二级科目");
+    					if(BalanceDirect.CREDIT.equals(value)){
+    						html.append("贷");
     					}
     				} else
     					html.append(value);
@@ -324,8 +338,8 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     			}
     		});
     		
-    		genderAction = row.getColumn("inited");
-    		genderAction.setTitle("初始化");
+    		genderAction = row.getColumn("status");
+    		genderAction.setTitle("状态");
     		genderAction.setSortable(Boolean.FALSE);
     		genderAction.getCellRenderer().setCellEditor(new CellEditor() {
     			public Object getValue(Object item, String property, int rowcount) {
@@ -334,25 +348,31 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     				HtmlBuilder html = new HtmlBuilder();
     				
     				if (value != null
-    						&& value instanceof Number ) {
-    					if(((Number)value).intValue()>0)
-    					html.append("是");
-    					else html.append("否");
+    						&& value instanceof AccountStatus ) {
+    					if(AccountStatus.PENDING.equals(value))
+    					html.append("挂靠");
+    					else if(AccountStatus.PRREBACK.equals(value))
+        					html.append("冲账待核");
+    					else if(AccountStatus.NORMAL.equals(value))
+        					html.append("已核");
+    					else if(AccountStatus.NORMAL.equals(value))
+        					html.append("冲账已核");
+    					else html.append(value.toString());
     				}
     				return html.toString();
     			}
     		});
     		
-    		genderAction = row.getColumn("lastMonthDebitBalance");
-    		genderAction.setTitle("上次<br/>借方余额");
+    		genderAction = row.getColumn("amount");
+    		genderAction.setTitle("金额");
     		genderAction.setSortable(Boolean.FALSE);
     		
-    		genderAction = row.getColumn("lastMonthCreditBalance");
-    		genderAction.setTitle("上次<br/>贷方余额");
+    		genderAction = row.getColumn("companyId");
+    		genderAction.setTitle("公司");
     		genderAction.setSortable(Boolean.FALSE);
     	
-    		genderAction = row.getColumn("lastDate");
-    		genderAction.setTitle("上次日期");
+    		genderAction = row.getColumn("bizDate");
+    		genderAction.setTitle("日期");
     		genderAction.setSortable(Boolean.FALSE);
     		final Format datefm=new SimpleDateFormat("yyyy-MM-dd");
     		genderAction.getCellRenderer().setCellEditor(new CellEditor() {
@@ -369,13 +389,7 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     			}
     		});
     		
-    		genderAction = row.getColumn("debitBalance");
-    		genderAction.setTitle("借方余额");
-    		genderAction.setSortable(Boolean.FALSE);
     		
-    		genderAction = row.getColumn("creditBalance");
-    		genderAction.setTitle("贷方余额");
-    		genderAction.setSortable(Boolean.FALSE);
     		
     		HtmlColumn operatorAction = row.getColumn("operator");
     		operatorAction.setTitle("操作");
@@ -386,25 +400,40 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     			public Object getValue(Object item, String property, int rowcount) {
     				
     				HtmlBuilder html = new HtmlBuilder();
-    				Object id = ItemUtils.getItemValue(item, "id");
-    				Object inited = ItemUtils.getItemValue(item, "inited");
-    				if(inited==null || ((Number)inited).intValue()<1){
-    				String js = " onclick='return del(\"tableId\",\"" +id + "\");'"; //
-    				html.a().append(js).href().quote().append(
-    						request.getContextPath()
-    								+ "/deleteTAccount.action?queryUserId=" + id).quote()
-    						.close();
-    				/*html.img().src(request.getContextPath() + "/images/pencil.png")
-    						.border("none").end();*/
-    				html.append("删除");
-    				html.aEnd();
-    				html.append("&#160;");
-    				//<a href="javascript:void(0)" href1="<s:property value="#url"/>"  class="ymPrompt" title="修改用户">修改</a>
-    				html.a().href().quote().append("javascript:void(0)").quote().append( " href1=\""+request.getContextPath()
-    								+ "/TAccountEdit.action?accountId=" + id+"\"").styleClass("ymPrompt").title("修改T帐")
-    						.close();
-    				html.append("修改");
-    				html.aEnd();
+    				Object id = ItemUtils.getItemValue(item, "financeId");
+    				
+    				Object inited = ItemUtils.getItemValue(item, "status");
+    				if (inited == null || AccountStatus.PENDING.equals( inited)||AccountStatus.PRREBACK.equals( inited) ) {
+    					String js = " onclick='return del(\"tableId\",\"" + id
+    							+ "\");'"; //
+    					html
+    							.a()
+    							.append(js)
+    							.href()
+    							.quote()
+    							.append(
+    									request.getContextPath()
+    											+ "/deleteFinanceForm.action?queryFinanceFormId="
+    											+ id).quote().close();
+    					
+    					html.append("删除");
+    					html.aEnd();
+    					html.append("&#160;");
+    					
+    					html
+    							.a()
+    							.href()
+    							.quote()
+    							.append("javascript:void(0)")
+    							.quote()
+    							.append(
+    									" href1=\""
+    											+ request.getContextPath()
+    											+ "/FinanceFormEdit.action?queryFinanceFormId="
+    											+ id + "\"").styleClass("ymPrompt")
+    							.title("修改凭证").close();
+    					html.append("修改");
+    					html.aEnd();
     				}else html.append("-");
     				return html.toString();
     				
@@ -415,9 +444,11 @@ public class RunningAccountManagerListAction extends AbstractAction  {
     	}
         
         
-        public void setAccountManager(TAccountManagerService manager){
+       /* public void setAccountManager(TAccountManagerService manager){
         	this.accountManager=manager;
-        }
-        
+        }*/
+        public void setFinanceManager(FinanceService manager) {
+    		this.financeManager = manager;
+    	}
        
 }

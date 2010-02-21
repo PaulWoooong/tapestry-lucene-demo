@@ -53,6 +53,7 @@ import org.jmesa.view.html.event.MouseRowEvent;
 
 import com.samtech.common.domain.IUser;
 import com.samtech.finance.FinanceRuleException;
+import com.samtech.finance.database.AccountStatus;
 import com.samtech.finance.database.BalanceDirect;
 import com.samtech.finance.domain.Account;
 import com.samtech.finance.domain.BalanceItem;
@@ -73,7 +74,7 @@ public class FinanceFormManagerListAction extends AbstractAction {
 	private InputStream pgtableResult;
 	private InputStream excelInputStream;
 
-	private static String tblid = "user_tbl";
+	private static String tblid = "aform_tbl";
 	private List<FinanceForms> accs;
 	
 	private Map<Integer,Account> acc_map=new HashMap<Integer, Account>(20);
@@ -108,7 +109,7 @@ public class FinanceFormManagerListAction extends AbstractAction {
 		if (fieldErrors != null && !fieldErrors.isEmpty()) {
 			return INPUT;
 		}
-		String tblid = "user_tbl";
+		//String tblid = "aform_tbl";
 		HttpServletRequest request = this.getServletRequest();
 		TableFacade tableFacade = new TableFacadeImpl(tblid, request);
 
@@ -462,8 +463,8 @@ public class FinanceFormManagerListAction extends AbstractAction {
 
 				HtmlBuilder html = new HtmlBuilder();
 				Object id = ItemUtils.getItemValue(item, "id");
-				Object inited = ItemUtils.getItemValue(item, "inited");
-				if (inited == null || ((Number) inited).intValue() < 1) {
+				Object inited = ItemUtils.getItemValue(item, "status");
+				if (inited == null || AccountStatus.PENDING.equals( inited)||AccountStatus.PRREBACK.equals( inited) ) {
 					String js = " onclick='return del(\"tableId\",\"" + id
 							+ "\");'"; //
 					html
@@ -496,7 +497,7 @@ public class FinanceFormManagerListAction extends AbstractAction {
 											+ request.getContextPath()
 											+ "/FinanceFormEdit.action?queryFinanceFormId="
 											+ id + "\"").styleClass("ymPrompt")
-							.title("修改T帐").close();
+							.title("修改凭证").close();
 					html.append("修改");
 					html.aEnd();
 				} else
