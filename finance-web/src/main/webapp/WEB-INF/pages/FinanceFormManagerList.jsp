@@ -20,7 +20,10 @@
     <td class="td1">原始单号：</td><td><s:textfield  name="queryName" size="12" maxlength="15"></s:textfield></td>
    </tr>
    <tr class="tab">
-    <td class="td1">日期：</td><td colspan="3"><s:textfield name="startDate" size="12" id="startDate" onclick="showCalendar('startDate')"/> -<s:textfield id="endDate" name="endDate" size="12" onclick="showCalendar('endDate')"/><s:hidden value="" id="calendarValue" name="calendarValue"/></td>
+    <td class="td1">日期：</td><td colspan="3">
+    <s:textfield name="startDate" size="12" id="startDate" onclick="showCalendar('startDate')"><s:param name="value"><s:date name="startDate" format="yyyy-MM-dd"/></s:param></s:textfield>
+     -<s:textfield id="endDate" name="endDate" size="12" onclick="showCalendar('endDate')">
+     <s:param name="value"><s:date name="endDate" format="yyyy-MM-dd"/></s:param></s:textfield><s:hidden value="" id="calendarValue" name="calendarValue"/></td>
     </tr>
   <tr class="tab">
     <td colspan="4" align="center">
