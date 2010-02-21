@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.samtech.finance.database.AccountStatus;
 import com.samtech.finance.database.BalanceDirect;
 
 public class RunningAccountHistory implements Serializable{
@@ -13,13 +14,14 @@ public class RunningAccountHistory implements Serializable{
 	 */
 	private static final long serialVersionUID = -2872467283356042863L;
 	private Integer id;
-	private Integer financeId;
+	private String financeId;
 	private Integer accountId;
 	private BigDecimal amount;
 	private BalanceDirect direct;
 	private String companyId;
 	private String context;
 	private Date bizDate;
+	private AccountStatus status;
 	private String className;
 	
 	public Integer getId() {
@@ -28,10 +30,10 @@ public class RunningAccountHistory implements Serializable{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Integer getFinanceId() {
+	public String getFinanceId() {
 		return financeId;
 	}
-	public void setFinanceId(Integer financeId) {
+	public void setFinanceId(String financeId) {
 		this.financeId = financeId;
 	}
 	public Integer getAccountId() {
@@ -70,12 +72,20 @@ public class RunningAccountHistory implements Serializable{
 	public void setBizDate(Date bizDate) {
 		this.bizDate = bizDate;
 	}
+	
+	public AccountStatus getStatus() {
+		return status;
+	}
+	public void setStatus(AccountStatus status) {
+		this.status = status;
+	}
 	public String getClassName() {
 		return className;
 	}
 	public void setClassName(String className) {
 		this.className = className;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

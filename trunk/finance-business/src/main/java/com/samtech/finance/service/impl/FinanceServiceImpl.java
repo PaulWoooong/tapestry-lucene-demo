@@ -30,6 +30,7 @@ import com.samtech.finance.domain.BalanceItem;
 import com.samtech.finance.domain.BizFinanceRule;
 import com.samtech.finance.domain.FinanceForms;
 import com.samtech.finance.domain.RuleItem;
+import com.samtech.finance.domain.RunningAccountHistory;
 import com.samtech.finance.service.FinanceService;
 import com.samtech.hibernate3.impl.AbstractEntityService;
 
@@ -479,7 +480,7 @@ private static Integer synTax=new Integer(2);
 
 		Object object = this.getJpaTemplate().execute(new JpaCallback() {
 			
-			@SuppressWarnings("unchecked")
+			
 			public Object doInJpa(EntityManager em) throws PersistenceException {
 				String ql="select o from "+FinanceForm.class.getName()+" as o ";
 				StringBuffer buf=new StringBuffer();
@@ -535,7 +536,7 @@ private static Integer synTax=new Integer(2);
 					if(lst!=null && !lst.isEmpty()){
 						for (RunningAccount r : lst) {
 							BalanceItem item = convertToBalanceItem(r);
-							String businessId = r.getBusinessId();
+							//String businessId = r.getBusinessId();
 							for (FinanceForms f1 : results) {
 								if(f1.getId().equals(r.getBusinessId())){
 									BalanceDirect direct = r.getDirect();
@@ -583,6 +584,19 @@ private static Integer synTax=new Integer(2);
 		fm.setStatus(f.getStatus());
 		return fm;
 	}
+	public static RunningAccountHistory convertToDomain(RunningAccount f) {
+		if(f==null)return null;
+		RunningAccountHistory hst = new RunningAccountHistory();
+		hst.setId(f.getId());
+		hst.setAccountId(f.getAccountId());
+		hst.setFinanceId(f.getBusinessId());
+		hst.setAmount(f.getAmount());
+		hst.setClassName(f.getClass().getName());
+		hst.setCompanyId(f.getCompanyId());
+		hst.setDirect(f.getDirect());
+		return hst;
+	}
+	
 	public static BalanceItem convertToBalanceItem(RunningAccount r) {
 		BalanceItem item=new BalanceItem();
 		item.setAmount(r.getAmount());
@@ -591,6 +605,118 @@ private static Integer synTax=new Integer(2);
 		item.setDirect(r.getDirect());
 		item.setFinanceId(r.getAccountId());
 		return item;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RunningAccountHistory> findRunningAccount(final String financeformId,
+			final Integer accountId,final String content, final List<AccountStatus> statuses,
+			final Date startDate,final Date endDate) {
+
+
+		Object object = this.getJpaTemplate().execute(new JpaCallback() {
+			
+			
+			public Object doInJpa(EntityManager em) throws PersistenceException {
+				String ql="select o from "+RunningAccount.class.getName()+" as o ";
+				StringBuffer buf=new StringBuffer();
+				
+				if(StringUtils.isNotBlank(financeformId)){
+					if(buf.length()>0)buf.append(" and ");
+					buf.append("  o.businessId=:p_id");
+				}
+				if(accountId!=null){
+					if(buf.length()>0)buf.append(" and ");
+					buf.append("  o.accountId=:p_bid");
+				}
+				StringBuffer subsql=new StringBuffer(20);
+				boolean hassub=false;
+				if(startDate!=null || endDate!=null || StringUtils.isNotBlank(content) || (statuses!=null && !statuses.isEmpty())){
+					buf.append(" and o.businessId in (select d.id from where ");
+					hassub=true;
+				}
+				if(startDate!=null){
+					if(subsql.length()>0)subsql.append(" and ");
+					subsql.append(" d.bizDate>=:p_sdate");
+					
+				}
+				if(endDate!=null){
+					if(subsql.length()>0)subsql.append(" and ");
+					subsql.append(" d.bizDate<=:p_edate");
+				}
+				if(StringUtils.isNotBlank(content)){
+					if(subsql.length()>0)subsql.append(" and ");
+					subsql.append(" d.context like :p_ctx");
+				}
+				if(statuses!=null && !statuses.isEmpty()){
+					if(subsql.length()>0)subsql.append(" and ");
+					subsql.append(" d.status in( :p_status )");
+					
+				}
+				if(hassub){
+					buf.append(subsql.toString()+")");
+				}
+				Query query = em.createQuery(ql+(buf.length()>0?(" where "+buf.toString()):""));
+				if(StringUtils.isNotBlank(financeformId)){
+					query.setParameter("p_id", financeformId.trim());
+					
+				}
+				if(accountId!=null){
+					query.setParameter("p_bid", accountId);
+				}
+				if(startDate!=null){
+					query.setParameter("p_sdate", startDate,TemporalType.DATE);
+					
+				}
+				if(endDate!=null){
+					query.setParameter("p_edate", endDate,TemporalType.DATE);
+				}
+				if(StringUtils.isNotBlank(content)){
+					query.setParameter("p_ctx", "%"+content.trim()+'%');
+				}
+				if(statuses!=null && !statuses.isEmpty()){
+				
+					query.setParameter("p_status", statuses);
+					
+				}
+				List<RunningAccount> resultList = query.getResultList();
+				List<String> ls=new ArrayList<String>(25);
+				List<RunningAccountHistory> results=new ArrayList<RunningAccountHistory>(25);
+				RunningAccountHistory ra=null;
+				for (RunningAccount f : resultList) {
+					ls.add(f.getBusinessId());
+					ra = convertToDomain(f);
+					 results.add(ra);
+				}
+				if(!ls.isEmpty()){
+					Query q = em.createQuery("select o from "+FinanceForm.class.getName()+" as o where o.id in( :p_id )");
+					q.setParameter("p_id", ls);
+					List<FinanceForm> lst = q.getResultList();
+					if(lst!=null && !lst.isEmpty()){
+						for (RunningAccountHistory f1 : results) {
+							for (FinanceForm r : lst) {
+								
+								if(f1.getFinanceId().equals(r.getId())){
+									f1.setBizDate(r.getBizDate());
+									f1.setStatus(r.getStatus());
+									f1.setContext(r.getContext());
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+				return results;
+			}
+
+			
+
+			
+
+			
+		}, true);
+		
+		return (List<RunningAccountHistory>)object;
 	}
 
 }
