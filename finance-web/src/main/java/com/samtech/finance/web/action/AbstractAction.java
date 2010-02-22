@@ -24,8 +24,8 @@ public abstract class AbstractAction extends ActionSupport implements
 	public static final String SESSION_ATTRIBUTE_KEY_USER = "USER";
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
-	final String LOGIN_KEY = "user_logined";
-	final String USER_INFO_KEY = "user_info";
+	final static String LOGIN_KEY = "user_logined";
+	public final static String USER_INFO_KEY = "user_info";
 	private IUser user;
 
 	public boolean isLoninRequired() {

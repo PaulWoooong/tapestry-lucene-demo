@@ -1,15 +1,12 @@
 package com.samtech.finance.web.action;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.samtech.business.database.Gender;
 import com.samtech.business.domain.User;
+import com.samtech.finance.web.anontation.Protected;
 import com.samtech.hibernate3.BaseServiceInf;
-
+@Protected
 public class UserEditAction extends AbstractAction {
 
 	/**

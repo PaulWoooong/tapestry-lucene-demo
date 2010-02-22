@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,20 +15,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import jxl.Cell;
 import jxl.CellFeatures;
-import jxl.CellType;
-import jxl.CellView;
 import jxl.Range;
-import jxl.Sheet;
 import jxl.Workbook;
-import jxl.format.Border;
-import jxl.format.BorderLineStyle;
 import jxl.format.CellFormat;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
 import jxl.write.WritableCell;
-import jxl.write.WritableCellFeatures;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
@@ -53,13 +45,12 @@ import org.jmesa.view.html.event.MouseRowEvent;
 import com.samtech.common.domain.IUser;
 import com.samtech.finance.database.AccountStatus;
 import com.samtech.finance.database.BalanceDirect;
-import com.samtech.finance.domain.BalanceItem;
-import com.samtech.finance.domain.FinanceForms;
 import com.samtech.finance.domain.RunningAccountHistory;
 import com.samtech.finance.service.FinanceService;
+import com.samtech.finance.web.anontation.Protected;
 
 
-
+@Protected
 public class RunningAccountManagerListAction extends AbstractAction  {
 
         /**

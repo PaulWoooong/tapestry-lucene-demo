@@ -60,7 +60,8 @@ import com.samtech.finance.domain.BalanceItem;
 import com.samtech.finance.domain.FinanceForms;
 import com.samtech.finance.service.FinanceService;
 import com.samtech.finance.service.TAccountManagerService;
-
+import com.samtech.finance.web.anontation.Protected;
+@Protected
 public class FinanceFormManagerListAction extends AbstractAction {
 
 	/**

@@ -15,7 +15,8 @@ import com.samtech.finance.database.BalanceDirect;
 import com.samtech.finance.domain.BalanceItem;
 import com.samtech.finance.domain.FinanceForms;
 import com.samtech.finance.service.FinanceService;
-
+import com.samtech.finance.web.anontation.Protected;
+@Protected
 public class FinanceFormEditAction extends AbstractAction {
 
 	/**
