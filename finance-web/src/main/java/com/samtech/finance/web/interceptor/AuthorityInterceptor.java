@@ -23,7 +23,7 @@ public class AuthorityInterceptor extends AbstractInterceptor {
 	private static final long serialVersionUID = -7865539928724374629L;
 
 	public static final String NO_PERMISSION = "noPermission";
-	public static final String LOGIN = "login";
+	public static final String LOGIN = "loginredirect";
 
 	@Override
 	public String intercept(ActionInvocation actionInvocation) throws Exception {

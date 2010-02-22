@@ -37,7 +37,7 @@
 		<default-action-ref name="struts2_demo" />
 		<global-results>
 			<result name="login">/WEB-INF/pages/Login.jsp</result>
-
+			<result name="loginredirect" type="redirect">login.action</result>
 		</global-results>
 		<action name="struts2_demo">
 			<result>/WEB-INF/pages/Login.jsp</result>
@@ -59,7 +59,7 @@
 			<result name="error">/WEB-INF/pages/Login.jsp</result>
 			<result name="input">/WEB-INF/pages/Login.jsp</result>
 		</action>
-		<action name="logout" class="com.samtech.finance.web.action.UserManagerAction">
+		<action name="logout" class="com.samtech.finance.web.action.UserManagerAction" method="doLogoutAction">
 			<result>/WEB-INF/pages/Login.jsp</result>
 		</action>
 		<action name="loginInfo" class="com.samtech.finance.web.action.UserManagerAction">
