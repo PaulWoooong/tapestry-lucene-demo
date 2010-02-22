@@ -32,9 +32,10 @@ import com.samtech.finance.FinanceRuleException;
 import com.samtech.finance.database.FinanceLevel;
 import com.samtech.finance.domain.Account;
 import com.samtech.finance.service.TAccountManagerService;
+import com.samtech.finance.web.anontation.Protected;
 
 
-
+@Protected
 public class TAccountManagerListAction extends AbstractAction  {
 
         /**

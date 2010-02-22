@@ -42,10 +42,11 @@ import com.samtech.business.service.UserManagerService;
 import com.samtech.common.domain.IUser;
 import com.samtech.common.domain.PagingAndSorting;
 import com.samtech.common.domain.SortColumn;
+import com.samtech.finance.web.anontation.Protected;
 import com.samtech.hibernate3.BaseServiceInf;
 
 
-
+@Protected
 public class UserManagerListAction extends AbstractAction  {
 
         /**

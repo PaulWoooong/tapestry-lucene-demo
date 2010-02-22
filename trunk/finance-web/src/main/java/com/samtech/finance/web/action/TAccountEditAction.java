@@ -8,7 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.samtech.finance.domain.Account;
 import com.samtech.finance.service.TAccountManagerService;
-
+import com.samtech.finance.web.anontation.Protected;
+@Protected
 public class TAccountEditAction extends AbstractAction {
 
 	/**
