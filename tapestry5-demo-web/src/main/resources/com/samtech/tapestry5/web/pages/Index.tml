@@ -1,47 +1,73 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:a="tapestry-library:ajax" xmlns:p="tapestry:parameter">
-
-  <head>
-      <title>tapestry demo </title>
-  </head>
-  <body>
+<t:Layout title="literal:流水帐查询" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+<!--
+<link href="/scripts/prompt/skin/dmm-green/ymPrompt.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="/scripts/prompt/ymPrompt.js"></script>
+<script type="text/javascript" src="/scripts/prompt/jquery_ymPrompt.js"></script>
+<script type="text/javascript" src="/scripts/DatePicker/DatePicker.js"></script>
+-->
  	<h1>hello world</h1>
- 	<form t:id="form" t:type="form">
+ 	<form t:id="form" t:type="form" t:clientValidation="false">
  	<t:errors/><br/>
- 		<span t:id="fltDate1" t:type="Label" t:for="fltDate" /><input t:id="fltDate"/>
- 		<span t:id="tierLabel" t:type="Label" t:for="tier"/>
-  		<input t:type="select" t:id="tier" t:value="ctier" t:blankOption="never" t:model="literal:ALL=All,90=VVIP,80=VIP,68=CIP,50=LIP"/>
- 		
- 		<input type="submit" t:id="submitButton" t:type="Submit"/>
- 	</form>
- 	<span t:type="If" test="isComputeFlag">
- 		<table t:id="tables">
- 		 <p:customerNamecell>
- 		    <t:pagelink page="ticket/customerticket" context="ticketParams">${item.customerName}</t:pagelink>
- 		 </p:customerNamecell>
- 		 
- 		  <p:editcell>
- 		    <t:pagelink page="ticket/customerticket" context="ticketParams">${message:edit-label}</t:pagelink>
+ 	<table width="100%" class="tabg" border="0" cellpadding="3" cellspacing="1" >
+<tr class="tr1">
+<td colspan="10">流水帐查询</td>
+</tr>
+  <tr class="tab">
+    <td class="td1">凭证号：</td><td><input t:type="textfield"  t:value="financeformId" maxlength="15" size="12"></input></td>
+    <td class="td1">摘要：</td><td><input t:type="textfield"  t:value="content" size="16"></input></td>
+    <td class="td1">T账科目：</td><td><input t:type="textfield" t:value="accountId" ></input></td>
+   </tr>
+   <tr class="tab">
+    <td class="td1">日期：</td><td colspan="3"><input t:type="datefield" t:value="startDate" size="12" t:id="startDate" t:format="yyyy-MM-dd">
+    </input>
+     -<input t:type="datefield" t:id="endDate" t:value="endDate" size="12" t:format="yyyy-MM-dd">
+     </input></td>
+    </tr>
+  <tr class="tab">
+    <td colspan="10" align="center">
+    <input t:type="submit" cssClass="button" value="查询" method="doQuery" 			id="submitButton"></input>
+    
+    </td>
+  </tr>
+</table>
+ </form>
+ 	<t:if test="hasResult">
+ 		<table id="tables" t:id="tables" t:type="grid" t:model="beanModel" t:source="tableSource" t:row="item" t:rowsPerPage="15">
+ 		<p:companyIdheader>公司</p:companyIdheader>
+ 		 <p:editcell>
+ 		   <t:any  t:element="a"  class="literal:ymPrompt" href1="ognl:buildUrl(ticketParams)">${message:edit-label}</t:any>
+ 		    <!-- pagelink -->
  		 </p:editcell>
- 		 <p:certificateIdcell>
- 		  <span t:type="If" test="ognl:@org.apache.commons.lang.StringUtils@isNotBlank(item.certificateId)">
- 		     ${message:yes-label}
+ 		 
+ 		 <p:accountNamecell>
+ 		   ${ognl:showAccountName(item)}
+ 		 </p:accountNamecell>
+ 		 <p:directcell>
+ 		  <span t:type="If" test="ognl:@com.samtech.finance.database.BalanceDirect@DEBIT.equals(item.direct)">
+ 		     ${message:debit-msg}
  		  </span>
- 		  <span t:type="If" test="ognl:@org.apache.commons.lang.StringUtils@isBlank(item.certificateId)">
- 		     ${message:no-label}
+ 		  <span t:type="If" test="ognl:@com.samtech.finance.database.BalanceDirect@CREDIT.equals(item.direct)">
+ 		     ${message:credit-msg}
  		  </span>
- 		 </p:certificateIdcell>
- 		 <p:transfercell>
- 		  <span t:type="If" test="item.transfer">
- 		    ${message:yes}
- 		  </span>
- 		 </p:transfercell>
- 		 <p:arvPortcell>
- 		 	${ognl:showTime(item.arvPort)}
- 		 </p:arvPortcell>
- 		 <p:leavPortcell>
- 		 	${ognl:showTime(item.arvPort)}
- 		 </p:leavPortcell>
+ 		 </p:directcell>
+ 		  <p:statuscell>
+ 		  ${ognl:showStatus(item.status)}
+ 		    
+ 		 </p:statuscell>
+ 		 
  		</table>
- 	</span>
-  </body>
-</html>
+ 		<script type="text/javascript">
+ 		 document.observe('dom:loaded',function (){
+ 		 	$$(".ymPrompt").each(function(e){
+ 		 	  $(e).observe("click",function(event){
+ 		 	  		var _href = $(this).readAttribute("href1");
+					var _title = $(this).readAttribute("title");
+					var _handler=$(this).readAttribute("handler");
+					ymPrompt.win({message:_href,iframe:true,width:800,height:400,title:_title,showMask:false,handler:_handler});
+					return false;
+					});
+ 		 	});
+ 		 });
+ 		</script>
+ 	</t:if>
+ </t:Layout>

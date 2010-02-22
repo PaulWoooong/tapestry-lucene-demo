@@ -13,7 +13,6 @@ import org.apache.tapestry5.services.Session;
 
 import com.samtech.common.domain.IUser;
 
-@IncludeStylesheet({"context:/style/main.css", "context:/style/direction.css"})
 public class Layout {
    
 
