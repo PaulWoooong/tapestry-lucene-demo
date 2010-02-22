@@ -3,21 +3,18 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 <head>
 <head>
-<title>csn</title>
-<link href="css/skin.css" rel="stylesheet" type="text/css" />
+<title>samtech</title>
 </head>
 <body>
-<font color="red"><s:fielderror>
-			</s:fielderror>
-			<s:actionerror/> <s:actionmessage/></font>
+<font color="red"><t:errors/><br/></font>
 
-<form method="POST" id="questionAddForm" t:type="form">
+<form method="POST" id="questionAddForm" t:id="questionAddForm" t:type="form">
 <table width="100%" border="0" cellpadding="3" cellspacing="1"  class="tabg">
 		<tr class="tr1">
 		<td colspan="4">
-		 <t:if test="queryFinanceFormId==null ">新增记账凭证
+		 <t:if test="ognl:financeId==null ">新增记账凭证
 		 <p:else> 修改记账凭证
-		    <t:hidden name="queryFinanceFormId"/>
+		    <t:hidden t:name="financeId" encoder="encoder"/>
 		 </p:else>
 		 </t:if>
 		        
@@ -26,15 +23,15 @@
           <tr class="tab">
             <td width="16%" class="td1">凭证号：</td>
             <td>
-               <s:if test="queryFinanceFormId==null">
-                   <s:textfield  name="FinanceForms.id"  size="20" maxlength="30" ></s:textfield><span class="red">*</span>
-               </s:if>
-               <s:else> 
-		          <s:textfield  name="financeForms.id"  size="20" maxlength="30" readonly="true"></s:textfield>
-		       </s:else>
+               <t:if test="financeId==null">
+                   <t:textfield  t:value="FinanceForms.id"  size="20" maxlength="30" ></t:textfield><span class="red">*</span>
+               <p:else> 
+		          <t:textfield  t:value="financeForms.id"  size="20" maxlength="30" readonly="true"></t:textfield>
+		       </p:else>
+               </t:if>
               </td>
             <td width="16%" class="td1">原始单号：</td>
-            <td><s:textfield  name="financeForms.businessId"  size="20" maxlength="30"></s:textfield></td>            
+            <td><t:textfield  name="financeForms.businessId"  size="20" maxlength="30"></s:textfield></td>            
           </tr>
           <tr class="tab">
             <td width="16%" class="td1">发生金额：</td>
@@ -85,12 +82,12 @@
 	</table>	
 
 	<p align="center">
-	   	 <s:if test="queryFinanceFormId==null ">
-			 <s:submit name="submit" method="doAddAndNew" id="doAddAndNew" value="保存并新增" />
-	  	 </s:if>
-     	 <s:else> 
-			<s:submit name="submit" method="doAddAndView"  id="doAddAndView"  value="保存"/>
-         </s:else>
+	   	 <t:if test="ognl:financeId==null ">
+			 <t:submit name="submit"  t:id="doAddAndNew" value="保存并新增" />
+     	 <p:else> 
+			<s:submit name="submit"   t:id="doAddAndView"  value="保存"/>
+         </p:else>
+	  	 </t:if>
 		<input type="button" value="关闭" onClick="parent.ymPrompt.close();" />
 	</p>
 </s:form>
