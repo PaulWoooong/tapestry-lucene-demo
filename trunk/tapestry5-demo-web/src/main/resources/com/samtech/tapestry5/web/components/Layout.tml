@@ -1,15 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 <head>
     <title>${title}</title>
-<link	href="<s:url value='/styles/main.css' encode='false' includeParams='none'/>"
-	rel="stylesheet" type="text/css" media="all" />
-<link
-	href="<s:url value='/styles/dbx.css' encode='false' includeParams='none'/>"
-	rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript"	src="<s:url value='/scripts/dbx/dbx.js' />" ></script>
-<script type="text/javascript"	src="<s:url value='/scripts/jquery/jquery-1.4.1.js' />" ></script>    
+<link	href="/styles/main.css"	rel="stylesheet" type="text/css" media="all" />
+<link	href="styles/dbx.css"	rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript"	src="/scripts/dbx/dbx.js "></script>
+ 
 </head>
 <body>
 <div id="page">
@@ -31,22 +28,20 @@
 	   </h3>
 	   <div class="dbx-content">
 	                  <ul>
-	                   <li><s:a action="UserList" >用户管理</s:a></li>
+	                   <li><a action="UserList" >用户管理</a></li>
 	                  <li><a href="#">原始凭证</a></li>
-	                  <li><s:a action="FinanceFormList">记账凭证查询</s:a></li>
-	                  <li><s:a action="RunningAccountList">流水账查询</s:a></li>
-	                  <li><s:a action="TAccountList">T账查询</s:a></li>
-                  	   <li><a action="gmesalist">T账报表</a></li>
-                  	   <!-- li><s:a action="gmesalist">T账报表</s:a></li-->
+	                  <li><a action="FinanceFormList">记账凭证查询</a></li>
+	                  <li><t:pagelink page="index">流水账查询</t:pagelink></li>
+                  	   
                 </ul>
 	  </div>
 	</div>
-	 <s:action var="logininfo" name="loginInfo" namespace="/" executeResult="true" ignoreContextParams="true"/>
+	 <!-- t:UserInfo/ -->
 </div><!-- end sidebar-left -->
 	<div id="left-col">
 	<div id="nav"></div>
     <div id="content">
-          <decorator:body/>
+          <t:body/>
         
     </div><!-- end content -->
     <div id="footer" >
@@ -62,7 +57,7 @@
 	</div>
 </div><!-- end page -->
 <script type="text/javascript">
-$(document).ready(function (){
+document.observe('dom:loaded',function (){
 	var manager = new dbxManager('main');				// toggle button element type ['link'|'button']
 	//create new docking boxes group
 	var sidebar_left = new dbxGroup(
