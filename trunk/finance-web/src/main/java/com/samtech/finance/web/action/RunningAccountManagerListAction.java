@@ -344,7 +344,7 @@ public String exportExcel(){
 				label=new Label(3,i+1,s,labelCellFormat);
 				sheet.addCell(label);
 				Number number = new Number(4,i+1,form.getAmount()!=null?form.getAmount().doubleValue():0,numberCellFormat);
-				sheet.addCell(label);
+				sheet.addCell(number);
 				label=new Label(5,i+1,fm.format(form.getBizDate()),labelCellFormat);
 				sheet.addCell(label);
 				if(form.getStatus()!=null){
