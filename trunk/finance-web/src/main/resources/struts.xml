@@ -24,6 +24,16 @@
 		</action>
 	</package>
 	<package name="default" extends="struts-default">
+	<interceptors>
+	<interceptor name="authority"
+				class="com.samtech.finance.web.interceptor.AuthorityInterceptor" />
+	<interceptor-stack name="crudstack">
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="authority"></interceptor-ref>
+	</interceptor-stack>
+				
+	</interceptors>
+	<default-interceptor-ref name="crudstack"></default-interceptor-ref>
 		<default-action-ref name="struts2_demo" />
 		<global-results>
 			<result name="login">/WEB-INF/pages/Login.jsp</result>
@@ -186,6 +196,14 @@
 				<param name="inputName">pgInputStream</param>
 				<param name="bufferSize">1024</param>
 			</result>
+		</action>
+		<action name="RunningAccountExport" class="com.samtech.finance.web.action.RunningAccountManagerListAction" method="exportExcel">
+			<result name="success" type="stream">
+				<param name="contentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelInputStream</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<result name="input">/WEB-INF/pages/RunningAccountManagerList.jsp</result>
 		</action>
 	</package>
 	<!--
