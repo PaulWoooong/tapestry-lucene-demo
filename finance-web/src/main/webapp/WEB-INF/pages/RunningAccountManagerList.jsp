@@ -40,17 +40,19 @@
 <s:actionerror /> 
 <s:actionmessage/>
 <br/>
-<s:form namespace="/" method="POST" id="printForm" action="FinanceFormExport">
+<s:form namespace="/" method="POST" id="printForm" action="RunningAccountExport">
 <div id="employee_container">
  ${user_tbl}
 </div>
 <s:if test="showTable">
-<input type="button" value="导出Excel" />
+<input type="button" value="导出Excel" onclick="submitexport()"/>
 </s:if>
 </s:form>
 <script type='text/javascript'>
-
-
+function submitexport(){
+	 var form1=document.getElementById("printForm");
+	 form1.submit();
+}
 function onInvokeAction(id) {
     $.jmesa.setExportToLimit(id, '');
 	

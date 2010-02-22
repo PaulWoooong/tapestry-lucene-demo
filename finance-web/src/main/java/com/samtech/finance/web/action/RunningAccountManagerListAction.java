@@ -15,13 +15,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import jxl.CellFeatures;
-import jxl.Range;
 import jxl.Workbook;
-import jxl.format.CellFormat;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
-import jxl.write.WritableCell;
+import jxl.write.Number;
+import jxl.write.NumberFormats;
+import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
@@ -286,7 +285,7 @@ public String exportExcel(){
 		}
 	}
 	private String getExcelFileName() {
-		return "financeforms.xls";
+		return "runnings.xls";
 	}
 	private void printExcel(List<RunningAccountHistory> dataList) throws BiffException, IOException, RowsExceededException, WriteException {
 
@@ -302,52 +301,68 @@ public String exportExcel(){
 		// 创建工作表实例
 		WritableSheet sheet = workbook.createSheet("sss",0);
 		// HSSFSheet sheet = workbook.createSheet("sxtaExcel");
-		// 设置列宽
+		// 记账凭证 T账号 摘要 借/贷 金额 日期 状态 公司
 		
 		// 获取样式
 		/*SheetSettings settings = sheet.getSettings();
 		if(settings!=null){
 			sheet.get
 		}*/
-		
+		String[] fieldNames={"记账凭证","T账号","摘要","借/贷","金额","日期","状态","公司"};
 		if (dataList != null && !dataList.isEmpty()) {
+			
 			Format fm=new SimpleDateFormat("yyyy年MM月dd日");
-			int rows=15;//skip 1 row
+			WritableCellFormat labelCellFormat = new WritableCellFormat(NumberFormats.DEFAULT);
+			WritableCellFormat numberCellFormat = new WritableCellFormat(NumberFormats.THOUSANDS_FLOAT);
+			
 			// 给excel填充数据
-			boolean isMerged=false;
-			Range[] orgin_mergedCells = sheet.getMergedCells();
-			if(orgin_mergedCells!=null && orgin_mergedCells.length>0){
-				isMerged=true;
+			for(int j=0;j<fieldNames.length;j++){
+				Label l = new Label(j,0,fieldNames[j],labelCellFormat);//sheet.getWritableCell(j, 0);
+				sheet.addCell(l);
 			}
+			
 			for (int i = 0; i < dataList.size(); i++) {
 				// 将dataList里面的数据取出来
 				RunningAccountHistory form = dataList.get(i);
 				
-				WritableCell cell = sheet.getWritableCell(1, i*17+1);//i*17
-				System.out.println("col="+cell.getColumn()+" ;row="+cell.getRow());
-				String contents = cell.getContents();
-				System.out.println("contents"+contents);
-				CellFormat cellFormat = cell.getCellFormat();
-				
 				Label label =null;
-				if(cellFormat!=null)
-					label=new Label(1,i*17+1,fm.format(form.getBizDate()),cellFormat);
-				else
-					label=new Label(1,i*17+1,fm.format(form.getBizDate()));
 				
+				label=new Label(0,i+1,form.getFinanceId(),labelCellFormat);
 				sheet.addCell(label);
-				cell = sheet.getWritableCell(0, i*17+4);
-				cellFormat = cell.getCellFormat();
-				CellFeatures cellFeatures = cell.getCellFeatures();
-				if(cellFormat!=null)
-					label=new Label(0,i*17+4,form.getContext(),cellFormat);
-				else
-					label=new Label(0,i*17+4,form.getContext());
+				StringBuffer buf=new StringBuffer();
+				if(form.getAccountId()!=null)buf.append(form.getAccountId());
+				if(form.getAccountName()!=null)buf.append(form.getAccountName().trim());
+				label=new Label(1,i+1,buf.toString(),labelCellFormat);
 				sheet.addCell(label);
-				int jj=i*17+4;
-				
-				
+				label=new Label(2,i+1,form.getContext(),labelCellFormat);
+				sheet.addCell(label);
+				String s="";
+				if(form.getDirect()!=null){
+					if(form.getDirect().equals(BalanceDirect.DEBIT))s="借";
+					if(form.getDirect().equals(BalanceDirect.CREDIT))s="贷";
+				}
+				label=new Label(3,i+1,s,labelCellFormat);
+				sheet.addCell(label);
+				Number number = new Number(4,i+1,form.getAmount()!=null?form.getAmount().doubleValue():0,numberCellFormat);
+				sheet.addCell(label);
+				label=new Label(5,i+1,fm.format(form.getBizDate()),labelCellFormat);
+				sheet.addCell(label);
+				if(form.getStatus()!=null){
+					if(AccountStatus.PENDING.equals(form.getStatus()))
+    					s=("挂靠");
+    					else if(AccountStatus.PRREBACK.equals(form.getStatus()))
+        					s=("冲账待核");
+    					else if(AccountStatus.NORMAL.equals(form.getStatus()))
+        					s=("已核");
+    					else if(AccountStatus.REBACK.equals(form.getStatus()))
+        					s=("冲账已核");
+				}
+				label=new Label(6,i+1,s,labelCellFormat);
+				sheet.addCell(label);
+				label=new Label(7,i+1,form.getCompanyId()!=null?form.getCompanyId():"",labelCellFormat);
+				sheet.addCell(label);
 			}
+			
 			String fileNames = getExcelFileName();
 			this
 					.getServletResponse()
@@ -518,7 +533,7 @@ public String exportExcel(){
         					html.append("冲账待核");
     					else if(AccountStatus.NORMAL.equals(value))
         					html.append("已核");
-    					else if(AccountStatus.NORMAL.equals(value))
+    					else if(AccountStatus.REBACK.equals(value))
         					html.append("冲账已核");
     					else html.append(value.toString());
     				}
