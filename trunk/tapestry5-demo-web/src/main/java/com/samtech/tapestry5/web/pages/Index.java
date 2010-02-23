@@ -83,7 +83,7 @@ public class Index {
 
 	@Property
 	private RunningAccountHistory item;
-	@Retain
+	
 	private GridDataSource tableSource;
 	
 	private Format timeformat;
@@ -191,6 +191,8 @@ public class Index {
 		
 		GridDataSourceImpl(FinanceService service){
 			this.financeManager=service;
+			_result=null;
+			totalRows=-1;
 		}
 		public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints) {
 			this.startIndex=startIndex;
@@ -404,9 +406,13 @@ public class Index {
 	}
 	
 	public String buildUrl(String[] args){
+		try{
 		Link link = _linkSource.createPageRenderLink("financeform/financeformEdit", true, args);
 		return link.toURI();
-		//return "";
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		return "";
 	}
 	public String showTime(Date d){
 		if(d!=null)
