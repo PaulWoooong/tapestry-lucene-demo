@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+<head>
+<title>samtech</title>
+
+</head>
+<body>
+
+<form method="POST" id="editForm" t:id="editForm" t:type="form">
+<font color="red"><t:errors/><br/></font>
+<t:if test="ognl:accountId==null ">新增T账
+		 <p:else> 修改T账
+		    <t:hidden t:name="accountId" t:value="accountId" />
+		 </p:else>
+		 </t:if>
+<span t:type="beanEditor" t:object="account" exclude="lastMonthDebitBalance,lastMonthCreditBalance,lastDate,inited">
+</span>
+	
+</form>
+<div id="auto_component"></div>
+
+</body>
+</html>
