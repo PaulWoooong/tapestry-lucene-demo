@@ -33,6 +33,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 
 import com.samtech.finance.database.AccountStatus;
+import com.samtech.finance.database.BalanceDirect;
 import com.samtech.finance.domain.RunningAccountHistory;
 import com.samtech.finance.service.FinanceService;
 
@@ -388,6 +389,14 @@ public class Index {
 			return buf.toString();
 		}
 		return "";
+	}
+	public boolean showDebitDirect(BalanceDirect d){
+		if(d!=null)return d.equals(BalanceDirect.DEBIT);
+		return false;
+	}
+	public boolean showCerditDirect(BalanceDirect d){
+		if(d!=null)return d.equals(BalanceDirect.CREDIT);
+		return false;
 	}
 	public String showStatus(Object status){
 		

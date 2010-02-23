@@ -32,7 +32,7 @@
 	                  <li><a href="#">原始凭证</a></li>
 	                  <li><a action="FinanceFormList">记账凭证查询</a></li>
 	                  <li><t:pagelink page="index">流水账查询</t:pagelink></li>
-                  	   
+                  	  <li><t:pagelink page="account/accountList">T账查询</t:pagelink></li> 
                 </ul>
 	  </div>
 	</div>

@@ -40,18 +40,20 @@
  		 </p:editcell>
  		 
  		 <p:accountNamecell>
- 		   ${ognl:showAccountName(item)}
+ 		   ${showAccountName(item)}
  		 </p:accountNamecell>
  		 <p:directcell>
- 		  <span t:type="If" test="ognl:@com.samtech.finance.database.BalanceDirect@DEBIT.equals(item.direct)">
+ 		  <span t:type="If" test="showDebitDirect(item.direct)">
+ 		     <!-- ognl:@com.samtech.finance.database.BalanceDirect@DEBIT.equals(item.direct)-->
  		     ${message:debit-msg}
  		  </span>
- 		  <span t:type="If" test="ognl:@com.samtech.finance.database.BalanceDirect@CREDIT.equals(item.direct)">
+ 		  <span t:type="If" test="showCerditDirect(item.direct)">
+ 		  <!-- ognl:@com.samtech.finance.database.BalanceDirect@CREDIT.equals(item.direct) -->
  		     ${message:credit-msg}
  		  </span>
  		 </p:directcell>
  		  <p:statuscell>
- 		  ${ognl:showStatus(item.status)}
+ 		  ${showStatus(item.status)}
  		    
  		 </p:statuscell>
  		 
