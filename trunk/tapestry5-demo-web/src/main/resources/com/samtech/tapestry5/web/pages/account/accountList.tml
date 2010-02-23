@@ -37,7 +37,7 @@
  		  <span t:type="If" test="ognl:@com.samtech.finance.database.FinanceLevel@ONE.equals(item.level)">
  		     ${message:level-one-msg}
  		  </span>
- 		  <span t:type="If" test="ognl:@com.samtech.finance.database.BalanceDirect@TWO.equals(item.level)">
+ 		  <span t:type="If" test="ognl:@com.samtech.finance.database.FinanceLevel@TWO.equals(item.level)">
  		     ${message:level-two-msg}
  		  </span>
  		 </p:levelcell>
