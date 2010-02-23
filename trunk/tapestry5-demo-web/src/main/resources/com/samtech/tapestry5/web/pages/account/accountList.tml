@@ -1,0 +1,71 @@
+<t:Layout title="literal:T帐查询" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+ 	<h1>hello world</h1>
+ 	<form t:id="form" t:type="form" t:clientValidation="false">
+ 	<t:errors/><br/>
+ 	<table width="100%" class="tabg" border="0" cellpadding="3" cellspacing="1" >
+<tr class="tr1">
+<td colspan="10">T帐查询</td>
+</tr>
+  <tr class="tab">
+    <td class="td1">ID：：</td><td><input t:type="textfield"  t:value="accountId" maxlength="15" size="12" translate="translate:integer"></input></td>
+    <td class="td1">名称：</td><td><input t:type="textfield"  t:value="accName" size="16"></input></td>
+    <td class="td1">${message:inited-label}：</td><td><input t:type="select" t:value="status" t:model="literal:-1=ALL,0=NO,1=Yes" translate="translate:short"></input></td>
+   </tr>
+   <tr class="tab">
+    <td colspan="10" align="center">
+    <input t:type="submit" class="button" value="查询" 	id="submitButton"	t:id="submitButton"></input>
+    
+    </td>
+  </tr>
+</table>
+<t:if test="message">
+<div>
+ ${message}
+</div>
+</t:if>
+ </form>
+ 	<t:if test="hasResult">
+ 		<table id="tables" t:id="tables" t:type="grid" t:model="beanModel" t:source="tableSource" t:row="item" t:rowsPerPage="15">
+ 		
+ 		 <p:editcell>
+ 		   <t:any  t:element="a"  class="literal:ymPrompt" href1="ognl:buildUrl(ticketParams)">${message:edit-label}</t:any>
+ 		    <!-- pagelink -->
+ 		 </p:editcell>
+ 		 
+ 		 <p:levelcell>
+ 		  <span t:type="If" test="ognl:@com.samtech.finance.database.FinanceLevel@ONE.equals(item.level)">
+ 		     ${message:level-one-msg}
+ 		  </span>
+ 		  <span t:type="If" test="ognl:@com.samtech.finance.database.BalanceDirect@TWO.equals(item.level)">
+ 		     ${message:level-two-msg}
+ 		  </span>
+ 		 </p:levelcell>
+ 		 <p:initedcell>
+ 		  <span t:type="If" test="ognl:item.inited>0">
+ 		     ${message:yes}
+ 		     <p:else>${message:no}</p:else>
+ 		  </span>
+ 		 </p:initedcell>
+ 		 <p:debitBalanceheader>
+ 		  ${message:debit-msg}
+ 		 </p:debitBalanceheader>
+ 		 <p:creditBalanceheader>
+ 		 ${message:credit-msg}
+ 		 </p:creditBalanceheader>
+ 		</table>
+ 		<script type="text/javascript">
+ 		 document.observe('dom:loaded',function (){
+ 		 	$$(".ymPrompt").each(function(e){
+ 		 	  $(e).observe("click",function(event){
+ 		 	  		var _href = $(this).readAttribute("href1");
+					var _title = $(this).readAttribute("title");
+					var _handler=$(this).readAttribute("handler");
+					ymPrompt.win({message:_href,iframe:true,width:800,height:400,title:_title,showMask:false,handler:_handler});
+					return false;
+					});
+ 		 	});
+ 		 });
+ 		</script>
+ 	</t:if>
+ </t:Layout>
