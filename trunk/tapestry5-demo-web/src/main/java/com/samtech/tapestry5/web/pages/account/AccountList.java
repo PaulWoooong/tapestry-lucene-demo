@@ -2,11 +2,8 @@ package com.samtech.tapestry5.web.pages.account;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
@@ -20,11 +17,9 @@ import org.apache.tapestry5.annotations.PageDetached;
 import org.apache.tapestry5.annotations.PageLoaded;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.corelib.components.Form;
-import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.grid.ColumnSort;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
@@ -34,21 +29,20 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 
-import com.samtech.finance.dao.TAccountBaseDao;
-import com.samtech.finance.database.AccountStatus;
 import com.samtech.finance.domain.Account;
-import com.samtech.finance.domain.RunningAccountHistory;
-import com.samtech.finance.service.FinanceService;
 import com.samtech.finance.service.TAccountManagerService;
+import com.samtech.tapestry5.web.annotation.ProtectedPage;
+import com.samtech.tapestry5.web.base.BasePage;
 
 /**
  * 
  * @author samwen
  *
  */
+@ProtectedPage
 @IncludeStylesheet(value="context:/scripts/prompt/skin/dmm-green/ymPrompt.css")
 @IncludeJavaScriptLibrary(value="context:/scripts/prompt/ymPrompt.js")
-public class AccountList {
+public class AccountList extends BasePage {
 	
 	@Inject
 	private TAccountManagerService accountManager;
@@ -58,8 +52,7 @@ public class AccountList {
 	private ComponentResources _componentResources;
 	@Inject
 	private LinkSource _linkSource;
-	 @Inject
-	 private Messages messages;
+	
 	 
 	
 	@Persist
@@ -138,7 +131,7 @@ public class AccountList {
 			if(!((List)results).isEmpty())
 				searched = true;
 			else{
-				this.message=messages.format("search-nofound");
+				this.message=this.getMessages().format("search-nofound");
 				return ;
 			}
 				
@@ -151,7 +144,7 @@ public class AccountList {
 				tableSource=d;
 			}*/
 		}else{
-			this.message=messages.format("search-nofound");
+			this.message=this.getMessages().format("search-nofound");
 		}
 	}
 

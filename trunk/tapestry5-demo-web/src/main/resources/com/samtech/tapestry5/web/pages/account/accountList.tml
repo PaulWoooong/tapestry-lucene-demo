@@ -29,16 +29,16 @@
  		<table id="tables" t:id="tables" t:type="grid" t:model="beanModel" t:source="tableSource" t:row="item" t:rowsPerPage="15">
  		
  		 <p:editcell>
- 		   <t:any  t:element="a"  class="literal:ymPrompt" href1="ognl:buildUrl(ticketParams)">${message:edit-label}</t:any>
- 		    <!-- pagelink -->
+ 		   <!-- :any  t:element="a"  class="literal:ymPrompt" href1="ognl:buildUrl(ticketParams)">${message:edit-label}</:any -->
+ 		    <t:pagelink page="account/accountEdit" context="ticketParams">${message:edit-label}</t:pagelink>
  		 </p:editcell>
  		 
  		 <p:levelcell>
  		  <span t:type="If" test="ognl:@com.samtech.finance.database.FinanceLevel@ONE.equals(item.level)">
- 		     ${message:level-one-msg}
+ 		     ${message:FinanceLevel.ONE}
  		  </span>
  		  <span t:type="If" test="ognl:@com.samtech.finance.database.FinanceLevel@TWO.equals(item.level)">
- 		     ${message:level-two-msg}
+ 		     ${message:FinanceLevel.TWO}
  		  </span>
  		 </p:levelcell>
  		 <p:initedcell>

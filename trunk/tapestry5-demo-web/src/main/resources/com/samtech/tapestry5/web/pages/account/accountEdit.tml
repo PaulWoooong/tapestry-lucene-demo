@@ -6,19 +6,29 @@
 
 </head>
 <body>
-
-<form method="POST" id="editForm" t:id="editForm" t:type="form">
+<t:zone t:id="updatezone" id="updatezone">
+<form method="POST" id="editForm" t:id="editForm" t:type="form" t:zone="updatezone">
 <font color="red"><t:errors/><br/></font>
 <t:if test="ognl:accountId==null ">新增T账
 		 <p:else> 修改T账
 		    <t:hidden t:name="accountId" t:value="accountId" />
 		 </p:else>
 		 </t:if>
-<span t:type="beanEditor" t:object="account" exclude="lastMonthDebitBalance,lastMonthCreditBalance,lastDate,inited">
+<div>
+<font>${message}</font>
+</div>
+<span t:type="beanEditor" t:id="beanEditor" t:object="account" exclude="lastMonthDebitBalance,lastMonthCreditBalance,lastDate,inited,level">
+
 </span>
-	
+ <div class="t-beaneditor-row">
+  <t:label for="levelField"/>
+        <input id="levelField" t:id="levelField" t:type="select" t:value="account.level" t:model="levelModel" t:blankOption="never" t:encoder="levelEncoder" t:label="message:level-label"/>
+</div>
+<div class="t-beaneditor-row">        
+	<input type="submit" t:type="submit" t:id="save_submit" value="${message:save-btn}"/>
+</div>	
 </form>
-<div id="auto_component"></div>
+</t:zone>
 
 </body>
 </html>
