@@ -34,9 +34,11 @@ import com.samtech.finance.domain.BalanceItem;
 import com.samtech.finance.domain.FinanceForms;
 import com.samtech.finance.service.FinanceService;
 import com.samtech.finance.service.TAccountManagerService;
-
+import com.samtech.tapestry5.web.annotation.ProtectedPage;
+import com.samtech.tapestry5.web.base.BasePage;
+@ProtectedPage
 @IncludeJavaScriptLibrary({ "${tapestry.scriptaculous}/controls.js","financeforms.js"})
-public class FinanceformEdit {
+public class FinanceformEdit extends BasePage{
 	@Property
 	private String financeId;
 	
