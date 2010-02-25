@@ -3,10 +3,6 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 <head>
     <title>${title}</title>
-<link	href="/styles/main.css"	rel="stylesheet" type="text/css" media="all" />
-<link	href="styles/dbx.css"	rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript"	src="/scripts/dbx/dbx.js "></script>
- 
 </head>
 <body>
 <div id="page">
@@ -33,6 +29,8 @@
 	                  <li><a action="FinanceFormList">记账凭证查询</a></li>
 	                  <li><t:pagelink page="index">流水账查询</t:pagelink></li>
                   	  <li><t:pagelink page="account/accountList">T账查询</t:pagelink></li> 
+                  	  <li><t:pagelink page="account/tableTestList">Table Test</t:pagelink></li>
+                  	  <li><t:actionLink t:id="logout">退出</t:actionLink></li>
                 </ul>
 	  </div>
 	</div>

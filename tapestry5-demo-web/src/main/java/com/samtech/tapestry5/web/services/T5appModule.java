@@ -34,7 +34,7 @@ public class T5appModule
 	
   public static void contributeApplicationDefaults(MappedConfiguration<String,String> configuration)
   {
-    configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,zh");
+    configuration.add(SymbolConstants.SUPPORTED_LOCALES, "zh_CN,en,zh");
     //configuration.add(SymbolConstants.FILE_CHECK_INTERVAL, "10 m");
     configuration.add(SymbolConstants.CHARSET, "UTF-8");
     configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "false");

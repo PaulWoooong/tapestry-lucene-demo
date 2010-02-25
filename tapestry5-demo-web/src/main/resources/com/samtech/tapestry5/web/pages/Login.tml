@@ -29,11 +29,11 @@ line-height:15px;padding:12px 0 0 10px;}
 			<div class="content">
 			<div><t:errors/></div>
 				<ul>
-					<li>用户名:<input t:type="TextField" t:id="loginId" size="15" maxLength="12" t:validate="required, maxLength=15" class="inpu"></input></li>
-					<li>密　码:<input  t:type="PasswordField" t:id="password" size="15" maxLength="12" t:validate="required, maxLength=15" class="inpu"/></li>
+					<li><t:label for="loginId"/>:<input t:type="TextField" t:id="loginId" size="15" maxLength="12" t:validate="required, maxLength=15" class="inpu"></input></li>
+					<li><t:label for="password"/>:<input  t:type="PasswordField" t:id="password" size="15" maxLength="12" t:validate="required, maxLength=15" class="inpu"/></li>
 					<li style="padding-left:55px;">
-					<input type="submit" value="登录"   class="inbu"></input>
-					<input type="reset" value="清 空" name="reset"  class="cancle inbu"/>
+					<input type="submit" value="${message:login-btn}"   class="inbu"></input>&nbsp;&nbsp;
+					<input type="reset" value="${message:reset-btn}" name="reset"  class="cancle inbu"/>
 					</li>
 				</ul>	
 			</div>

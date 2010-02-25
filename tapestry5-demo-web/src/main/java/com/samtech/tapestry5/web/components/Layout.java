@@ -3,6 +3,7 @@ package com.samtech.tapestry5.web.components;
 import java.io.IOException;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -12,7 +13,13 @@ import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.Session;
 
 import com.samtech.common.domain.IUser;
+import com.samtech.tapestry5.web.pages.Login;
 
+/**
+ *
+ */
+@IncludeStylesheet(value={"context:/styles/main.css","context:/styles/dbx.css"})
+@IncludeJavaScriptLibrary(value="context:/scripts/dbx/dbx.js")
 public class Layout {
    
 
@@ -30,15 +37,7 @@ public class Layout {
     @Parameter(required = true)
     private String title;
 
-    /*@OnEvent(value = "action", component = "locale")
-    void changeLocale() {
-        Locale current = localeService.get();
-        if (current == null || current.equals(PERSIAN_LOCAL)) {
-            localeService.set(ENGLISH_LOCAL);
-        } else {
-            localeService.set(PERSIAN_LOCAL);
-        }
-    }*/
+    
 
     @OnEvent(value = "action")
     Object changePage(String page) {
@@ -47,9 +46,17 @@ public class Layout {
 
     @OnEvent(value = "action", component = "logout")
     Object logout() throws IOException {
-        Session session = request.getSession(true);
+    	response.setHeader( "Cache-Control" , "no-cache" ); 
+		//Forces caches to obtain a new copy of the page from the origin server 
+    	response.setHeader( "Cache-Control" , "no-store" ); 
+		//Directs caches not to store the page under any circumstance 
+    	response.setDateHeader( "Expires" , 0); 
+		//Causes the proxy cache to see the page as "stale" 
+    	response.setHeader( "Pragma" , "no-cache" );
+        Session session = request.getSession(false);
+        if(session!=null)
         session.invalidate();
-        return null;
+        return Login.class;
     }
 
     public String getContext() {

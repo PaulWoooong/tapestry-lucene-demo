@@ -57,7 +57,7 @@ public class ProtectedPageGateKeeper implements Dispatcher {
 			if (nextslashx <= 1)
 				return false;
 		}
-		if(pageName.equalsIgnoreCase(this.LOGIN_PAGE))return false;
+		if(pageName.equalsIgnoreCase(LOGIN_PAGE))return false;
 		return checkAccess(pageName, request, response);
 	}
 
@@ -93,11 +93,6 @@ public class ProtectedPageGateKeeper implements Dispatcher {
 				activationContextParams= path.substring(pageName.length() +
 			2).split("\\/");
 			}
-			 Component page2 = componentSource.getPage("login");
-			 //PageCallbackContainer page1 =(PageCallbackContainer)page2;
-			 Class[] interfaces = page2.getClass().getInterfaces();
-			 //boolean  found=false;
-			 
 			Link backlink = pageRenderLinkSource.createPageRenderLinkWithContext(pageName,
 			(Object[]) activationContextParams);
 			if(backlink!=null){
