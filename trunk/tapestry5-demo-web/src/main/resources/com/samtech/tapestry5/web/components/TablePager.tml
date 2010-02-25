@@ -1,0 +1,14 @@
+<div class="t-data-grid-pager" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+${totalRowMsg}&#160;&#160;${pagesMsg}&#160;&#160;
+<t:if test="showPager">
+ <t:loop source="pages" index="lastIndex" value="ipage">
+  <t:if test="curPage">
+   <span class="current">${ipage}</span>
+   <p:else>
+     <t:actionLink context="linkContext" t:title="prop:linkTitle">${ipage}</t:actionLink> 
+   </p:else>
+  </t:if>
+  <t:if test="showComment">...</t:if>
+ </t:loop>
+</t:if>
+</div>
