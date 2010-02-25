@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
@@ -84,31 +85,23 @@ public class Index {
 
 	@Property
 	private RunningAccountHistory item;
-	
+	@Retain
 	private GridDataSource tableSource;
 	
 	private Format timeformat;
 	private String sortColumnId;
+	@Retain
 	private BeanModel<RunningAccountHistory> mymodel;
 	
 	
-	@Component(id = "form")
+	@Component(id = "form" ,parameters={"clientValidation=true"})
 	private Form _form;
-
-	
 
 	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private boolean isComputeFlag;
 
-	// Or public void onSelectedFromComputeButton()
-	@OnEvent(component = "submitButton", value = "selected")
-	public void selectCompute() {
-
-		isComputeFlag = true;
-		
-	}
 
 	@OnEvent(value=EventConstants.ACTIVATE)
 	public void activatePage(Object... ars){
@@ -126,23 +119,8 @@ public class Index {
 
 	@OnEvent(component = "form", value = EventConstants.SUCCESS)
 	public void formSucess() {
-		searched=false;
-		results= financeManager.findRunningAccount(financeformId, accountId, content, null, startDate, endDate);
-		if(results!=null ){
-			if(!((List)results).isEmpty())
-				searched = true;
-			isComputeFlag = true;
-			if(tableSource==null){
-				GridDataSourceImpl d= new GridDataSourceImpl(this.financeManager);
-				d.setAccountId(accountId);
-				d.setContent(content);
-				d.setStartDate(startDate);
-				d.setEndDate(endDate);
-				d.setFinanceformId(financeformId);
-				tableSource=d;
-			}
-			
-		}
+		searched=true;
+		
 	}
 
 	@OnEvent(component = "form", value = EventConstants.FAILURE)
@@ -151,7 +129,7 @@ public class Index {
 	}
 	
 	public boolean isHasResult(){
-		return this.searched && this.isComputeFlag;
+		return this.searched ;
 	}
 	/**
 	 * 从到数据库提取数据,给grid显示(分页获取)
@@ -373,6 +351,11 @@ public class Index {
 		cld.add(Calendar.DATE, -3);
 		this.startDate=cld.getTime();
 		}
+	}
+	@AfterRender
+	public void afterRenderClear(){
+		this.item=null;
+		this.tableSource=null;
 	}
 	
 	@PageAttached

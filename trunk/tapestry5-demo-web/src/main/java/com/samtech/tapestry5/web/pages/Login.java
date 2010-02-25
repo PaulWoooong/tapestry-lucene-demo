@@ -11,6 +11,7 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.corelib.components.PasswordField;
 import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -25,9 +26,6 @@ import com.samtech.business.service.UserManagerService;
 import com.samtech.common.domain.IUser;
 import com.samtech.tapestry5.web.base.BasePage;
 
-// To make this page accessible only by HTTPS, annotate it with @Secure and ensure your web server can deliver HTTPS.
-// See http://tapestry.apache.org/tapestry5/guide/secure.html .
-// @Secure
 public class Login extends BasePage {
 
 	@Property
@@ -36,8 +34,9 @@ public class Login extends BasePage {
 	private String redirectURI;
 	@Property
 	private String _password;
+	@SuppressWarnings("unused")
 	@Property
-	private ValueEncoder stringEncoder=new StringValueEncoder();
+	private ValueEncoder<String> stringEncoder=new StringValueEncoder();
 	
 	
 	@Component(id = "login")
@@ -45,6 +44,8 @@ public class Login extends BasePage {
 
 	@Component(id = "loginId")
 	private TextField _loginIdField;
+	@Component(id="password")
+	private PasswordField _passowrdField;
 	@Inject
 	private UserManagerService userManager;
 	@Inject
@@ -87,7 +88,18 @@ public class Login extends BasePage {
 			_logger.info(user.getUserName() + " has logged in.");
 		}
 		catch (AuthorizeException e) {
+			Integer code = e.getCode();
+			if(code!=null){
+				if(AuthorizeException.USER_NOTFOUND.equals(code))
+					_form.recordError(_loginIdField, this.getMessages().format("user-nofound", _loginId));
+				else if(AuthorizeException.PASSWORD_ERROR.equals(code))
+				_form.recordError(_passowrdField, this.getMessages().format("password-error"));//password-error
+				else
+					_form.recordError(_loginIdField, this.getMessages().format("account-error"));
+			}
+			else{
 			_form.recordError(_loginIdField, e.getLocalizedMessage());
+			}
 		}
 		catch (Exception e) {
 			_logger.info("Could not log in.  Stack trace follows...");

@@ -1,7 +1,5 @@
 <t:Layout title="literal:T帐查询" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
-
- 	<h1>hello world</h1>
- 	<form t:id="form" t:type="form" t:clientValidation="false">
+	<form t:id="form" t:type="form" t:clientValidation="false">
  	<t:errors/><br/>
  	<table width="100%" class="tabg" border="0" cellpadding="3" cellspacing="1" >
 <tr class="tr1">
