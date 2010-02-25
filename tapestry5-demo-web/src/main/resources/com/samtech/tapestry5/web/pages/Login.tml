@@ -25,7 +25,7 @@ line-height:15px;padding:12px 0 0 10px;}
  <div id="wrap">
 		<form t:type="form" t:id="login" class="v">
 			<div class="top-nav">
-			<div class="nav"></div>
+			<div class="nav"><span t:type="hidden" t:value="redirectURI" t:encoder="stringEncoder"/></div>
 			<div class="content">
 			<div><t:errors/></div>
 				<ul>
