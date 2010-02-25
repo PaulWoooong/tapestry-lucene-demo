@@ -2,21 +2,28 @@ package com.samtech.tapestry5.web.pages;
 
 
 
-import org.apache.tapestry5.Link;
+import java.io.IOException;
+
+import org.apache.commons.lang.xwork.StringUtils;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextField;
+import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.Session;
 import org.slf4j.Logger;
 
 import com.samtech.business.AuthorizeException;
 import com.samtech.business.service.UserManagerService;
 import com.samtech.common.domain.IUser;
 import com.samtech.tapestry5.web.base.BasePage;
-import com.samtech.tapestry5.web.base.CallBack;
 
 // To make this page accessible only by HTTPS, annotate it with @Secure and ensure your web server can deliver HTTPS.
 // See http://tapestry.apache.org/tapestry5/guide/secure.html .
@@ -25,11 +32,13 @@ public class Login extends BasePage {
 
 	@Property
 	private String _loginId;
-	
+	@Property
+	private String redirectURI;
 	@Property
 	private String _password;
-	@SessionState(create=false)
-	private CallBack callback;
+	@Property
+	private ValueEncoder stringEncoder=new StringValueEncoder();
+	
 	
 	@Component(id = "login")
 	private Form _form;
@@ -42,14 +51,29 @@ public class Login extends BasePage {
 	private ApplicationStateManager sessionStateManager;
 	
 	@Inject
+	private Response response;
+	@Inject
+	private Request request;
+	@Inject
 	private Logger _logger;
 	
 	String onPassivate() {
 		return _loginId;
 	}
-	
-	void onActivate(String loginId) {
-		_loginId = loginId;
+	@OnEvent(value=EventConstants.ACTIVATE)
+	void activatePage(Object... args) {
+		if(args!=null && args.length>0){
+			_loginId =(String)args[0];
+		}
+		
+		boolean haveenv=false;
+		
+		Session session = request.getSession(false);
+		if(session!=null && !haveenv){
+			
+			redirectURI=(String) session.getAttribute("login_callback");
+			session.setAttribute("login_callback", null);
+		}
 	}
 
 	void onValidateForm() {
@@ -83,6 +107,13 @@ public class Login extends BasePage {
 			callback=null;
 			 return burl; 
 		}*/
+		if(StringUtils.isNotBlank(redirectURI))
+			try {
+				response.sendRedirect(redirectURI);
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
 		return Index.class;
 	}
 

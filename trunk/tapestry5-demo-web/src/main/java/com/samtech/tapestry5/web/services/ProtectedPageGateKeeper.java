@@ -11,11 +11,10 @@ import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.Session;
 
 import com.samtech.common.domain.IUser;
 import com.samtech.tapestry5.web.annotation.ProtectedPage;
-import com.samtech.tapestry5.web.base.CallBack;
-import com.samtech.tapestry5.web.base.PageCallBack;
 
 public class ProtectedPageGateKeeper implements Dispatcher {
 	private final static String LOGIN_PAGE = "login";
@@ -25,6 +24,7 @@ public class ProtectedPageGateKeeper implements Dispatcher {
 	private final ComponentClassResolver componentClassResolver;
 	private final ComponentSource componentSource;
 	private PageRenderLinkSource pageRenderLinkSource;
+	
 	//private final Logger logger;
 
 	/**
@@ -37,6 +37,7 @@ public class ProtectedPageGateKeeper implements Dispatcher {
 		this.componentClassResolver = resolver;
 		this.componentSource = componentSource;
 		this.pageRenderLinkSource=pageRenderLinkSource;
+		
 		
 	}
 
@@ -99,7 +100,10 @@ public class ProtectedPageGateKeeper implements Dispatcher {
 			 
 			Link backlink = pageRenderLinkSource.createPageRenderLinkWithContext(pageName,
 			(Object[]) activationContextParams);
-			if(backlink!=null)SessionStateManager.set(CallBack.class,new PageCallBack(backlink));
+			if(backlink!=null){
+				Session session = request.getSession(true);
+				if(session!=null)session.setAttribute("login_callback", backlink.toRedirectURI());
+			}
 			Link back = pageRenderLinkSource.createPageRenderLink("login");
 			response.sendRedirect(back);
 			return true; // Make sure to leave the chain
