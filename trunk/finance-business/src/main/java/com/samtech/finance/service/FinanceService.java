@@ -7,6 +7,7 @@ import com.samtech.finance.FinanceRuleException;
 import com.samtech.finance.database.AccountStatus;
 import com.samtech.finance.domain.BizFinanceRule;
 import com.samtech.finance.domain.FinanceForms;
+import com.samtech.finance.domain.MonthReportData;
 import com.samtech.finance.domain.RunningAccountHistory;
 
 public interface FinanceService {
@@ -38,6 +39,7 @@ public interface FinanceService {
 	public void confirmMonthReport(int year,int month)throws FinanceRuleException;
 	
 	public void refuseMonthReport(int year,int month)throws FinanceRuleException;
+	public MonthReportData getMonthReport(int year,int month);
 	/**
 	 * 
 	 * @param financeid
