@@ -308,7 +308,7 @@ public String exportExcel(){
 		if(settings!=null){
 			sheet.get
 		}*/
-		String[] fieldNames={"记账凭证","T账号","摘要","借/贷","金额","日期","状态","公司"};
+		String[] fieldNames={"记账凭证","T账号","摘要","借/贷","金额","金额2","日期","状态","公司"};
 		if (dataList != null && !dataList.isEmpty()) {
 			
 			Format fm=new SimpleDateFormat("yyyy年MM月dd日");
@@ -343,9 +343,14 @@ public String exportExcel(){
 				}
 				label=new Label(3,i+1,s,labelCellFormat);
 				sheet.addCell(label);
-				Number number = new Number(4,i+1,form.getAmount()!=null?form.getAmount().doubleValue():0,numberCellFormat);
+				
+				Number number =null;
+				if(form.getDirect().equals(BalanceDirect.DEBIT))
+					number=new Number(4,i+1,form.getAmount()!=null?form.getAmount().doubleValue():0,numberCellFormat);
+				if(form.getDirect().equals(BalanceDirect.CREDIT))
+					number=new Number(5,i+1,form.getAmount()!=null?form.getAmount().doubleValue():0,numberCellFormat);
 				sheet.addCell(number);
-				label=new Label(5,i+1,fm.format(form.getBizDate()),labelCellFormat);
+				label=new Label(6,i+1,fm.format(form.getBizDate()),labelCellFormat);
 				sheet.addCell(label);
 				if(form.getStatus()!=null){
 					if(AccountStatus.PENDING.equals(form.getStatus()))
@@ -357,9 +362,9 @@ public String exportExcel(){
     					else if(AccountStatus.REBACK.equals(form.getStatus()))
         					s=("冲账已核");
 				}
-				label=new Label(6,i+1,s,labelCellFormat);
+				label=new Label(7,i+1,s,labelCellFormat);
 				sheet.addCell(label);
-				label=new Label(7,i+1,form.getCompanyId()!=null?form.getCompanyId():"",labelCellFormat);
+				label=new Label(8,i+1,form.getCompanyId()!=null?form.getCompanyId():"",labelCellFormat);
 				sheet.addCell(label);
 			}
 			

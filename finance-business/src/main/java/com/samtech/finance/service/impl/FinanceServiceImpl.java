@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -29,6 +31,7 @@ import com.samtech.finance.database.TAccountHistory;
 import com.samtech.finance.domain.BalanceItem;
 import com.samtech.finance.domain.BizFinanceRule;
 import com.samtech.finance.domain.FinanceForms;
+import com.samtech.finance.domain.MonthReportData;
 import com.samtech.finance.domain.RuleItem;
 import com.samtech.finance.domain.RunningAccountHistory;
 import com.samtech.finance.service.FinanceService;
@@ -148,7 +151,11 @@ private static Integer synTax=new Integer(2);
 							items.add(o);
 						}
 					}
-					if(credit!=debit && debit!=form.getAmount().doubleValue())
+					BigDecimal c1 = new BigDecimal(credit);
+					c1=c1.setScale(2,BigDecimal.ROUND_HALF_UP);
+					BigDecimal c2 = new BigDecimal(debit);
+					c2=c2.setScale(2,BigDecimal.ROUND_HALF_UP);
+					if(!c1.equals(c2) || !c1.equals(form.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)))
 						return BALANCE_ERROR;
 					boolean fb=checkFinanceRule(items,em);
 					if(fb==false)return FINANCE_RULE_ERROR;
@@ -361,6 +368,20 @@ private static Integer synTax=new Integer(2);
 			}
 			if(!ids.contains(accountId))
 				ids.add(accountId);
+		}
+		if(!mdebit.isEmpty() && !mcredit.isEmpty()){
+			Iterator<Integer> iter = mdebit.keySet().iterator();
+			Integer inx =null;
+			while(iter.hasNext()){
+				inx= iter.next();
+				if(mcredit.containsKey(inx) && inx.intValue()!=2221)return false;
+			}
+			iter= mcredit.keySet().iterator();
+			
+			while(iter.hasNext()){
+				inx= iter.next();
+				if(mdebit.containsKey(inx) && inx.intValue()!=2221)return false;
+			}
 		}
 		Query q = em.createQuery("select o from "+TAccount.class.getName()+" as o where o.id in (:p_lst)");
 		q.setParameter("p_lst", ids);
@@ -735,6 +756,85 @@ private static Integer synTax=new Integer(2);
 		}, true);
 		
 		return (List<RunningAccountHistory>)object;
+	}
+
+	public MonthReportData getMonthReport(final int year, final int month) {
+		if(year<1980 || month<Calendar.JANUARY)return null;
+
+		Object object = this.getJpaTemplate().execute(new JpaCallback() {
+			
+			
+			public Object doInJpa(EntityManager em) throws PersistenceException {
+				MonthReportData monthReportData = new MonthReportData();
+				Calendar cld = Calendar.getInstance();
+				cld.set(Calendar.YEAR, year);
+				cld.set(Calendar.MONTH, month);
+				cld.set(Calendar.DAY_OF_MONTH, 2);
+				cld.add(Calendar.MONTH, 1);
+				Date dtime = cld.getTime();
+				String qlString = "from "+TAccountHistory.class.getName()+ " as o order where o.initDate<:pdate by o.initDate desc";
+				Query q = em.createQuery(qlString);
+				List resultList = q.setParameter("pdate", dtime,TemporalType.DATE).getResultList();
+				if(resultList!=null && !resultList.isEmpty()){
+					boolean found=false;
+					TAccountHistory t=null;
+					boolean isInited=false;
+					int lastyear=0,lastmonth=0;
+					for(int k=0;k<resultList.size() && !found;k++){
+						t=(TAccountHistory) resultList.get(k);
+						Date initDate = t.getInitDate();
+						if(lastyear!=0 && lastmonth!=0){
+							cld.setTime(initDate);
+							int y = cld.get(Calendar.YEAR);
+							int m=cld.get(Calendar.MONTH);
+							if(y==year && m==(month+1)){
+								found=true;
+								isInited=true;
+							}
+							if((year+1)==y && month==Calendar.DECEMBER && m==Calendar.JANUARY){
+								found=true;
+								isInited=true;
+							}
+							if(year>y)found=true;
+						}else{
+							cld.setTime(initDate);
+							int y = cld.get(Calendar.YEAR);
+							int m=cld.get(Calendar.MONTH);
+							if(y==1980)found=true;
+							if(y>year || (y==year && m>=(month+1))){
+								found=true;
+								isInited=true;
+							}
+							lastyear=y;lastmonth=m;
+						}
+					}
+					monthReportData.setInited(isInited?1:0);
+					monthReportData.setYear(year);
+					monthReportData.setMonth(month);
+				}
+				cld.set(Calendar.YEAR, year);
+				cld.set(Calendar.MONTH, month);
+				cld.set(Calendar.DAY_OF_MONTH, 1);
+				Date startDate = cld.getTime();
+				int day = cld.getActualMaximum(Calendar.DAY_OF_MONTH);
+				cld.set(Calendar.DAY_OF_MONTH, day);
+				Date endDate = cld.getTime();
+				List<FinanceForms> forms = findFinanceForms(null,null,startDate,endDate);
+				for (FinanceForms financeForms : forms) {
+					monthReportData.addForm(financeForms);
+				}
+				
+				return monthReportData;
+			}
+
+			
+
+			
+
+			
+		}, true);
+		
+		return (MonthReportData)object;
 	}
 
 }
