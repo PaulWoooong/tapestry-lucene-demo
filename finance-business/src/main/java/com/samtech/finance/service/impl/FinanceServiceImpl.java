@@ -363,6 +363,7 @@ public class FinanceServiceImpl extends AbstractEntityService implements
 
 		Object object = this.getJpaTemplate().execute(new JpaCallback() {
 
+			@SuppressWarnings("unchecked")
 			public Object doInJpa(EntityManager em) throws PersistenceException {
 				MonthReportData monthReportData = new MonthReportData();
 				Calendar cld = Calendar.getInstance();
@@ -462,7 +463,65 @@ public class FinanceServiceImpl extends AbstractEntityService implements
 							confirmItem(financeForms.getId(), em);
 						}
 						List<AccountData> accounts = monthReportData.getAccounts();
-						//check account is inited?
+						qlString = "from "
+							+ TAccount.class.getName()
+							+ " as o  where o.inited>0";
+						q = em.createQuery(qlString);
+						List<TAccount> accs = q.getResultList();
+						if(accs!=null && !accs.isEmpty()){
+							cld.set(Calendar.YEAR, year);
+							cld.set(Calendar.MONTH, month);
+							cld.set(Calendar.DAY_OF_MONTH, 1);
+							cld.add(Calendar.MONTH, 1);
+							for (TAccount account : accs) {
+								BigDecimal creditBalance = account.getCreditBalance();
+								BigDecimal debitBalance = account.getDebitBalance();
+								if(accounts!=null)
+								for (AccountData data : accounts) {
+									if(data.getAccountId().equals(account.getId())){
+										debitBalance=debitBalance.add(data.getDebit());
+										creditBalance=creditBalance.add(data.getCredit());
+										accounts.remove(data);
+										break;
+									}
+								}
+								if(debitBalance.doubleValue()>creditBalance.doubleValue()){
+									debitBalance=debitBalance.subtract(creditBalance);
+									creditBalance=new BigDecimal(0d);
+								}else{
+									creditBalance=creditBalance.subtract(debitBalance);
+									debitBalance=new BigDecimal(0d);
+								}
+								account.setDebitBalance(debitBalance.setScale(2, BigDecimal.ROUND_HALF_UP));
+								account.setCreditBalance(creditBalance.setScale(2, BigDecimal.ROUND_HALF_UP));
+								em.merge(account);
+								TAccountHistory t_h = new TAccountHistory();
+								t_h.setAccountId(account.getId());
+								t_h.setInitDate(cld.getTime());
+								t_h.setDebitBalance(account.getDebitBalance());
+								t_h.setCreditBalance(account.getCreditBalance());
+								t_h.setLevel(account.getLevel());
+								t_h.setName(account.getName());
+								t_h.setParentId(account.getParentId());
+								em.merge(t_h);
+							}
+							if( accounts!=null &&  !accounts.isEmpty()){
+								FinanceRuleException ex = new FinanceRuleException(
+								"not inited.");
+								ex.setErrorCode(FinanceRuleException.ACCOUNT_INITED);
+								return ex;
+								//throw new PersistenceException("not inited account in forms");
+								//
+							}
+						}else{
+							if( accounts!=null && !accounts.isEmpty()){
+								FinanceRuleException ex = new FinanceRuleException(
+								"not inited.");
+							ex.setErrorCode(FinanceRuleException.ACCOUNT_INITED);
+							return ex;
+							}
+						}
+						
 					}
 				}
 				return null;
