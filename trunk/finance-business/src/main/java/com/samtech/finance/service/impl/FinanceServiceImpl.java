@@ -17,6 +17,7 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.orm.jpa.JpaCallback;
 
 import com.samtech.finance.FinanceRuleException;
@@ -24,6 +25,7 @@ import com.samtech.finance.database.AccountStatus;
 import com.samtech.finance.database.BalanceDirect;
 import com.samtech.finance.database.BusinessAccountRule;
 import com.samtech.finance.database.FinanceForm;
+import com.samtech.finance.database.FinanceLevel;
 import com.samtech.finance.database.RunningAccount;
 import com.samtech.finance.database.TAccount;
 import com.samtech.finance.database.TAccountHistory;
@@ -361,9 +363,10 @@ public class FinanceServiceImpl extends AbstractEntityService implements
 		if (year < 1980 || month < Calendar.JANUARY)
 			throw new FinanceRuleException();
 
-		Object object = this.getJpaTemplate().execute(new JpaCallback() {
+		Object object = null;
+		try{
+		object=this.getJpaTemplate().execute(new JpaCallback() {
 
-			@SuppressWarnings("unchecked")
 			public Object doInJpa(EntityManager em) throws PersistenceException {
 				MonthReportData monthReportData = new MonthReportData();
 				Calendar cld = Calendar.getInstance();
@@ -455,79 +458,100 @@ public class FinanceServiceImpl extends AbstractEntityService implements
 						}
 						if (!monthReportData.getDebit().equals(
 								monthReportData.getCredit())) {
-							FinanceRuleException ex = new FinanceRuleException();
-							ex.setErrorCode(FinanceRuleException.NO_BALANCE);
-							return ex;
+							throw new PersistenceException("FinanceRuleException.NO_BALANCE");
 						}
 						for (FinanceForms financeForms : forms) {
 							confirmItem(financeForms.getId(), em);
 						}
-						List<AccountData> accounts = monthReportData.getAccounts();
-						qlString = "from "
-							+ TAccount.class.getName()
-							+ " as o  where o.inited>0";
-						q = em.createQuery(qlString);
-						List<TAccount> accs = q.getResultList();
-						if(accs!=null && !accs.isEmpty()){
-							cld.set(Calendar.YEAR, year);
-							cld.set(Calendar.MONTH, month);
-							cld.set(Calendar.DAY_OF_MONTH, 1);
-							cld.add(Calendar.MONTH, 1);
-							for (TAccount account : accs) {
-								BigDecimal creditBalance = account.getCreditBalance();
-								BigDecimal debitBalance = account.getDebitBalance();
-								if(accounts!=null)
-								for (AccountData data : accounts) {
-									if(data.getAccountId().equals(account.getId())){
-										debitBalance=debitBalance.add(data.getDebit());
-										creditBalance=creditBalance.add(data.getCredit());
-										accounts.remove(data);
-										break;
-									}
-								}
-								if(debitBalance.doubleValue()>creditBalance.doubleValue()){
-									debitBalance=debitBalance.subtract(creditBalance);
-									creditBalance=new BigDecimal(0d);
-								}else{
-									creditBalance=creditBalance.subtract(debitBalance);
-									debitBalance=new BigDecimal(0d);
-								}
-								account.setDebitBalance(debitBalance.setScale(2, BigDecimal.ROUND_HALF_UP));
-								account.setCreditBalance(creditBalance.setScale(2, BigDecimal.ROUND_HALF_UP));
-								em.merge(account);
-								TAccountHistory t_h = new TAccountHistory();
-								t_h.setAccountId(account.getId());
-								t_h.setInitDate(cld.getTime());
-								t_h.setDebitBalance(account.getDebitBalance());
-								t_h.setCreditBalance(account.getCreditBalance());
-								t_h.setLevel(account.getLevel());
-								t_h.setName(account.getName());
-								t_h.setParentId(account.getParentId());
-								em.merge(t_h);
-							}
-							if( accounts!=null &&  !accounts.isEmpty()){
-								FinanceRuleException ex = new FinanceRuleException(
-								"not inited.");
-								ex.setErrorCode(FinanceRuleException.ACCOUNT_INITED);
-								return ex;
-								//throw new PersistenceException("not inited account in forms");
-								//
-							}
-						}else{
-							if( accounts!=null && !accounts.isEmpty()){
-								FinanceRuleException ex = new FinanceRuleException(
-								"not inited.");
-							ex.setErrorCode(FinanceRuleException.ACCOUNT_INITED);
-							return ex;
+						Query query = em.createQuery("select o from "+TAccount.class.getName()+" as o ");
+						List<TAccount> lst = query.getResultList();
+						Map<Integer,TAccount> map=new HashMap<Integer, TAccount>(20);
+						if(lst!=null && !lst.isEmpty()){
+							for (TAccount a : lst) {
+								map.put(a.getId(), a);
 							}
 						}
-						
+						List<AccountData> accounts = monthReportData.getAccounts();
+						//check account is inited?
+						//parent account and sub account
+						TAccount ta;
+						cld.set(Calendar.YEAR, year);
+						cld.set(Calendar.MONTH, month);
+						cld.set(Calendar.DAY_OF_MONTH, 1);
+						cld.add(Calendar.MONTH, 1);
+						List<Integer> inBusiness=new ArrayList<Integer>();
+						if(accounts!=null && !accounts.isEmpty()){
+							for (AccountData data : accounts) {
+								Integer id = data.getAccountId();
+								 ta= map.get(id);
+								if(ta==null)throw new PersistenceException("account.not_found");
+								short inited = ta.getInited();
+								if(inited<1)throw new PersistenceException("account.not_inited");
+								if(!inBusiness.contains(id))
+									inBusiness.add(id);
+								ta.setDebitBalance(ta.getDebitBalance().add(data.getDebit()));
+								ta.setCreditBalance(ta.getCreditBalance().add(data.getCredit()));
+								Integer parentId = ta.getParentId();
+								if(parentId!=null){
+									ta = map.get(parentId);
+									ta.setDebitBalance(ta.getDebitBalance().add(data.getDebit()));
+									ta.setCreditBalance(ta.getCreditBalance().add(data.getCredit()));
+									if(!inBusiness.contains(parentId))
+										inBusiness.add(parentId);
+								}
+							}
+							for (TAccount t : lst) {
+								short inited=t.getInited();
+								if(inited>0){
+									if(t.getDebitBalance().doubleValue()>=t.getCreditBalance().doubleValue()){
+										t.setDebitBalance(t.getDebitBalance().subtract(t.getCreditBalance()));
+										BigDecimal b = new BigDecimal(0);
+										t.setCreditBalance(b.setScale(2, BigDecimal.ROUND_HALF_UP));
+									}else{
+										t.setCreditBalance(t.getCreditBalance().subtract(t.getDebitBalance()));
+										BigDecimal b = new BigDecimal(0);
+										t.setDebitBalance(b.setScale(2, BigDecimal.ROUND_HALF_UP));
+									}
+								}else if(inBusiness.contains(t.getId())){
+									throw new PersistenceException("account.not_inited");
+								}
+								em.merge(t);	
+								TAccountHistory taHistory = new TAccountHistory();
+								taHistory.setAccountId(t.getId());
+								taHistory.setDebitBalance(t.getDebitBalance());
+								taHistory.setCreditBalance(t.getCreditBalance());
+								taHistory.setInitDate(cld.getTime());
+								taHistory.setLevel(t.getLevel());
+								taHistory.setName(t.getName());
+								taHistory.setParentId(t.getParentId());
+								em.merge(taHistory);
+							}
+						}
 					}
 				}
 				return null;
 			}
 		}, true);
-
+		}
+		catch (DataAccessException e) {
+			if(e.getMessage()!=null){
+				FinanceRuleException ex = new FinanceRuleException(e.getMessage());
+				if(e.getMessage().indexOf("account.not_inited")>=0) {
+					ex.setErrorCode(FinanceRuleException.ACCOUNT_INITED);
+					throw ex;
+				}
+				if(e.getMessage().indexOf("account.not_found")>=0) {
+					ex.setErrorCode(FinanceRuleException.UNKNOW);
+					throw ex;
+				}
+				if(e.getMessage().indexOf("FinanceRuleException.NO_BALANCE")>=0) {
+					ex.setErrorCode(FinanceRuleException.NO_BALANCE);
+					throw ex;
+				}
+			}
+			throw e;
+		}
+		if(object!=null && object instanceof FinanceRuleException)throw (FinanceRuleException)object;
 		// return (MonthReportData)object;
 	}
 
