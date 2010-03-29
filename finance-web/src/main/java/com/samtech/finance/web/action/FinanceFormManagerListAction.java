@@ -619,6 +619,14 @@ public class FinanceFormManagerListAction extends AbstractAction {
 					label=new Label(1,i*17+1,fm.format(form.getBizDate()));
 				
 				sheet.addCell(label);
+				label =null;
+				if(cellFormat!=null)
+					label=new Label(3+('t'-'d'),i*17+1,form.getId(),cellFormat);
+				else
+					label=new Label(3+('t'-'d'),i*17+1,form.getId());
+				
+				sheet.addCell(label);
+				
 				cell = sheet.getWritableCell(0, i*17+4);
 				cellFormat = cell.getCellFormat();
 				CellFeatures cellFeatures = cell.getCellFeatures();
