@@ -397,15 +397,19 @@ public class FinanceServiceImpl extends AbstractEntityService implements
 						if (y == year && m > month) {
 							found = true;
 							isInited = true;
+							continue;
 						}
 						if ((year + 1) == y && month == Calendar.DECEMBER
 								&& m == Calendar.JANUARY) {
 							found = true;
 							isInited = true;
+							continue;
 						}
 
-						if (y == 1980)
+						if (y == 1980){
 							found = true;
+							continue;
+						}
 						if (y > year || (y == year && m >= (month + 1))) {
 							found = true;
 							isInited = true;
@@ -555,9 +559,183 @@ public class FinanceServiceImpl extends AbstractEntityService implements
 		// return (MonthReportData)object;
 	}
 
-	public void refuseMonthReport(int year, int month)
+	public void refuseMonthReport(final int year, final int month)
 			throws FinanceRuleException {
-		// TODO Auto-generated method stub
+		Object object = null;
+		try{
+		object=this.getJpaTemplate().execute(new JpaCallback() {
+
+			public Object doInJpa(EntityManager em) throws PersistenceException {
+				MonthReportData monthReportData = new MonthReportData();
+				Calendar cld = Calendar.getInstance();
+				cld.set(Calendar.YEAR, year);
+				cld.set(Calendar.MONTH, month);
+				cld.set(Calendar.DAY_OF_MONTH, 2);
+				cld.add(Calendar.MONTH, 2);
+				Date dtime = cld.getTime();
+				String qlString = "from "
+						+ TAccountHistory.class.getName()
+						+ " as o  where o.initDate<:pdate order by o.initDate desc";
+				Query q = em.createQuery(qlString);
+				List resultList = q.setParameter("pdate", dtime,
+						TemporalType.DATE).getResultList();
+				boolean isInited = false;
+				boolean lastMonthNoInited = false;
+				if (resultList != null && !resultList.isEmpty()) {
+					boolean found = false;
+					TAccountHistory t = null;
+
+					for (int k = 0; k < resultList.size() && !found; k++) {
+						t = (TAccountHistory) resultList.get(k);
+						Date initDate = t.getInitDate();
+
+						cld.setTime(initDate);
+						int y = cld.get(Calendar.YEAR);
+						int m = cld.get(Calendar.MONTH);
+						if (y == year && m > (month+1)) {
+							found = true;
+							isInited = true;
+							lastMonthNoInited=true;
+						}
+						if (y == year && month==Calendar.NOVEMBER && m==Calendar.DECEMBER) {
+							found = true;
+							isInited = true;
+							
+						}
+						if ((year + 1) == y  ) {
+							 if(month == Calendar.DECEMBER){
+								 if(m == Calendar.JANUARY){
+									found = true;
+									isInited = true;
+								 }
+								 if(m>Calendar.JANUARY){
+									 found = true;
+									 isInited = true; 
+									 lastMonthNoInited=true;
+								 }
+							 }
+							 if(month == Calendar.NOVEMBER){
+								 found = true;
+								 isInited = true; 
+								 if(m>=Calendar.JANUARY){
+									 lastMonthNoInited=true;
+								 }
+							 }
+						}
+
+						if (y == 1980)
+							found = true;
+						if (y > year ) {
+							if(!found){
+							found = true;
+							isInited = true;
+							lastMonthNoInited=true;
+							}
+						}
+						if (!isInited) {
+							if (y == year && m == month) {
+								found = true;
+								break;
+							}
+							
+						}
+					}
+				}
+				if (lastMonthNoInited) {
+					FinanceRuleException ex = new FinanceRuleException(
+							"last month is inited.");
+					ex.setErrorCode(FinanceRuleException.UNKNOW);
+					return ex;
+				}
+				if (!isInited) {
+					return null;
+				}
+				monthReportData.setInited(isInited ? 1 : 0);
+				monthReportData.setYear(year);
+				monthReportData.setMonth(month);
+
+				synchronized (synT) {
+
+					cld.set(Calendar.YEAR, year);
+					cld.set(Calendar.MONTH, month);
+					cld.set(Calendar.DAY_OF_MONTH, 1);
+					cld.add(Calendar.MONTH, 1);
+					Date startDate = cld.getTime();
+					
+					synchronized (synTax) {
+							Query query =null;
+							
+							query =em.createQuery("DELETE FROM "+TAccountHistory.class.getName()+" as o where o.initDate>=:pdate");
+							query.setParameter("pdate", startDate, TemporalType.DATE);
+							query.executeUpdate();
+							cld.set(Calendar.YEAR, year);
+							cld.set(Calendar.MONTH, month);
+							cld.set(Calendar.DAY_OF_MONTH, 1);
+							startDate = cld.getTime();
+							query=em.createQuery("select o from "+TAccountHistory.class.getName()+" as o where o.initDate<=:pdate order by o.initDate desc");
+							query.setParameter("pdate", startDate, TemporalType.DATE);
+							List<TAccountHistory> lst = query.getResultList();
+							List<Integer> initedIds=new ArrayList<Integer>(10);
+							for (TAccountHistory t : lst) {
+								Integer id = t.getAccountId();
+								if(initedIds.contains(id))continue;
+								TAccount a = em.find(TAccount.class, id);
+								if(a!=null){
+									a.setCreditBalance(t.getCreditBalance());
+									a.setDebitBalance(t.getDebitBalance());
+									em.merge(a);
+								}
+								initedIds.add(id);
+							}
+							if(lst!=null)lst.clear();
+							
+							//FinanceForm
+							query = em.createQuery("select o from "+FinanceForm.class.getName()+" as o where o.bizDate>=:pdate");
+							query.setParameter("pdate", startDate, TemporalType.DATE);
+							List<FinanceForm> forms = query.getResultList();
+							boolean b=false;
+							for (FinanceForm financeForm : forms) {
+								b=false;
+								if(financeForm.getConfirmDate()!=null){
+									if(!b)b=true;
+									financeForm.setConfirmDate(null);
+								}
+								if(financeForm.getStatus()!=null && financeForm.getStatus().equals(AccountStatus.NORMAL)){
+									if(!b)b=true;
+									financeForm.setStatus(AccountStatus.PENDING);
+								}
+								if(financeForm.getStatus()!=null && financeForm.getStatus().equals(AccountStatus.REBACK)){
+									if(!b)b=true;
+									financeForm.setStatus(AccountStatus.PRREBACK);
+								}
+								if(b)em.merge(financeForm);
+							}
+							
+					}
+				}
+				return null;
+			}
+		}, true);
+		}
+		catch (DataAccessException e) {
+			if(e.getMessage()!=null){
+				FinanceRuleException ex = new FinanceRuleException(e.getMessage());
+				if(e.getMessage().indexOf("account.not_inited")>=0) {
+					ex.setErrorCode(FinanceRuleException.ACCOUNT_INITED);
+					throw ex;
+				}
+				if(e.getMessage().indexOf("account.not_found")>=0) {
+					ex.setErrorCode(FinanceRuleException.UNKNOW);
+					throw ex;
+				}
+				if(e.getMessage().indexOf("FinanceRuleException.NO_BALANCE")>=0) {
+					ex.setErrorCode(FinanceRuleException.NO_BALANCE);
+					throw ex;
+				}
+			}
+			throw e;
+		}
+		if(object!=null && object instanceof FinanceRuleException)throw (FinanceRuleException)object;
 
 	}
 
@@ -567,7 +745,7 @@ public class FinanceServiceImpl extends AbstractEntityService implements
 			long time = d.getTime();
 			Calendar cld = Calendar.getInstance();
 			cld.setTimeInMillis(time);
-			cld.set(Calendar.DAY_OF_MONTH, 1);
+			cld.set(Calendar.DAY_OF_MONTH, 2);
 			cld.set(Calendar.HOUR_OF_DAY, 0);
 			cld.set(Calendar.MINUTE, 0);
 			cld.set(Calendar.SECOND, 0);
@@ -653,7 +831,7 @@ public class FinanceServiceImpl extends AbstractEntityService implements
 		AccountStatus status = form.getStatus();
 		Query query = em.createQuery("select o from "
 				+ RunningAccount.class.getName()
-				+ " as o where o.business=:p_bizid");
+				+ " as o where o.businessId=:p_bizid");
 		query.setParameter("p_bizid", bizId);
 		List<RunningAccount> resultList = query.getResultList();
 		synchronized (synT) {
