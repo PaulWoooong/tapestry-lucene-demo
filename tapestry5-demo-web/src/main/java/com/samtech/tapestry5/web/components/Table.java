@@ -11,7 +11,7 @@ import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.RenderSupport;
+//import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
@@ -35,13 +35,16 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.internal.bindings.AbstractBinding;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+//import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+//import org.apache.tapestry5.services.javascript.JavascriptSupport;
 @SupportsInformalParameters
 public class Table implements GridModel{
     /**
@@ -84,7 +87,8 @@ public class Table implements GridModel{
     /**
      * Optional output parmeter used to identify the index of the column being rendered.
      */
-    @Parameter
+    @SuppressWarnings("unused")
+	@Parameter
     private int columnIndex;
 
     /**
@@ -93,13 +97,15 @@ public class Table implements GridModel{
      * the objects provided by the source are uniform). The model may be explicitly specified to override the default
      * behavior, say to reorder or rename columns or add additional columns.
      */
-    @Parameter
+    @SuppressWarnings("unchecked")
+	@Parameter
     private BeanModel model;
 
     /**
      * The model parameter after modification due to the add, include, exclude and reorder parameters.
      */
-    private BeanModel dataModel;
+    @SuppressWarnings("unchecked")
+	private BeanModel dataModel;
 
     /**
      * The model used to handle sorting of the Grid. This is generally not specified, and the built-in model supports
@@ -121,7 +127,7 @@ public class Table implements GridModel{
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
-    @SuppressWarnings("unused")
+   
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
 
@@ -152,7 +158,8 @@ public class Table implements GridModel{
      * CSS class for the &lt;table&gt; element.  In addition, informal parameters to the Grid are rendered in the table
      * element.
      */
-    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "t-data-grid")
+    @SuppressWarnings("unused")
+	@Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "t-data-grid")
     @Property(write = false)
     private String tableClass;
 
@@ -191,7 +198,8 @@ public class Table implements GridModel{
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
 
-    @Component(
+    @SuppressWarnings("unused")
+	@Component(
             parameters = {
                     "index=inherit:columnIndex",
                     "lean=inherit:lean",
@@ -199,7 +207,8 @@ public class Table implements GridModel{
                     "zone=zone" })
     private GridColumns columns;
 
-    @Component(
+    @SuppressWarnings("unused")
+	@Component(
             parameters = {
                     "columnIndex=inherit:columnIndex",
                     "rowsPerPage=rowsPerPage",
@@ -216,24 +225,29 @@ public class Table implements GridModel{
             "zone=zone" })
     private TablePager pager;
 
-    @Component(parameters = "to=pagerTop")
+    @SuppressWarnings("unused")
+	@Component(parameters = "to=pagerTop")
     private Delegate pagerTop;
 
-    @Component(parameters = "to=pagerBottom")
+    @SuppressWarnings("unused")
+	@Component(parameters = "to=pagerBottom")
     private Delegate pagerBottom;
 
-    @Component(parameters = "class=tableClass", inheritInformalParameters = true)
+    @SuppressWarnings("unused")
+	@Component(parameters = "class=tableClass", inheritInformalParameters = true)
     private Any table;
 
     @Environmental(false)
     private FormSupport formSupport;
 
-    @Inject
+    @SuppressWarnings("unused")
+	@Inject
     private Request request;
 
+    /*Environmental
+    private RenderSupport renderSupport;*/
     @Environmental
-    private RenderSupport renderSupport;
-
+    private JavaScriptSupport javascriptSupport;
     /**
      * Defines where block and label overrides are obtained from. By default, the Grid component provides block
      * overrides (from its block parameters).
@@ -245,13 +259,15 @@ public class Table implements GridModel{
     /**
      * Set up via the traditional or Ajax component event request handler
      */
-    @Environmental
+    @SuppressWarnings("unchecked")
+	@Environmental
     private ComponentEventResultProcessor componentEventResultProcessor;
 
     @Inject
     private ComponentDefaultProvider defaultsProvider;
 
-    ValueEncoder defaultEncoder()
+    @SuppressWarnings("unchecked")
+	ValueEncoder defaultEncoder()
     {
         return defaultsProvider.defaultValueEncoder("row", resources);
     }
@@ -293,7 +309,8 @@ public class Table implements GridModel{
             return delegate.getRowValue(index);
         }
 
-        public Class getRowType()
+        @SuppressWarnings("unchecked")
+		public Class getRowType()
         {
             return delegate.getRowType();
         }
@@ -321,8 +338,8 @@ public class Table implements GridModel{
 
         public void updateSort(String columnId)
         {
-            Defense.notBlank(columnId, "columnId");
-
+            //Defense.notBlank(columnId, "columnId");
+            assert InternalUtils.isNonBlank(columnId);
             if (columnId.equals(sortColumnId))
             {
                 setSortAscending(!getSortAscending());
@@ -367,7 +384,8 @@ public class Table implements GridModel{
     {
         return new AbstractBinding()
         {
-            public Object get()
+            @SuppressWarnings("unchecked")
+			public Object get()
             {
                 // Get the default row type from the data source
 
@@ -467,7 +485,7 @@ public class Table implements GridModel{
 
         if (inPlace && zone == null)
         {
-            zone = renderSupport.allocateClientId(resources);
+            zone = javascriptSupport.allocateClientId(resources) ;//renderSupport.allocateClientId(resources);
 
             writer.element("div", "id", zone);
 
@@ -488,7 +506,8 @@ public class Table implements GridModel{
         }
     }
 
-    public BeanModel getDataModel()
+    @SuppressWarnings("unchecked")
+	public BeanModel getDataModel()
     {
         if (dataModel == null)
         {
@@ -571,7 +590,8 @@ public class Table implements GridModel{
      * re-render themselves.  Invokes {@link org.apache.tapestry5.services.ComponentEventResultProcessor#processResultValue(Object)}
      * passing this (the Grid component) as the content provider for the update.
      */
-    void onInPlaceUpdate(String zone) throws IOException
+    @SuppressWarnings("unchecked")
+	void onInPlaceUpdate(String zone) throws IOException
     {
         this.zone = zone;
 

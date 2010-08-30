@@ -7,7 +7,6 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
@@ -18,6 +17,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 @Events(InternalConstants.GRID_INPLACE_UPDATE + " (internal event)")
 public class TablePager {
@@ -68,12 +68,15 @@ public class TablePager {
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
 
+    /*Environmental
+    private RenderSupport renderSupport;*/
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport javascriptSupport;
     
     private boolean isshow;
     private int totalRows;
-    private boolean firstcom,lastcom;
+    @SuppressWarnings("unused")
+	private boolean firstcom,lastcom;
     private List<Integer> pages;
     
     public boolean isShowPager( ){
@@ -156,7 +159,8 @@ public class TablePager {
 	public String getLinkTitle() {
 	return messages.format("goto-page", this.ipage);
 	}
-    private void writePageLink(MarkupWriter writer, int pageIndex)
+    @SuppressWarnings("unused")
+	private void writePageLink(MarkupWriter writer, int pageIndex)
     {
         if (pageIndex < 1 || pageIndex > maxPages) return;
 
@@ -189,7 +193,7 @@ public class TablePager {
 
         if (zone != null)
         {
-            String id = renderSupport.allocateClientId(resources);
+            String id = javascriptSupport.allocateClientId(resources);// renderSupport.allocateClientId(resources);
 
             element.attribute("id", id);
 

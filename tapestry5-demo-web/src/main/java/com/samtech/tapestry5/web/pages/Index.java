@@ -12,6 +12,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.OnEvent;
@@ -43,8 +44,9 @@ import com.samtech.finance.service.FinanceService;
  * @author samwen
  *
  */
-@IncludeStylesheet(value="context:/scripts/prompt/skin/dmm-green/ymPrompt.css")
-@IncludeJavaScriptLibrary(value="context:/scripts/prompt/ymPrompt.js")
+//@IncludeStylesheet(value="context:/scripts/prompt/skin/dmm-green/ymPrompt.css")
+//@IncludeJavaScriptLibrary(value="context:/scripts/prompt/ymPrompt.js")
+@Import(stylesheet="context:/scripts/prompt/skin/dmm-green/ymPrompt.css",library="context:/scripts/prompt/ymPrompt.js")
 public class Index {
 	// @Service
 	@Inject
@@ -58,6 +60,9 @@ public class Index {
 	private ComponentResources _componentResources;
 	@Inject
 	private LinkSource _linkSource;
+	
+	
+	
 	
 	//private List<AccountStatus> statuses;
 	@Persist
@@ -78,7 +83,7 @@ public class Index {
 	
 	private Object results=null;
 
-	@SuppressWarnings("unused")
+	
 	@Persist
 	@Property
 	private boolean searched;

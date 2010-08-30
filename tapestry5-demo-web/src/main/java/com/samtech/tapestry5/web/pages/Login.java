@@ -4,7 +4,9 @@ package com.samtech.tapestry5.web.pages;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.xwork.StringUtils;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
@@ -57,6 +59,8 @@ public class Login extends BasePage {
 	private Request request;
 	@Inject
 	private Logger _logger;
+	@Inject
+	private ComponentResources _componentResources;
 	
 	String onPassivate() {
 		return _loginId;
@@ -91,11 +95,11 @@ public class Login extends BasePage {
 			Integer code = e.getCode();
 			if(code!=null){
 				if(AuthorizeException.USER_NOTFOUND.equals(code))
-					_form.recordError(_loginIdField, this.getMessages().format("user-nofound", _loginId));
+					_form.recordError(_loginIdField, this._componentResources.getMessages().format("user-nofound", _loginId));
 				else if(AuthorizeException.PASSWORD_ERROR.equals(code))
-				_form.recordError(_passowrdField, this.getMessages().format("password-error"));//password-error
+				_form.recordError(_passowrdField, this._componentResources.getMessages().format("password-error"));//password-error
 				else
-					_form.recordError(_loginIdField, this.getMessages().format("account-error"));
+					_form.recordError(_loginIdField, this._componentResources.getMessages().format("account-error"));
 			}
 			else{
 			_form.recordError(_loginIdField, e.getLocalizedMessage());
@@ -104,7 +108,7 @@ public class Login extends BasePage {
 		catch (Exception e) {
 			_logger.info("Could not log in.  Stack trace follows...");
 			e.printStackTrace();
-			_form.recordError(getMessages().get("login_problem"));
+			_form.recordError(_componentResources.getMessages().get("login_problem"));
 		}
 	}
 	

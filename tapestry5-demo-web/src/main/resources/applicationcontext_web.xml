@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="windows-1252"?>
+
+	<!--
+		GRANITE DATA SERVICES Copyright (C) 2007-2008 ADEQUATE SYSTEMS SARL
+
+		This file is part of Granite Data Services. Granite Data Services is
+		free software; you can redistribute it and/or modify it under the
+		terms of the GNU Lesser General Public License as published by the
+		Free Software Foundation; either version 3 of the License, or (at your
+		option) any later version. Granite Data Services is distributed in the
+		hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+		the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU Lesser General Public License for more details.
+
+		You should have received a copy of the GNU Lesser General Public
+		License along with this library; if not, see
+		<http://www.gnu.org/licenses/>.
+	-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+	default-autowire="byName" default-lazy-init="false">
+	
+	<bean id="userManager" class="com.samtech.business.service.impl.UserManagerServiceImpl" scope="prototype">
+		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
+	
+	<bean id="financeManager" class="com.samtech.finance.service.impl.FinanceServiceImpl" scope="prototype">
+		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
+	<bean id="accountManager" class="com.samtech.finance.service.impl.TAccountManagerServiceImpl" scope="prototype">
+	<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="modi*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="initAccount" propagation="REQUIRED" />
+			<tx:method name="pendingBizForm" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	<tx:advice id="txAdvice1" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="modi*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<aop:config>
+		
+		<aop:pointcut id="serviceOperation"
+			expression="execution(* com.samtech.business.service.impl.*ServiceImpl.*(..))|| execution(* com.samtech.finance.service.impl.*ServiceImpl.*(..))" />	 
+			
+		<aop:pointcut id="baseDaoOperation"
+			expression="execution(* com.samtech.finance.dao.*BaseDao.*(..))|| execution(* com.samtech.business.dao.*BaseDao.*(..))" />	 
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+		
+		<aop:advisor advice-ref="txAdvice1" pointcut-ref="baseDaoOperation" />
+	</aop:config>
+</beans>

@@ -39,6 +39,7 @@ public class T5appModule
     configuration.add(SymbolConstants.CHARSET, "UTF-8");
     configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "false");
     configuration.add(SymbolConstants.COMBINE_SCRIPTS, "false");
+    configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "context:styles/t5main.css");//tapestry.default-stylesheet
     
   }
   
