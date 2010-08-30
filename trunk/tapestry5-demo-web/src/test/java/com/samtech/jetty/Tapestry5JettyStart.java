@@ -1,9 +1,9 @@
 package com.samtech.jetty;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.bio.SocketConnector;
-import org.eclipse.jetty.webapp.WebAppContext;
+//import org.eclipse.jetty.server.Connector;
+//import org.eclipse.jetty.server.Server;
+//import org.eclipse.jetty.server.bio.SocketConnector;
+//import org.eclipse.jetty.webapp.WebAppContext;
 
 
 /*import org.mortbay.jetty.Connector;
@@ -14,7 +14,7 @@ import org.mortbay.jetty.webapp.WebAppContext;*/
 
 public class Tapestry5JettyStart {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {/*
 		Server server = new Server();
 		
 		SocketConnector connector =new SocketConnector();// new Ajp13SocketConnector();
@@ -25,10 +25,7 @@ public class Tapestry5JettyStart {
 		connector.setPort(8068);
 		//connector.setConfidentialPort(8443);
 		//connector.setConfidentialScheme("https");
-		/*SslSocketConnector sslconnector = new SslSocketConnector();
-		sslconnector.setPort(8443);
-		sslconnector.setMaxIdleTime(1000 * 60 * 60);
-		sslconnector.setSoLingerTime(-1);*/
+	
 		server.setConnectors(new Connector[] { connector});
 		
 		Class clazz=org.slf4j.Logger.class;
@@ -40,10 +37,10 @@ public class Tapestry5JettyStart {
 		
 		
 		
-		/*
+		
 		ServletHolder holder=new ServletHolder(new JspServlet());
         bb.addServlet(holder, "*.jsp");
-        */
+        
 		server.setHandler(bb);
 		//server.addHandler(bb);
 
@@ -61,5 +58,5 @@ public class Tapestry5JettyStart {
 			e.printStackTrace();
 			System.exit(100);
 		}
-	}
+	*/}
 }

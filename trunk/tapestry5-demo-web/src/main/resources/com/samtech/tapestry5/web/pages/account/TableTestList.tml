@@ -1,6 +1,6 @@
 <t:Layout title="literal:T帐查询" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 	<form t:id="form" t:type="form" t:clientValidation="false">
- 	<t:errors/><br/>
+ 	<t:errors /><br/>
  	<table width="100%" class="tabg" border="0" cellpadding="3" cellspacing="1" >
 <tr class="tr1">
 <td colspan="10">T帐查询</td>
@@ -17,30 +17,28 @@
     </td>
   </tr>
 </table>
-<t:if test="message">
-<div>
- ${message}
-</div>
-</t:if>
  </form>
+ 	<t:block id="nodata" >${notFoundMessage}</t:block>
+ 	
  	<t:if test="hasResult">
- 		<table id="tables" t:id="tables" t:type="table" t:model="beanModel" t:source="tableSource" t:row="item" t:rowsPerPage="3">
+ 		<table id="tables" t:id="tables" t:type="table" t:model="beanModel" t:source="tableSource" t:row="item" t:rowsPerPage="3" t:empty="block:nodata">
  		
  		 <p:editcell>
  		   <!-- :any  t:element="a"  class="literal:ymPrompt" href1="ognl:buildUrl(ticketParams)">${message:edit-label}</:any -->
- 		    <t:pagelink page="account/accountEdit" context="ticketParams">${message:edit-label}</t:pagelink>
+ 		    <!-- t:pagelink page="account/accountEdit" context="ticketParams" zone="showDetail">${message:edit-label}</t:pagelink -->
+ 		    <t:actionLink context=""
  		 </p:editcell>
  		 
  		 <p:levelcell>
- 		  <span t:type="If" test="ognl:@com.samtech.finance.database.FinanceLevel@ONE.equals(item.level)">
+ 		  <span t:type="If" t:test="equalOne">
  		     ${message:FinanceLevel.ONE}
  		  </span>
- 		  <span t:type="If" test="ognl:@com.samtech.finance.database.FinanceLevel@TWO.equals(item.level)">
+ 		  <span t:type="If" t:test="equalTwo">
  		     ${message:FinanceLevel.TWO}
  		  </span>
  		 </p:levelcell>
  		 <p:initedcell>
- 		  <span t:type="If" test="ognl:item.inited>0">
+ 		  <span t:type="If" t:test="itemInited">
  		     ${message:yes}
  		     <p:else>${message:no}</p:else>
  		  </span>
@@ -52,9 +50,12 @@
  		 ${message:credit-msg}
  		 </p:creditBalanceheader>
  		</table>
+ 		
+ 		<t:zone id="showDetail">
+ 		</t:zone>
  		<script type="text/javascript">
  		 document.observe('dom:loaded',function (){
- 		 	$$(".ymPrompt").each(function(e){
+ 		 	$(".ymPrompt").each(function(e){
  		 	  $(e).observe("click",function(event){
  		 	  		var _href = $(this).readAttribute("href1");
 					var _title = $(this).readAttribute("title");

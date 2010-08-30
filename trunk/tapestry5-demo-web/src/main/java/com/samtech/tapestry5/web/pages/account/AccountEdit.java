@@ -2,6 +2,7 @@ package com.samtech.tapestry5.web.pages.account;
 
 import java.util.List;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.OptionGroupModel;
 import org.apache.tapestry5.OptionModel;
@@ -46,7 +47,8 @@ public class AccountEdit extends BasePage {
 	@Inject
 	private TAccountManagerService accountManager;
 	
-	
+	@Inject
+	private ComponentResources _componentResources;
 	
 	
 	
@@ -121,7 +123,7 @@ public class AccountEdit extends BasePage {
 	}
 	@OnEvent(component="editForm" ,value=EventConstants.SUCCESS)
 	public void formSucess(){
-		this.message=this.getMessages().get("save-successful");
+		this.message=this._componentResources.getMessages().get("save-successful");
 	}
 	
 	public ValueEncoder<FinanceLevel> getLevelEncoder(){
@@ -136,8 +138,8 @@ public class AccountEdit extends BasePage {
 			}
 
 			public List<OptionModel> getOptions() {
-				options.add(new OptionModelImpl(getMessages().get("levelone-msg"),FinanceLevel.ONE));
-				options.add(new OptionModelImpl(getMessages().get("leveltwo-msg"),FinanceLevel.TWO));
+				options.add(new OptionModelImpl(_componentResources.getMessages().get("levelone-msg"),FinanceLevel.ONE));
+				options.add(new OptionModelImpl(_componentResources.getMessages().get("leveltwo-msg"),FinanceLevel.TWO));
 				return options;
 			}
 			

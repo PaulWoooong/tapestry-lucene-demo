@@ -9,8 +9,7 @@ import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
-import org.apache.tapestry5.annotations.IncludeStylesheet;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.PageAttached;
 import org.apache.tapestry5.annotations.PageDetached;
@@ -25,10 +24,10 @@ import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.internal.services.LinkSource;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 
+import com.samtech.finance.database.FinanceLevel;
 import com.samtech.finance.domain.Account;
 import com.samtech.finance.service.TAccountManagerService;
 import com.samtech.tapestry5.web.annotation.ProtectedPage;
@@ -40,8 +39,9 @@ import com.samtech.tapestry5.web.base.BasePage;
  *
  */
 @ProtectedPage
-@IncludeStylesheet(value="context:/scripts/prompt/skin/dmm-green/ymPrompt.css")
-@IncludeJavaScriptLibrary(value="context:/scripts/prompt/ymPrompt.js")
+//IncludeStylesheet(value="context:/scripts/prompt/skin/dmm-green/ymPrompt.css")
+//IncludeJavaScriptLibrary(value="context:/scripts/prompt/ymPrompt.js")
+@Import(stylesheet="context:/scripts/prompt/skin/dmm-green/ymPrompt.css",library="context:/scripts/prompt/ymPrompt.js")
 public class TableTestList extends BasePage {
 	
 	@Inject
@@ -66,7 +66,7 @@ public class TableTestList extends BasePage {
 	private Short status;
 	
 	
-	private Object results=null;
+	//private Object results=null;
 
 	
 	@Persist
@@ -75,8 +75,8 @@ public class TableTestList extends BasePage {
 
 	@Property
 	private Account item;
-	@Property
-	private String message;
+	//@Property
+	//private String _message;
 	private GridDataSource tableSource;
 	
 	private Format timeformat;
@@ -95,9 +95,14 @@ public class TableTestList extends BasePage {
 	 */
 	@OnEvent(value=EventConstants.ACTIVATE)
 	public void activatePage(Object... ars){
+		System.out.println("activatePage...");
 		if(ars!=null && ars.length>0){
-			
-		}else{
+			StringBuffer buf=new StringBuffer(30);
+			for (int i = 0; i < ars.length; i++) {
+				if(buf.length()>0)buf.append("; ");
+				buf.append("arg"+i+"=").append(ars[i]);
+			}
+			System.out.println(buf.toString());
 		}
 	}
 	
@@ -125,29 +130,12 @@ public class TableTestList extends BasePage {
 
 	@OnEvent(component = "form", value = EventConstants.SUCCESS)
 	public void formSucess() {
-		searched=false;
-		results= this.accountManager.findTAccountStatus(accName, accountId, status);
-		if(results!=null ){
-			if(!((List)results).isEmpty())
-				searched = true;
-			else{
-				this.message=this.getMessages().format("search-nofound");
-				return ;
-			}
-				
-			/*if(tableSource==null){
-				GridDataSourceImpl d= new GridDataSourceImpl(this.accountManager);
-				d.setAccountId(accountId);
-				d.setAccountName(accName);
-				d.setStatus(status);
-				
-				tableSource=d;
-			}*/
-		}else{
-			this.message=this.getMessages().format("search-nofound");
-		}
+		searched=true;
+		
 	}
-
+	public String getNotFoundMessage(){
+		return this._componentResources.getMessages().format("search-nofound");//_message;
+	}
 	@OnEvent(component = "form", value = EventConstants.FAILURE)
 	public void formFailure() {
 		searched = false;
@@ -163,13 +151,13 @@ public class TableTestList extends BasePage {
 	
 	public GridDataSource getTableSource() {
 		if(tableSource==null){
-			if(tableSource==null){
-				GridDataSourceImpl d= new GridDataSourceImpl(this.accountManager);
-				d.setAccountId(accountId);
-				d.setAccountName(accName);
-				d.setStatus(status);
-				tableSource=d;
-			}
+
+			GridDataSourceImpl d= new GridDataSourceImpl(this.accountManager);
+			d.setAccountId(accountId);
+			d.setAccountName(accName);
+			d.setStatus(status);
+			tableSource=d;
+
 		}
 		return tableSource;
 	}
@@ -331,7 +319,7 @@ public class TableTestList extends BasePage {
 	public void detached() {
 		item = null;
 		timeformat=null;
-		message=null;
+		//_message=null;
 	}
 	
 	@BeginRender
@@ -357,7 +345,21 @@ public class TableTestList extends BasePage {
 		return "";
 	}
 	
-	
+	public boolean isEqualOne(){
+		if(item==null || item.getLevel()==null)return false;
+		return item.getLevel().equals(FinanceLevel.ONE);
+		//return false;
+	}
+	public boolean isEqualTwo(){
+		if(item==null || item.getLevel()==null)return false;
+		return item.getLevel().equals(FinanceLevel.TWO);
+		//return false;
+	}
+	public boolean isItemInited(){
+		if(item==null )return false;
+		 return item.getInited()>0;
+		//return item.getLevel().equals(FinanceLevel.TWO);
+	}
 	/*public String showTime(Date d){
 		if(d!=null)
 		return timeformat.format(d);

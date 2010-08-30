@@ -131,7 +131,7 @@ public class AccountList extends BasePage {
 			if(!((List)results).isEmpty())
 				searched = true;
 			else{
-				this.message=this.getMessages().format("search-nofound");
+				this.message=this._componentResources.getMessages().format("search-nofound");
 				return ;
 			}
 				
@@ -144,7 +144,7 @@ public class AccountList extends BasePage {
 				tableSource=d;
 			}*/
 		}else{
-			this.message=this.getMessages().format("search-nofound");
+			this.message=this._componentResources.getMessages().format("search-nofound");
 		}
 	}
 
