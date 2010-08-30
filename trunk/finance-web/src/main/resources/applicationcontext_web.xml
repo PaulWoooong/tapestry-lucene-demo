@@ -47,6 +47,9 @@
 			<tx:method name="update*" propagation="REQUIRED" />
 			<tx:method name="initAccount" propagation="REQUIRED" />
 			<tx:method name="pendingBizForm" propagation="REQUIRED"/>
+			<tx:method name="deleteFinanceForm" propagation="REQUIRED"/>
+			<tx:method name="confirmMonthReport" propagation="REQUIRED"/>
+			<tx:method name="refuseMonthReport" propagation="REQUIRED"/>
 		</tx:attributes>
 	</tx:advice>
 	<tx:advice id="txAdvice1" transaction-manager="txManager">

@@ -182,7 +182,11 @@ public class TAccountManagerServiceImpl extends AbstractEntityService implements
 								return ex;
 							}*/
 						}
-						if (debits != credits) {
+						BigDecimal cDecimal = new BigDecimal(credits);
+						BigDecimal dDecimal = new BigDecimal(debits);
+						cDecimal=cDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+						dDecimal=dDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+						if (!cDecimal.equals(dDecimal)) {
 							FinanceRuleException ex = new FinanceRuleException();
 							ex.setErrorCode(FinanceRuleException.NO_BALANCE);
 							return ex;

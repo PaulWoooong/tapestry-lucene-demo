@@ -205,6 +205,30 @@
 			</result>
 			<result name="input">/WEB-INF/pages/RunningAccountManagerList.jsp</result>
 		</action>
+		<action name="Reportlist"
+			class="com.samtech.finance.web.action.FinanceReportManagerListAction">
+			<result>/WEB-INF/pages/FinanceReportList.jsp</result>
+			<result name="input">/WEB-INF/pages/FinanceReportList.jsp</result>
+			<result name="success">/WEB-INF/pages/FinanceReportList.jsp</result>
+			<result name="error">/WEB-INF/pages/FinanceReportList.jsp</result>
+		</action>
+		<action name="pgReportlist"
+			class="com.samtech.finance.web.action.FinanceReportManagerListAction"
+			method="paging">
+			<result name="pgresult" type="stream">
+				<param name="contentType">txt/html</param>
+				<param name="inputName">pgInputStream</param>
+				<param name="bufferSize">1024</param>
+			</result>
+		</action>
+		<action name="ReportExport" class="com.samtech.finance.web.action.FinanceReportManagerListAction" method="exportExcel">
+			<result name="success" type="stream">
+				<param name="contentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelInputStream</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<result name="input">/WEB-INF/pages/FinanceReportList.jsp</result>
+		</action>
 	</package>
 	<!--
 		<package name="gtexample" extends="json-default"> <action
