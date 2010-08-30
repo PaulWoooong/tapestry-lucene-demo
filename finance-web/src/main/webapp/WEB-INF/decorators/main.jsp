@@ -19,6 +19,32 @@
 <link
 	href="<s:url value='/styles/dbx.css' encode='false' includeParams='none'/>"
 	rel="stylesheet" type="text/css" media="all" />
+<style>
+#header{
+background: #42afdc url("images/bg.jpg") repeat-x;
+height: 128px;
+width: 760px;
+vertical-align: middle;
+}
+#branding{
+background:#42afdc  no-repeat;
+width: 152px;
+height: 126px;
+float: left;
+}
+#search{
+font: 24px Arial, Helvetica, sans-serif;
+width:580px;
+height: 128px;
+float: right;
+vertical-align: middle;
+text-align: center;
+margin-top: auto;
+margin-right: 10px;
+margin-bottom: auto;
+margin-left: 10px;
+}
+</style>	
 <script type="text/javascript"	src="<s:url value='/scripts/dbx/dbx.js' />" ></script>
 <script type="text/javascript"	src="<s:url value='/scripts/jquery/jquery-1.4.1.js' />" ></script>
 <decorator:head/>
@@ -32,9 +58,9 @@
 <div id="wrapper">
     
         <div id="header" >
-            <div id="branding">
+            <div id="branding">&#160;
             </div><!-- end branding -->
-            <div id="search">
+            <div id="search"><div><b>广州峰境贸易有限公司</b></div>
             </div><!-- end search -->
             <div style="clear: both;"></div>
         </div>
@@ -52,7 +78,7 @@
 	                  <li><s:a action="FinanceFormList">记账凭证查询</s:a></li>
 	                  <li><s:a action="RunningAccountList">流水账查询</s:a></li>
 	                  <li><s:a action="TAccountList">T账查询</s:a></li>
-                  	   <li><a action="gmesalist">T账报表</a></li>
+                  	   <li><s:a action="Reportlist">T账报表</s:a></li>
                   	   <!-- li><s:a action="gmesalist">T账报表</s:a></li-->
                 </ul>
 	  </div>

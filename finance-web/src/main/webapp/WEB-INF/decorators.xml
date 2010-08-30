@@ -22,6 +22,7 @@
         <pattern>/UserEdit*</pattern>
         <pattern>/FinanceFormEdit*</pattern>
         <pattern>/FinanceFormExport*</pattern>
+        <pattern>/pgReportlist*</pattern>
         <pattern>/TAccountEdit*</pattern>
         <pattern>/logout.action</pattern>
         <pattern>/tags/ui/ajax/*</pattern>
