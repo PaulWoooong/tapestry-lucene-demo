@@ -185,7 +185,7 @@ public class FinanceReportManagerListAction extends AbstractAction  {
     				
     		}
     		try {
-				this.financeManager.confirmMonthReport(this.year, imonth);
+				this.financeManager.refuseMonthReport(this.year, imonth);
 			} catch (FinanceRuleException e) {
 				String message = e.getMessage();
 				e.printStackTrace();
