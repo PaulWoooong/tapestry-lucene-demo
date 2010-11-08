@@ -12,7 +12,7 @@
   <description>tapestry5-web-common</description>
   <repositories>
   	<repository>
-  		<id>releases</id>
+  		<id>jboss</id>
   		<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
   		<releases>
   			<enabled>true</enabled>
@@ -33,7 +33,7 @@
   	</repository>
   </repositories>
   <properties>
-  <t5-version>5.2.0</t5-version>
+  	<t5-version>5.2.2</t5-version>
   </properties>
   <dependencies>
   	<dependency>
